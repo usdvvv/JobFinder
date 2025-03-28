@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,7 +15,9 @@ import {
   CalendarDays, 
   Banknote,
   Building,
-  Bookmark
+  Bookmark,
+  ChevronRight,
+  FileText
 } from 'lucide-react';
 import NavBar from '@/components/NavBar';
 import AnimatedSection from '@/components/AnimatedSection';

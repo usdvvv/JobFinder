@@ -16,6 +16,7 @@ interface JobCardProps {
   posted: string;
   description: string;
   skills: string[];
+  remote: boolean;
 }
 
 const JobCard = ({
@@ -27,7 +28,8 @@ const JobCard = ({
   type,
   posted,
   description,
-  skills
+  skills,
+  remote
 }: JobCardProps) => {
   const [expanded, setExpanded] = useState(false);
   const [favorite, setFavorite] = useState(false);
@@ -84,6 +86,11 @@ const JobCard = ({
           <Badge variant="outline" className="flex items-center gap-1 font-normal">
             <Clock className="w-3 h-3" /> {posted}
           </Badge>
+          {remote && (
+            <Badge variant="secondary" className="flex items-center gap-1 font-normal">
+              Remote
+            </Badge>
+          )}
         </div>
 
         <div className={`transition-all duration-300 overflow-hidden ${expanded ? 'max-h-96' : 'max-h-16'}`}>
