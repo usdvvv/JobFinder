@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Menu, X, Briefcase, Home, FileText, Video, UserRound, Code, Brain } from 'lucide-react';
+import { Menu, X, Briefcase, Home, FileText, Video, UserRound, Code, Brain, Bot } from 'lucide-react';
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -61,6 +61,7 @@ const NavBar = () => {
               <NavLink to="/interview" icon={<Video className="h-4 w-4" />} text="Interview Prep" />
               <NavLink to="/practice" icon={<Code className="h-4 w-4" />} text="Practice Coding" />
               <NavLink to="/therapist" icon={<Brain className="h-4 w-4" />} text="AI Therapist" />
+              <NavLink to="/assistant" icon={<Bot className="h-4 w-4" />} text="AI Assistant" />
               <Link to="/login">
                 <Button variant="outline" size="sm" className="ml-2">
                   <UserRound className="h-4 w-4 mr-2" />
@@ -96,6 +97,7 @@ const NavBar = () => {
             <MobileNavLink to="/interview" icon={<Video className="h-5 w-5" />} text="Interview Prep" />
             <MobileNavLink to="/practice" icon={<Code className="h-5 w-5" />} text="Practice Coding" />
             <MobileNavLink to="/therapist" icon={<Brain className="h-5 w-5" />} text="AI Therapist" />
+            <MobileNavLink to="/assistant" icon={<Bot className="h-5 w-5" />} text="AI Assistant" />
             <MobileNavLink to="/login" icon={<UserRound className="h-5 w-5" />} text="Login" />
           </div>
         </div>

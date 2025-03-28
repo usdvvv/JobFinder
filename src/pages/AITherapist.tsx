@@ -18,7 +18,11 @@ import {
   Info,
   ArrowRight,
   HeartPulse,
-  Laugh
+  Laugh,
+  Video,
+  Mic,
+  MicOff,
+  VideoOff
 } from 'lucide-react';
 import NavBar from '@/components/NavBar';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -50,6 +54,12 @@ const AITherapist = () => {
       timestamp: new Date()
     }
   ]);
+  
+  const [videoCall, setVideoCall] = useState({
+    active: false,
+    micMuted: false,
+    videoMuted: false
+  });
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
@@ -97,6 +107,35 @@ const AITherapist = () => {
       e.preventDefault();
       handleSend();
     }
+  };
+
+  const startVideoCall = () => {
+    setVideoCall({
+      ...videoCall,
+      active: true
+    });
+  };
+
+  const endVideoCall = () => {
+    setVideoCall({
+      active: false,
+      micMuted: false,
+      videoMuted: false
+    });
+  };
+
+  const toggleMic = () => {
+    setVideoCall({
+      ...videoCall,
+      micMuted: !videoCall.micMuted
+    });
+  };
+
+  const toggleVideo = () => {
+    setVideoCall({
+      ...videoCall,
+      videoMuted: !videoCall.videoMuted
+    });
   };
 
   return (
@@ -214,10 +253,14 @@ const AITherapist = () => {
             
             <AnimatedSection animation="slide-up" delay={100} className="lg:col-span-3">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="chat" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                     <MessageSquare className="h-4 w-4 mr-2" />
                     Text Chat
+                  </TabsTrigger>
+                  <TabsTrigger value="video" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                    <Video className="h-4 w-4 mr-2" />
+                    Video Chat
                   </TabsTrigger>
                   <TabsTrigger value="exercises" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                     <Wand2 className="h-4 w-4 mr-2" />
@@ -335,6 +378,103 @@ const AITherapist = () => {
                         </div>
                       </div>
                     </CardFooter>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="video" className="mt-6">
+                  <Card className="h-[calc(80vh-200px)] flex flex-col">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="text-lg flex items-center">
+                        <Video className="h-5 w-5 mr-2 text-primary" />
+                        Video Therapy Session
+                      </CardTitle>
+                      <CardDescription>
+                        Have a face-to-face therapy session with our AI therapist
+                      </CardDescription>
+                    </CardHeader>
+                    
+                    <CardContent className="flex-1 p-4 flex flex-col items-center justify-center">
+                      {!videoCall.active ? (
+                        <div className="text-center space-y-4">
+                          <div className="h-24 w-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                            <Video className="h-12 w-12 text-primary" />
+                          </div>
+                          <h3 className="text-xl font-medium">Ready for your session?</h3>
+                          <p className="text-muted-foreground max-w-md">
+                            Connect with our AI therapist for a face-to-face video session to discuss your career anxiety and stress.
+                          </p>
+                          <Button className="mt-2" size="lg" onClick={startVideoCall}>
+                            Start Video Session
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="w-full h-full flex flex-col">
+                          <div className="relative flex-1 bg-black rounded-lg overflow-hidden flex items-center justify-center mb-4">
+                            {/* Therapist video feed */}
+                            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                              <div className="text-center">
+                                <Avatar className="h-24 w-24 bg-primary/10 mx-auto mb-4">
+                                  <Brain className="h-12 w-12 text-primary" />
+                                </Avatar>
+                                <p className="text-white">AI Therapist</p>
+                              </div>
+                            </div>
+                            
+                            {/* User video feed (small picture-in-picture) */}
+                            <div className="absolute bottom-4 right-4 w-32 h-24 bg-muted rounded overflow-hidden border-2 border-background shadow-lg">
+                              {videoCall.videoMuted ? (
+                                <div className="w-full h-full flex items-center justify-center bg-muted">
+                                  <User className="h-8 w-8 text-muted-foreground" />
+                                </div>
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-muted">
+                                  <Avatar className="h-10 w-10">
+                                    <User className="h-6 w-6" />
+                                  </Avatar>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="flex justify-center space-x-2 mt-auto">
+                            <Button
+                              variant={videoCall.micMuted ? "destructive" : "outline"}
+                              size="icon"
+                              className="h-12 w-12 rounded-full"
+                              onClick={toggleMic}
+                            >
+                              {videoCall.micMuted ? (
+                                <MicOff className="h-5 w-5" />
+                              ) : (
+                                <Mic className="h-5 w-5" />
+                              )}
+                            </Button>
+                            
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              className="h-12 w-12 rounded-full"
+                              onClick={endVideoCall}
+                            >
+                              <PhoneOff className="h-5 w-5" />
+                            </Button>
+                            
+                            <Button
+                              variant={videoCall.videoMuted ? "destructive" : "outline"}
+                              size="icon"
+                              className="h-12 w-12 rounded-full"
+                              onClick={toggleVideo}
+                            >
+                              {videoCall.videoMuted ? (
+                                <VideoOff className="h-5 w-5" />
+                              ) : (
+                                <Video className="h-5 w-5" />
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
                   </Card>
                 </TabsContent>
                 
@@ -467,5 +607,24 @@ const AITherapist = () => {
     </div>
   );
 };
+
+// Missing PhoneOff icon, let's create it
+const PhoneOff = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg" 
+    width="24" 
+    height="24" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91" />
+    <line x1="22" y1="2" x2="2" y2="22" />
+  </svg>
+);
 
 export default AITherapist;

@@ -14,7 +14,9 @@ import ResumeMaker from "./pages/ResumeMaker";
 import InterviewPrep from "./pages/InterviewPrep";
 import PracticeCoding from "./pages/PracticeCoding";
 import AITherapist from "./pages/AITherapist";
+import AILiveAssistant from "./pages/AILiveAssistant";
 import NotFound from "./pages/NotFound";
+import AIFloatingAssistant from "./components/AIFloatingAssistant";
 
 const queryClient = new QueryClient();
 
@@ -35,9 +37,11 @@ const App = () => (
           <Route path="/interview" element={<InterviewPrep />} />
           <Route path="/practice" element={<PracticeCoding />} />
           <Route path="/therapist" element={<AITherapist />} />
+          <Route path="/assistant" element={<AILiveAssistant />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <AIFloatingAssistant />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
