@@ -10,6 +10,10 @@ import JobListings from "./pages/JobListings";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ApplicationForm from "./pages/ApplicationForm";
+import ResumeMaker from "./pages/ResumeMaker";
+import InterviewPrep from "./pages/InterviewPrep";
+import PracticeCoding from "./pages/PracticeCoding";
+import AITherapist from "./pages/AITherapist";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +31,10 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/apply/:id" element={<ApplicationForm />} />
+          <Route path="/resume" element={<ResumeMaker />} />
+          <Route path="/interview" element={<InterviewPrep />} />
+          <Route path="/practice" element={<PracticeCoding />} />
+          <Route path="/therapist" element={<AITherapist />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
