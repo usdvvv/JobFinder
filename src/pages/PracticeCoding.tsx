@@ -558,7 +558,7 @@ const PracticeCoding = () => {
 
 interface ProblemCardProps {
   title: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
+  difficulty: string;
   categories: string[];
   description: string;
   solvedRate: string;
