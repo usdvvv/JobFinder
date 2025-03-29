@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -543,7 +544,7 @@ const PracticeCoding = () => {
         <CodingChallenge 
           title={activeProblem.title}
           description={activeProblem.description}
-          difficulty={activeProblem.difficulty}
+          difficulty={activeProblem.difficulty as "Easy" | "Medium" | "Hard"}
           category={activeProblem.categories[0]}
           examples={activeProblem.examples}
           starterCode={activeProblem.starterCode}
@@ -577,7 +578,7 @@ const ProblemCard = ({ title, difficulty, categories, description, solvedRate, o
         <div>
           <h3 className="font-medium hover:text-primary transition-colors">{title}</h3>
           <div className="flex items-center mt-1 flex-wrap gap-1">
-            <span className={`text-xs px-2 py-0.5 rounded-full ${difficultyColor[difficulty]}`}>
+            <span className={`text-xs px-2 py-0.5 rounded-full ${difficultyColor[difficulty as "Easy" | "Medium" | "Hard"]}`}>
               {difficulty}
             </span>
             {categories.map((category, idx) => (
