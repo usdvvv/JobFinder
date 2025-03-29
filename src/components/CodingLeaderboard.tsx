@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { 
   Table, 
@@ -171,7 +171,7 @@ const CodingLeaderboard = ({ isCompanyView = false }: CodingLeaderboardProps) =>
                 <CardContent className="p-4 flex flex-col items-center text-center">
                   <div className="relative">
                     <Avatar className="h-16 w-16 mt-2 bg-primary text-white text-lg">
-                      <span>{user.avatar}</span>
+                      <AvatarFallback>{user.avatar}</AvatarFallback>
                     </Avatar>
                     {user.rank === 1 && (
                       <Crown className="absolute -top-2 -right-2 h-6 w-6 text-yellow-500" />
@@ -192,17 +192,109 @@ const CodingLeaderboard = ({ isCompanyView = false }: CodingLeaderboardProps) =>
                       </Badge>
                     ))}
                   </div>
-                  {isCompanyView && (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="mt-4"
+                        onClick={() => setSelectedUser(user)}
+                      >
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        Contact
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Contact {user.name}</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="flex items-center space-x-4">
+                          <Avatar className="h-10 w-10 bg-primary text-primary-foreground">
+                            <AvatarFallback>{user.avatar}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h4 className="font-medium">{user.name}</h4>
+                            <p className="text-sm text-muted-foreground">Rank #{user.rank} • {user.score} points</p>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Input placeholder="Subject" />
+                          <Textarea 
+                            placeholder="Your message to the candidate..." 
+                            className="min-h-[150px]"
+                            value={contactMessage}
+                            onChange={(e) => setContactMessage(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button variant="outline">Cancel</Button>
+                        </DialogClose>
+                        <Button onClick={handleContact}>Send Message</Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          
+          {/* Table for the rest of the users */}
+          <Table>
+            <TableCaption>Showing top performers based on problem-solving score.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[50px]">Rank</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Score</TableHead>
+                <TableHead className="hidden md:table-cell">Problems</TableHead>
+                <TableHead className="hidden md:table-cell">Streak</TableHead>
+                <TableHead className="hidden md:table-cell">Languages</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {leaderboardData.slice(3).map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted">
+                      {getRankIcon(user.rank)}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center">
+                      <Avatar className="h-8 w-8 mr-2 bg-primary text-white">
+                        <AvatarFallback>{user.avatar}</AvatarFallback>
+                      </Avatar>
+                      <span>{user.name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="font-semibold">{user.score}</div>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">{user.solvedProblems}</TableCell>
+                  <TableCell className="hidden md:table-cell">{user.streak} days</TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <div className="flex flex-wrap gap-1">
+                      {user.languages.map((lang, idx) => (
+                        <Badge key={idx} variant="outline" className="text-xs">
+                          {lang}
+                        </Badge>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="mt-4"
+                          variant="ghost" 
+                          size="sm"
                           onClick={() => setSelectedUser(user)}
                         >
-                          <MessageSquare className="mr-2 h-4 w-4" />
-                          Contact
+                          <MessageSquare className="h-4 w-4" />
+                          <span className="sr-only">Contact</span>
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
@@ -212,7 +304,7 @@ const CodingLeaderboard = ({ isCompanyView = false }: CodingLeaderboardProps) =>
                         <div className="space-y-4 py-4">
                           <div className="flex items-center space-x-4">
                             <Avatar className="h-10 w-10 bg-primary text-primary-foreground">
-                              <span>{user.avatar}</span>
+                              <AvatarFallback>{user.avatar}</AvatarFallback>
                             </Avatar>
                             <div>
                               <h4 className="font-medium">{user.name}</h4>
@@ -237,103 +329,7 @@ const CodingLeaderboard = ({ isCompanyView = false }: CodingLeaderboardProps) =>
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          
-          {/* Table for the rest of the users */}
-          <Table>
-            <TableCaption>Showing top performers based on problem-solving score.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[50px]">Rank</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Score</TableHead>
-                <TableHead className="hidden md:table-cell">Problems</TableHead>
-                <TableHead className="hidden md:table-cell">Streak</TableHead>
-                <TableHead className="hidden md:table-cell">Languages</TableHead>
-                {isCompanyView && <TableHead className="text-right">Actions</TableHead>}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {leaderboardData.slice(3).map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted">
-                      {getRankIcon(user.rank)}
-                    </div>
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <Avatar className="h-8 w-8 mr-2 bg-primary text-white">
-                        <span>{user.avatar}</span>
-                      </Avatar>
-                      <span>{user.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="font-semibold">{user.score}</div>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">{user.solvedProblems}</TableCell>
-                  <TableCell className="hidden md:table-cell">{user.streak} days</TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    <div className="flex flex-wrap gap-1">
-                      {user.languages.map((lang, idx) => (
-                        <Badge key={idx} variant="outline" className="text-xs">
-                          {lang}
-                        </Badge>
-                      ))}
-                    </div>
-                  </TableCell>
-                  {isCompanyView && (
-                    <TableCell className="text-right">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => setSelectedUser(user)}
-                          >
-                            <MessageSquare className="h-4 w-4" />
-                            <span className="sr-only">Contact</span>
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Contact {user.name}</DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-4 py-4">
-                            <div className="flex items-center space-x-4">
-                              <Avatar className="h-10 w-10 bg-primary text-primary-foreground">
-                                <span>{user.avatar}</span>
-                              </Avatar>
-                              <div>
-                                <h4 className="font-medium">{user.name}</h4>
-                                <p className="text-sm text-muted-foreground">Rank #{user.rank} • {user.score} points</p>
-                              </div>
-                            </div>
-                            <div className="space-y-2">
-                              <Input placeholder="Subject" />
-                              <Textarea 
-                                placeholder="Your message to the candidate..." 
-                                className="min-h-[150px]"
-                                value={contactMessage}
-                                onChange={(e) => setContactMessage(e.target.value)}
-                              />
-                            </div>
-                          </div>
-                          <DialogFooter>
-                            <DialogClose asChild>
-                              <Button variant="outline">Cancel</Button>
-                            </DialogClose>
-                            <Button onClick={handleContact}>Send Message</Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
-                    </TableCell>
-                  )}
                 </TableRow>
               ))}
             </TableBody>

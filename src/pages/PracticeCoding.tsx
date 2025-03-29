@@ -24,7 +24,157 @@ import CodingChallenge from '@/components/CodingChallenge';
 import CodingLeaderboard from '@/components/CodingLeaderboard';
 
 const codingProblems = [
-  // Sample coding problems remain unchanged
+  {
+    id: 1,
+    title: "Two Sum",
+    difficulty: "Easy",
+    categories: ["Arrays", "Hash Table"],
+    description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+    solvedRate: "85%",
+    examples: [
+      { input: "nums = [2,7,11,15], target = 9", output: "[0,1]", explanation: "Because nums[0] + nums[1] == 9, we return [0, 1]." },
+      { input: "nums = [3,2,4], target = 6", output: "[1,2]", explanation: "Because nums[1] + nums[2] == 6, we return [1, 2]." }
+    ],
+    starterCode: "function twoSum(nums, target) {\n  // Your code here\n}",
+    solution: "function twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n  return [];\n}"
+  },
+  {
+    id: 2,
+    title: "Valid Parentheses",
+    difficulty: "Easy",
+    categories: ["Stack", "String"],
+    description: "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
+    solvedRate: "76%",
+    examples: [
+      { input: "s = '()'", output: "true", explanation: "The parentheses match." },
+      { input: "s = '()[]{}'", output: "true", explanation: "All brackets match and close in the correct order." }
+    ],
+    starterCode: "function isValid(s) {\n  // Your code here\n}",
+    solution: "function isValid(s) {\n  const stack = [];\n  const map = {\n    '(': ')',\n    '[': ']',\n    '{': '}'\n  };\n  for (let i = 0; i < s.length; i++) {\n    const char = s[i];\n    if (map[char]) {\n      stack.push(map[char]);\n    } else if (stack.pop() !== char) {\n      return false;\n    }\n  }\n  return stack.length === 0;\n}"
+  },
+  {
+    id: 3,
+    title: "Reverse Linked List",
+    difficulty: "Easy",
+    categories: ["Linked List"],
+    description: "Given the head of a singly linked list, reverse the list, and return the reversed list.",
+    solvedRate: "82%",
+    examples: [
+      { input: "head = [1,2,3,4,5]", output: "[5,4,3,2,1]", explanation: "The list is reversed." },
+      { input: "head = [1,2]", output: "[2,1]", explanation: "The list is reversed." }
+    ],
+    starterCode: "function reverseList(head) {\n  // Your code here\n}",
+    solution: "function reverseList(head) {\n  let prev = null;\n  let current = head;\n  while (current !== null) {\n    const next = current.next;\n    current.next = prev;\n    prev = current;\n    current = next;\n  }\n  return prev;\n}"
+  },
+  {
+    id: 4,
+    title: "Maximum Subarray",
+    difficulty: "Medium",
+    categories: ["Array", "Dynamic Programming"],
+    description: "Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.",
+    solvedRate: "68%",
+    examples: [
+      { input: "nums = [-2,1,-3,4,-1,2,1,-5,4]", output: "6", explanation: "The subarray [4,-1,2,1] has the largest sum 6." },
+      { input: "nums = [1]", output: "1", explanation: "The subarray [1] has the largest sum 1." }
+    ],
+    starterCode: "function maxSubArray(nums) {\n  // Your code here\n}",
+    solution: "function maxSubArray(nums) {\n  let maxCurrent = nums[0];\n  let maxGlobal = nums[0];\n  for (let i = 1; i < nums.length; i++) {\n    maxCurrent = Math.max(nums[i], maxCurrent + nums[i]);\n    if (maxCurrent > maxGlobal) {\n      maxGlobal = maxCurrent;\n    }\n  }\n  return maxGlobal;\n}"
+  },
+  {
+    id: 5,
+    title: "Merge Intervals",
+    difficulty: "Medium",
+    categories: ["Array", "Sorting"],
+    description: "Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.",
+    solvedRate: "62%",
+    examples: [
+      { input: "intervals = [[1,3],[2,6],[8,10],[15,18]]", output: "[[1,6],[8,10],[15,18]]", explanation: "Since intervals [1,3] and [2,6] overlap, merge them into [1,6]." },
+      { input: "intervals = [[1,4],[4,5]]", output: "[[1,5]]", explanation: "Intervals [1,4] and [4,5] are considered overlapping." }
+    ],
+    starterCode: "function merge(intervals) {\n  // Your code here\n}",
+    solution: "function merge(intervals) {\n  if (intervals.length <= 1) return intervals;\n  intervals.sort((a, b) => a[0] - b[0]);\n  const result = [intervals[0]];\n  for (let i = 1; i < intervals.length; i++) {\n    const current = intervals[i];\n    const last = result[result.length - 1];\n    if (current[0] <= last[1]) {\n      last[1] = Math.max(last[1], current[1]);\n    } else {\n      result.push(current);\n    }\n  }\n  return result;\n}"
+  },
+  {
+    id: 6,
+    title: "LRU Cache",
+    difficulty: "Medium",
+    categories: ["Hash Table", "Linked List", "Design"],
+    description: "Design a data structure that follows the constraints of a Least Recently Used (LRU) cache.",
+    solvedRate: "52%",
+    examples: [
+      { 
+        input: "LRUCache lRUCache = new LRUCache(2);\nlRUCache.put(1, 1);\nlRUCache.put(2, 2);\nlRUCache.get(1);    // return 1\nlRUCache.put(3, 3); // evicts key 2\nlRUCache.get(2);    // returns -1 (not found)\nlRUCache.put(4, 4); // evicts key 1\nlRUCache.get(1);    // returns -1 (not found)\nlRUCache.get(3);    // returns 3\nlRUCache.get(4);    // returns 4", 
+        output: "[null, null, null, 1, null, -1, null, -1, 3, 4]", 
+        explanation: "LRU Cache implementation with capacity 2."
+      }
+    ],
+    starterCode: "class LRUCache {\n  constructor(capacity) {\n    // Initialize your data structure here\n  }\n  \n  get(key) {\n    // Your code here\n  }\n  \n  put(key, value) {\n    // Your code here\n  }\n}",
+    solution: "class LRUCache {\n  constructor(capacity) {\n    this.capacity = capacity;\n    this.cache = new Map();\n  }\n  \n  get(key) {\n    if (!this.cache.has(key)) return -1;\n    \n    const value = this.cache.get(key);\n    this.cache.delete(key);\n    this.cache.set(key, value);\n    return value;\n  }\n  \n  put(key, value) {\n    if (this.cache.has(key)) {\n      this.cache.delete(key);\n    } else if (this.cache.size >= this.capacity) {\n      const firstKey = this.cache.keys().next().value;\n      this.cache.delete(firstKey);\n    }\n    \n    this.cache.set(key, value);\n  }\n}"
+  },
+  {
+    id: 7,
+    title: "Word Break",
+    difficulty: "Medium",
+    categories: ["Dynamic Programming", "Trie", "Memoization"],
+    description: "Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a space-separated sequence of one or more dictionary words.",
+    solvedRate: "49%",
+    examples: [
+      { input: 's = "leetcode", wordDict = ["leet","code"]', output: "true", explanation: "Return true because 'leetcode' can be segmented as 'leet code'." },
+      { input: 's = "applepenapple", wordDict = ["apple","pen"]', output: "true", explanation: "Return true because 'applepenapple' can be segmented as 'apple pen apple'." }
+    ],
+    starterCode: "function wordBreak(s, wordDict) {\n  // Your code here\n}",
+    solution: "function wordBreak(s, wordDict) {\n  const dp = new Array(s.length + 1).fill(false);\n  dp[0] = true;\n  \n  for (let i = 1; i <= s.length; i++) {\n    for (let j = 0; j < i; j++) {\n      if (dp[j] && wordDict.includes(s.substring(j, i))) {\n        dp[i] = true;\n        break;\n      }\n    }\n  }\n  \n  return dp[s.length];\n}"
+  },
+  {
+    id: 8,
+    title: "Number of Islands",
+    difficulty: "Medium",
+    categories: ["Depth-First Search", "Breadth-First Search", "Union Find"],
+    description: "Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands.",
+    solvedRate: "59%",
+    examples: [
+      { 
+        input: 'grid = [\n  ["1","1","1","1","0"],\n  ["1","1","0","1","0"],\n  ["1","1","0","0","0"],\n  ["0","0","0","0","0"]\n]', 
+        output: "1", 
+        explanation: "There is one island (connected land cells)." 
+      },
+      { 
+        input: 'grid = [\n  ["1","1","0","0","0"],\n  ["1","1","0","0","0"],\n  ["0","0","1","0","0"],\n  ["0","0","0","1","1"]\n]', 
+        output: "3", 
+        explanation: "There are three islands." 
+      }
+    ],
+    starterCode: "function numIslands(grid) {\n  // Your code here\n}",
+    solution: "function numIslands(grid) {\n  if (!grid || grid.length === 0) return 0;\n  \n  const m = grid.length;\n  const n = grid[0].length;\n  let count = 0;\n  \n  function dfs(i, j) {\n    if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] === '0') return;\n    \n    grid[i][j] = '0';\n    dfs(i + 1, j);\n    dfs(i - 1, j);\n    dfs(i, j + 1);\n    dfs(i, j - 1);\n  }\n  \n  for (let i = 0; i < m; i++) {\n    for (let j = 0; j < n; j++) {\n      if (grid[i][j] === '1') {\n        count++;\n        dfs(i, j);\n      }\n    }\n  }\n  \n  return count;\n}"
+  },
+  {
+    id: 9,
+    title: "Trapping Rain Water",
+    difficulty: "Hard",
+    categories: ["Array", "Two Pointers", "Stack"],
+    description: "Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
+    solvedRate: "38%",
+    examples: [
+      { input: "height = [0,1,0,2,1,0,1,3,2,1,2,1]", output: "6", explanation: "The elevation map represents the histogram where the width of each bar is 1. The above water is captured in blue on the diagram." },
+      { input: "height = [4,2,0,3,2,5]", output: "9", explanation: "The elevation map represents the histogram where the width of each bar is 1." }
+    ],
+    starterCode: "function trap(height) {\n  // Your code here\n}",
+    solution: "function trap(height) {\n  if (!height || height.length === 0) return 0;\n  \n  let left = 0;\n  let right = height.length - 1;\n  let leftMax = 0;\n  let rightMax = 0;\n  let result = 0;\n  \n  while (left < right) {\n    if (height[left] < height[right]) {\n      height[left] >= leftMax ? (leftMax = height[left]) : (result += leftMax - height[left]);\n      left++;\n    } else {\n      height[right] >= rightMax ? (rightMax = height[right]) : (result += rightMax - height[right]);\n      right--;\n    }\n  }\n  \n  return result;\n}"
+  },
+  {
+    id: 10,
+    title: "Merge k Sorted Lists",
+    difficulty: "Hard",
+    categories: ["Linked List", "Divide and Conquer", "Heap"],
+    description: "You are given an array of k linked-lists lists, each linked-list is sorted in ascending order. Merge all the linked-lists into one sorted linked-list and return it.",
+    solvedRate: "35%",
+    examples: [
+      { input: "lists = [[1,4,5],[1,3,4],[2,6]]", output: "[1,1,2,3,4,4,5,6]", explanation: "The linked-lists are merged in ascending order." },
+      { input: "lists = []", output: "[]", explanation: "The input is an empty list." }
+    ],
+    starterCode: "function mergeKLists(lists) {\n  // Your code here\n}",
+    solution: "function mergeKLists(lists) {\n  if (!lists || lists.length === 0) return null;\n  \n  function mergeTwoLists(l1, l2) {\n    const dummy = new ListNode(0);\n    let curr = dummy;\n    \n    while (l1 && l2) {\n      if (l1.val < l2.val) {\n        curr.next = l1;\n        l1 = l1.next;\n      } else {\n        curr.next = l2;\n        l2 = l2.next;\n      }\n      curr = curr.next;\n    }\n    \n    curr.next = l1 || l2;\n    \n    return dummy.next;\n  }\n  \n  function divideAndConquer(start, end) {\n    if (start === end) return lists[start];\n    if (start > end) return null;\n    \n    const mid = Math.floor((start + end) / 2);\n    const left = divideAndConquer(start, mid);\n    const right = divideAndConquer(mid + 1, end);\n    \n    return mergeTwoLists(left, right);\n  }\n  \n  return divideAndConquer(0, lists.length - 1);\n}"
+  }
 ];
 
 const PracticeCoding = () => {
