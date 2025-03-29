@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import RoleSelection from "./pages/RoleSelection";
 import LandingPage from "./pages/LandingPage";
 import ChooseSearchType from "./pages/ChooseSearchType";
 import JobListings from "./pages/JobListings";
@@ -27,7 +28,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<RoleSelection />} />
+          <Route path="/home" element={<LandingPage />} />
           <Route path="/choose" element={<ChooseSearchType />} />
           <Route path="/jobs" element={<JobListings />} />
           <Route path="/login" element={<Login />} />
