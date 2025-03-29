@@ -30,6 +30,12 @@ import CompanyProfile from "./pages/company/CompanyProfile";
 import CreateJobPosting from "./pages/company/CreateJobPosting";
 import ApplicationsManager from "./pages/company/ApplicationsManager";
 
+// Information pages
+import AboutUs from "./pages/AboutUs";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import ContactUs from "./pages/ContactUs";
+
 // Shared components
 import NotFound from "./pages/NotFound";
 import AIFloatingAssistant from "./components/AIFloatingAssistant";
@@ -72,6 +78,12 @@ const App = () => {
             <Route path="/company/jobs/:id/edit" element={<CreateJobPosting />} />
             <Route path="/company/applications" element={<ApplicationsManager />} />
             <Route path="/company/profile" element={<CompanyProfile />} />
+            
+            {/* Information pages */}
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/contact" element={<ContactUs />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
