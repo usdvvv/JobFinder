@@ -46,8 +46,8 @@ const AboutUs = () => {
               <div className="glass-effect p-6 rounded-lg mb-4">
                 <h3 className="text-gradient font-bold text-lg">Seif Eddine Mezned</h3>
                 <p className="mt-2 text-blue-200">
-                  JobFinder was developed, designed, and created by Seif Eddine Mezned, a passionate 
-                  web developer dedicated to creating innovative solutions that help people succeed in their careers.
+                  JobFinder was developed, designed, and created by Seif Eddine Mezned, an AI Engineer and Full Stack Developer
+                  passionate about creating innovative solutions that help people succeed in their careers.
                 </p>
                 <p className="mt-2 text-blue-300">
                   Contact: <a href="mailto:seifmezned.2004@gmail.com" className="text-blue-400 hover:underline">seifmezned.2004@gmail.com</a>

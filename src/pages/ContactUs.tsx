@@ -72,7 +72,7 @@ const ContactUs = () => {
                   For technical issues or collaboration opportunities, please contact the developer directly:
                 </p>
                 <p className="mt-2 text-blue-200">
-                  Seif Eddine Mezned<br />
+                  Seif Eddine Mezned - AI Engineer & Full Stack Developer<br />
                   Email: <a href="mailto:seifmezned.2004@gmail.com" className="text-blue-400 hover:underline">seifmezned.2004@gmail.com</a>
                 </p>
               </div>
