@@ -2,7 +2,20 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Menu, X, Building2, LayoutDashboard, FileText, FileSearch, LogOut, PlusCircle, User } from 'lucide-react';
+import { 
+  Menu, 
+  X, 
+  Building2, 
+  LayoutDashboard, 
+  FileText, 
+  FileSearch, 
+  LogOut, 
+  PlusCircle, 
+  User,
+  Puzzle,
+  HeartPulse,
+  MessageSquare
+} from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 
 const CompanyNavBar = () => {
@@ -70,6 +83,9 @@ const CompanyNavBar = () => {
               <NavLink to="/company/jobs" icon={<FileText className="h-4 w-4" />} text="Job Postings" />
               <NavLink to="/company/applications" icon={<FileSearch className="h-4 w-4" />} text="Applications" />
               <NavLink to="/company/profile" icon={<User className="h-4 w-4" />} text="Profile" />
+              <NavLink to="/company/entertainment" icon={<Puzzle className="h-4 w-4" />} text="Entertainment" />
+              <NavLink to="/company/therapist" icon={<HeartPulse className="h-4 w-4" />} text="AI Therapist" />
+              <NavLink to="/company/peer-chat" icon={<MessageSquare className="h-4 w-4" />} text="Peer Chat" />
               <Link to="/company/jobs/create">
                 <Button size="sm" className="bg-blue-600 hover:bg-blue-700 ml-2">
                   <PlusCircle className="h-4 w-4 mr-2" />
@@ -112,6 +128,9 @@ const CompanyNavBar = () => {
             <MobileNavLink to="/company/jobs" icon={<FileText className="h-5 w-5" />} text="Job Postings" />
             <MobileNavLink to="/company/applications" icon={<FileSearch className="h-5 w-5" />} text="Applications" />
             <MobileNavLink to="/company/profile" icon={<User className="h-5 w-5" />} text="Profile" />
+            <MobileNavLink to="/company/entertainment" icon={<Puzzle className="h-5 w-5" />} text="Entertainment" />
+            <MobileNavLink to="/company/therapist" icon={<HeartPulse className="h-5 w-5" />} text="AI Therapist" />
+            <MobileNavLink to="/company/peer-chat" icon={<MessageSquare className="h-5 w-5" />} text="Peer Chat" />
             <div className="pt-2 border-t border-gray-200/30 mt-2">
               <Link 
                 to="/company/jobs/create"

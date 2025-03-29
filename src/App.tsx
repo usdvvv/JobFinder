@@ -30,6 +30,9 @@ import CompanyJobs from "./pages/company/CompanyJobs";
 import CompanyProfile from "./pages/company/CompanyProfile";
 import CreateJobPosting from "./pages/company/CreateJobPosting";
 import ApplicationsManager from "./pages/company/ApplicationsManager";
+import CompanyEntertainment from "./pages/company/CompanyEntertainment";
+import CompanyAITherapist from "./pages/company/CompanyAITherapist";
+import CompanyPeerChat from "./pages/company/CompanyPeerChat";
 
 // Information pages
 import AboutUs from "./pages/AboutUs";
@@ -80,6 +83,9 @@ const App = () => {
             <Route path="/company/jobs/:id/edit" element={<CreateJobPosting />} />
             <Route path="/company/applications" element={<ApplicationsManager />} />
             <Route path="/company/profile" element={<CompanyProfile />} />
+            <Route path="/company/entertainment" element={<CompanyEntertainment />} />
+            <Route path="/company/therapist" element={<CompanyAITherapist />} />
+            <Route path="/company/peer-chat" element={<CompanyPeerChat />} />
             
             {/* Information pages */}
             <Route path="/about" element={<AboutUs />} />

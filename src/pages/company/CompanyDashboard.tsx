@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,19 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Building2, FileText, FileSearch, PlusCircle, Users, ArrowUpRight, Briefcase, Trophy } from 'lucide-react';
+import { 
+  Building2, 
+  FileText, 
+  FileSearch, 
+  PlusCircle, 
+  Users, 
+  ArrowUpRight, 
+  Briefcase, 
+  Trophy, 
+  Puzzle, 
+  HeartPulse, 
+  MessageSquare 
+} from 'lucide-react';
 import CompanyNavBar from '@/components/company/CompanyNavBar';
 import AnimatedSection from '@/components/AnimatedSection';
 import CodingLeaderboard from '@/components/CodingLeaderboard';
@@ -27,6 +40,31 @@ const CompanyDashboard = () => {
     { title: 'Total Applications', value: jobPostings.reduce((acc, job) => acc + job.applications, 0), icon: <FileText className="h-5 w-5" />, color: 'bg-emerald-100 text-emerald-700' },
     { title: 'Candidates Viewed', value: 32, icon: <Users className="h-5 w-5" />, color: 'bg-violet-100 text-violet-700' },
     { title: 'Plagiarism Checks', value: 5, icon: <FileSearch className="h-5 w-5" />, color: 'bg-amber-100 text-amber-700' },
+  ];
+
+  // Employee wellness services
+  const wellnessServices = [
+    { 
+      title: 'Entertainment Zone', 
+      description: 'Games and activities to help employees relax and recharge',
+      icon: <Puzzle className="h-10 w-10 text-purple-500" />,
+      path: '/company/entertainment',
+      color: 'bg-purple-50 border-purple-200'
+    },
+    { 
+      title: 'AI Therapist', 
+      description: 'Confidential AI-powered mental health support for your team',
+      icon: <HeartPulse className="h-10 w-10 text-red-500" />,
+      path: '/company/therapist',
+      color: 'bg-red-50 border-red-200'
+    },
+    { 
+      title: 'Peer Chat', 
+      description: 'Connect team members with AI-powered peer support',
+      icon: <MessageSquare className="h-10 w-10 text-blue-500" />,
+      path: '/company/peer-chat',
+      color: 'bg-blue-50 border-blue-200'
+    }
   ];
 
   return (
@@ -57,10 +95,11 @@ const CompanyDashboard = () => {
         </div>
         
         <Tabs defaultValue="overview" className="w-full" onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-4 w-full max-w-md mb-8">
+          <TabsList className="grid grid-cols-5 w-full max-w-md mb-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="jobs">Job Postings</TabsTrigger>
             <TabsTrigger value="talents">Top Talents</TabsTrigger>
+            <TabsTrigger value="wellness">Wellness</TabsTrigger>
             <TabsTrigger value="company">Company Profile</TabsTrigger>
           </TabsList>
           
@@ -80,6 +119,38 @@ const CompanyDashboard = () => {
                         </div>
                       </div>
                     </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </AnimatedSection>
+            
+            {/* Employee Wellness Services */}
+            <AnimatedSection animation="slide-up" delay={150} className="mb-8">
+              <h2 className="text-xl font-bold mb-4">Employee Wellness</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {wellnessServices.map((service, index) => (
+                  <Card key={index} className={`border ${service.color} hover:shadow-md transition-shadow`}>
+                    <CardHeader>
+                      <div className="flex justify-between items-start">
+                        <div className="p-3 rounded-lg bg-white shadow-sm">
+                          {service.icon}
+                        </div>
+                        <Button variant="ghost" size="icon" asChild>
+                          <Link to={service.path}>
+                            <ArrowUpRight className="h-5 w-5" />
+                          </Link>
+                        </Button>
+                      </div>
+                      <CardTitle className="mt-2">{service.title}</CardTitle>
+                      <CardDescription>{service.description}</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                      <Button asChild variant="outline" className="w-full">
+                        <Link to={service.path}>
+                          Access Now
+                        </Link>
+                      </Button>
+                    </CardFooter>
                   </Card>
                 ))}
               </div>
@@ -261,6 +332,94 @@ const CompanyDashboard = () => {
                   </div>
                 </CardContent>
               </Card>
+            </AnimatedSection>
+          </TabsContent>
+          
+          <TabsContent value="wellness">
+            <AnimatedSection animation="fade-in">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold mb-2">Employee Wellness Services</h2>
+                <p className="text-muted-foreground">
+                  Provide your team with tools for mental health, entertainment, and peer support.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {wellnessServices.map((service, index) => (
+                  <Card key={index} className={`border ${service.color} hover:shadow-md transition-all hover:translate-y-[-5px]`}>
+                    <CardHeader>
+                      <div className="flex justify-center mb-2">
+                        <div className="p-4 rounded-full bg-white shadow-sm">
+                          {service.icon}
+                        </div>
+                      </div>
+                      <CardTitle className="text-center">{service.title}</CardTitle>
+                      <CardDescription className="text-center">
+                        {service.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 text-sm">
+                        {index === 0 && (
+                          <>
+                            <li className="flex items-center">
+                              <span className="bg-purple-100 rounded-full p-1 mr-2">✓</span>
+                              Brain teasers and puzzles
+                            </li>
+                            <li className="flex items-center">
+                              <span className="bg-purple-100 rounded-full p-1 mr-2">✓</span>
+                              Strategy games
+                            </li>
+                            <li className="flex items-center">
+                              <span className="bg-purple-100 rounded-full p-1 mr-2">✓</span>
+                              Team-building activities
+                            </li>
+                          </>
+                        )}
+                        {index === 1 && (
+                          <>
+                            <li className="flex items-center">
+                              <span className="bg-red-100 rounded-full p-1 mr-2">✓</span>
+                              Confidential AI counseling
+                            </li>
+                            <li className="flex items-center">
+                              <span className="bg-red-100 rounded-full p-1 mr-2">✓</span>
+                              Stress management
+                            </li>
+                            <li className="flex items-center">
+                              <span className="bg-red-100 rounded-full p-1 mr-2">✓</span>
+                              Mental health resources
+                            </li>
+                          </>
+                        )}
+                        {index === 2 && (
+                          <>
+                            <li className="flex items-center">
+                              <span className="bg-blue-100 rounded-full p-1 mr-2">✓</span>
+                              Connect with AI mentors
+                            </li>
+                            <li className="flex items-center">
+                              <span className="bg-blue-100 rounded-full p-1 mr-2">✓</span>
+                              Career advice and support
+                            </li>
+                            <li className="flex items-center">
+                              <span className="bg-blue-100 rounded-full p-1 mr-2">✓</span>
+                              Professional guidance
+                            </li>
+                          </>
+                        )}
+                      </ul>
+                    </CardContent>
+                    <CardFooter>
+                      <Button asChild className="w-full">
+                        <Link to={service.path}>
+                          Launch Service
+                        </Link>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
             </AnimatedSection>
           </TabsContent>
           
