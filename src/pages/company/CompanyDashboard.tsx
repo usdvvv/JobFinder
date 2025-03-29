@@ -126,7 +126,7 @@ const CompanyDashboard = () => {
             
             {/* Employee Wellness Services */}
             <AnimatedSection animation="slide-up" delay={150} className="mb-8">
-              <h2 className="text-xl font-bold mb-4">Employee Wellness</h2>
+              <h2 className="text-xl font-bold mb-4 text-white">Employee Wellness</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {wellnessServices.map((service, index) => (
                   <Card key={index} className={`border ${service.color} hover:shadow-md transition-shadow`}>
@@ -141,11 +141,11 @@ const CompanyDashboard = () => {
                           </Link>
                         </Button>
                       </div>
-                      <CardTitle className="mt-2">{service.title}</CardTitle>
-                      <CardDescription>{service.description}</CardDescription>
+                      <CardTitle className="mt-2 text-white">{service.title}</CardTitle>
+                      <CardDescription className="text-gray-300">{service.description}</CardDescription>
                     </CardHeader>
                     <CardFooter>
-                      <Button asChild variant="outline" className="w-full">
+                      <Button asChild variant="outline" className="w-full bg-white/10 text-white hover:bg-white/20 border-white/20">
                         <Link to={service.path}>
                           Access Now
                         </Link>
@@ -160,8 +160,8 @@ const CompanyDashboard = () => {
               <Card className="border border-border/40 shadow-sm">
                 <CardHeader>
                   <div className="flex justify-between items-center">
-                    <CardTitle>Recent Job Postings</CardTitle>
-                    <Link to="/company/jobs" className="text-sm font-medium text-blue-600 hover:underline flex items-center">
+                    <CardTitle className="text-white">Recent Job Postings</CardTitle>
+                    <Link to="/company/jobs" className="text-sm font-medium text-blue-400 hover:text-blue-300 hover:underline flex items-center">
                       View All <ArrowUpRight className="ml-1 h-3 w-3" />
                     </Link>
                   </div>
@@ -171,18 +171,18 @@ const CompanyDashboard = () => {
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-border/40">
-                          <th className="text-left pb-3 font-medium text-muted-foreground">Job Title</th>
-                          <th className="text-left pb-3 font-medium text-muted-foreground">Applications</th>
-                          <th className="text-left pb-3 font-medium text-muted-foreground">Status</th>
-                          <th className="text-left pb-3 font-medium text-muted-foreground">Created</th>
-                          <th className="text-right pb-3 font-medium text-muted-foreground">Actions</th>
+                          <th className="text-left pb-3 font-medium text-gray-300">Job Title</th>
+                          <th className="text-left pb-3 font-medium text-gray-300">Applications</th>
+                          <th className="text-left pb-3 font-medium text-gray-300">Status</th>
+                          <th className="text-left pb-3 font-medium text-gray-300">Created</th>
+                          <th className="text-right pb-3 font-medium text-gray-300">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
                         {jobPostings.map((job) => (
                           <tr key={job.id} className="border-b border-border/20 hover:bg-muted/50">
-                            <td className="py-3 font-medium">{job.title}</td>
-                            <td className="py-3">{job.applications}</td>
+                            <td className="py-3 font-medium text-white">{job.title}</td>
+                            <td className="py-3 text-gray-200">{job.applications}</td>
                             <td className="py-3">
                               <span className={`px-2 py-1 text-xs rounded-full ${
                                 job.status === 'active' 
@@ -192,15 +192,15 @@ const CompanyDashboard = () => {
                                 {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
                               </span>
                             </td>
-                            <td className="py-3 text-muted-foreground">{job.createdAt}</td>
+                            <td className="py-3 text-gray-300">{job.createdAt}</td>
                             <td className="py-3 text-right">
                               <div className="flex justify-end gap-2">
-                                <Button variant="ghost" size="sm" asChild>
+                                <Button variant="ghost" size="sm" asChild className="text-blue-400 hover:text-blue-300 hover:bg-blue-950/30">
                                   <Link to={`/company/jobs/${job.id}`}>
                                     View
                                   </Link>
                                 </Button>
-                                <Button variant="ghost" size="sm" asChild>
+                                <Button variant="ghost" size="sm" asChild className="text-blue-400 hover:text-blue-300 hover:bg-blue-950/30">
                                   <Link to={`/company/applications?job=${job.id}`}>
                                     Applications
                                   </Link>
@@ -220,11 +220,11 @@ const CompanyDashboard = () => {
               <Card className="border border-border/40 shadow-sm">
                 <CardHeader>
                   <div className="flex justify-between items-center">
-                    <CardTitle className="flex items-center">
+                    <CardTitle className="flex items-center text-white">
                       <Trophy className="mr-2 h-5 w-5 text-yellow-500" />
                       Top Coding Talents
                     </CardTitle>
-                    <Button variant="outline" size="sm" asChild>
+                    <Button variant="outline" size="sm" asChild className="bg-white/10 text-white hover:bg-white/20 border-white/20">
                       <Link to="#talents" onClick={() => setActiveTab('talents')}>
                         View Full Leaderboard <ArrowUpRight className="ml-1 h-3 w-3" />
                       </Link>
@@ -236,19 +236,19 @@ const CompanyDashboard = () => {
                     {Array(3).fill(0).map((_, index) => {
                       const userIndex = index;
                       return (
-                        <Card key={index} className={`border ${index === 0 ? 'bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800' : ''}`}>
+                        <Card key={index} className={`border ${index === 0 ? 'bg-yellow-950/30 dark:bg-yellow-950/30 border-yellow-700 dark:border-yellow-700' : ''}`}>
                           <CardContent className="p-4 flex items-center space-x-4">
                             <Avatar className="h-12 w-12 bg-primary text-white">
                               <AvatarFallback>{["AJ", "SL", "MC"][userIndex]}</AvatarFallback>
                             </Avatar>
                             <div>
-                              <h3 className="font-medium">{["Alex Johnson", "Samantha Lee", "Michael Chen"][userIndex]}</h3>
-                              <p className="text-sm text-muted-foreground">
+                              <h3 className="font-medium text-white">{["Alex Johnson", "Samantha Lee", "Michael Chen"][userIndex]}</h3>
+                              <p className="text-sm text-gray-300">
                                 {[950, 920, 890][userIndex]} points • {[48, 45, 43][userIndex]} problems
                               </p>
                               <div className="flex gap-1 mt-1">
                                 {[["JavaScript", "Python"], ["C++", "Python"], ["JavaScript", "TypeScript"]][userIndex].map((lang, i) => (
-                                  <Badge key={i} variant="secondary" className="text-xs">
+                                  <Badge key={i} variant="secondary" className="text-xs bg-blue-900/50 text-blue-200">
                                     {lang}
                                   </Badge>
                                 ))}
@@ -269,7 +269,7 @@ const CompanyDashboard = () => {
               <Card>
                 <CardHeader>
                   <div className="flex justify-between items-center">
-                    <CardTitle>All Job Postings</CardTitle>
+                    <CardTitle className="text-white">All Job Postings</CardTitle>
                     <Button asChild className="bg-blue-600 hover:bg-blue-700">
                       <Link to="/company/jobs/create">
                         <PlusCircle className="mr-2 h-4 w-4" />
@@ -277,7 +277,7 @@ const CompanyDashboard = () => {
                       </Link>
                     </Button>
                   </div>
-                  <CardDescription>
+                  <CardDescription className="text-gray-300">
                     Manage all your job listings in one place
                   </CardDescription>
                 </CardHeader>
@@ -286,18 +286,18 @@ const CompanyDashboard = () => {
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-border/40">
-                          <th className="text-left pb-3 font-medium text-muted-foreground">Job Title</th>
-                          <th className="text-left pb-3 font-medium text-muted-foreground">Applications</th>
-                          <th className="text-left pb-3 font-medium text-muted-foreground">Status</th>
-                          <th className="text-left pb-3 font-medium text-muted-foreground">Created</th>
-                          <th className="text-right pb-3 font-medium text-muted-foreground">Actions</th>
+                          <th className="text-left pb-3 font-medium text-gray-300">Job Title</th>
+                          <th className="text-left pb-3 font-medium text-gray-300">Applications</th>
+                          <th className="text-left pb-3 font-medium text-gray-300">Status</th>
+                          <th className="text-left pb-3 font-medium text-gray-300">Created</th>
+                          <th className="text-right pb-3 font-medium text-gray-300">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
                         {jobPostings.map((job) => (
                           <tr key={job.id} className="border-b border-border/20 hover:bg-muted/50">
-                            <td className="py-3 font-medium">{job.title}</td>
-                            <td className="py-3">{job.applications}</td>
+                            <td className="py-3 font-medium text-white">{job.title}</td>
+                            <td className="py-3 text-gray-200">{job.applications}</td>
                             <td className="py-3">
                               <span className={`px-2 py-1 text-xs rounded-full ${
                                 job.status === 'active' 
@@ -307,20 +307,20 @@ const CompanyDashboard = () => {
                                 {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
                               </span>
                             </td>
-                            <td className="py-3 text-muted-foreground">{job.createdAt}</td>
+                            <td className="py-3 text-gray-300">{job.createdAt}</td>
                             <td className="py-3 text-right">
                               <div className="flex justify-end gap-2">
-                                <Button variant="ghost" size="sm" asChild>
+                                <Button variant="ghost" size="sm" asChild className="text-blue-400 hover:text-blue-300 hover:bg-blue-950/30">
                                   <Link to={`/company/jobs/${job.id}/edit`}>
                                     Edit
                                   </Link>
                                 </Button>
-                                <Button variant="ghost" size="sm" asChild>
+                                <Button variant="ghost" size="sm" asChild className="text-blue-400 hover:text-blue-300 hover:bg-blue-950/30">
                                   <Link to={`/company/applications?job=${job.id}`}>
                                     Applications
                                   </Link>
                                 </Button>
-                                <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+                                <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-950/30">
                                   Delete
                                 </Button>
                               </div>
@@ -338,8 +338,8 @@ const CompanyDashboard = () => {
           <TabsContent value="wellness">
             <AnimatedSection animation="fade-in">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold mb-2">Employee Wellness Services</h2>
-                <p className="text-muted-foreground">
+                <h2 className="text-2xl font-bold mb-2 text-white">Employee Wellness Services</h2>
+                <p className="text-gray-300">
                   Provide your team with tools for mental health, entertainment, and peer support.
                 </p>
               </div>
@@ -353,25 +353,25 @@ const CompanyDashboard = () => {
                           {service.icon}
                         </div>
                       </div>
-                      <CardTitle className="text-center">{service.title}</CardTitle>
-                      <CardDescription className="text-center">
+                      <CardTitle className="text-center text-white">{service.title}</CardTitle>
+                      <CardDescription className="text-center text-gray-300">
                         {service.description}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <ul className="space-y-2 text-sm">
+                      <ul className="space-y-2 text-sm text-gray-200">
                         {index === 0 && (
                           <>
                             <li className="flex items-center">
-                              <span className="bg-purple-100 rounded-full p-1 mr-2">✓</span>
+                              <span className="bg-purple-700 text-white rounded-full p-1 mr-2">✓</span>
                               Brain teasers and puzzles
                             </li>
                             <li className="flex items-center">
-                              <span className="bg-purple-100 rounded-full p-1 mr-2">✓</span>
+                              <span className="bg-purple-700 text-white rounded-full p-1 mr-2">✓</span>
                               Strategy games
                             </li>
                             <li className="flex items-center">
-                              <span className="bg-purple-100 rounded-full p-1 mr-2">✓</span>
+                              <span className="bg-purple-700 text-white rounded-full p-1 mr-2">✓</span>
                               Team-building activities
                             </li>
                           </>
@@ -379,15 +379,15 @@ const CompanyDashboard = () => {
                         {index === 1 && (
                           <>
                             <li className="flex items-center">
-                              <span className="bg-red-100 rounded-full p-1 mr-2">✓</span>
+                              <span className="bg-red-700 text-white rounded-full p-1 mr-2">✓</span>
                               Confidential AI counseling
                             </li>
                             <li className="flex items-center">
-                              <span className="bg-red-100 rounded-full p-1 mr-2">✓</span>
+                              <span className="bg-red-700 text-white rounded-full p-1 mr-2">✓</span>
                               Stress management
                             </li>
                             <li className="flex items-center">
-                              <span className="bg-red-100 rounded-full p-1 mr-2">✓</span>
+                              <span className="bg-red-700 text-white rounded-full p-1 mr-2">✓</span>
                               Mental health resources
                             </li>
                           </>
@@ -395,15 +395,15 @@ const CompanyDashboard = () => {
                         {index === 2 && (
                           <>
                             <li className="flex items-center">
-                              <span className="bg-blue-100 rounded-full p-1 mr-2">✓</span>
+                              <span className="bg-blue-700 text-white rounded-full p-1 mr-2">✓</span>
                               Connect with AI mentors
                             </li>
                             <li className="flex items-center">
-                              <span className="bg-blue-100 rounded-full p-1 mr-2">✓</span>
+                              <span className="bg-blue-700 text-white rounded-full p-1 mr-2">✓</span>
                               Career advice and support
                             </li>
                             <li className="flex items-center">
-                              <span className="bg-blue-100 rounded-full p-1 mr-2">✓</span>
+                              <span className="bg-blue-700 text-white rounded-full p-1 mr-2">✓</span>
                               Professional guidance
                             </li>
                           </>
@@ -426,8 +426,8 @@ const CompanyDashboard = () => {
           <TabsContent value="talents">
             <AnimatedSection animation="fade-in">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold mb-2">Top Coding Talents</h2>
-                <p className="text-muted-foreground">
+                <h2 className="text-2xl font-bold mb-2 text-white">Top Coding Talents</h2>
+                <p className="text-gray-300">
                   Browse the leaderboard of top performers from our coding challenges. You can contact candidates directly to discuss opportunities.
                 </p>
               </div>
@@ -439,38 +439,38 @@ const CompanyDashboard = () => {
             <AnimatedSection animation="fade-in">
               <Card>
                 <CardHeader>
-                  <CardTitle>Company Profile</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-white">Company Profile</CardTitle>
+                  <CardDescription className="text-gray-300">
                     Update your company details and profile
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center mb-8">
-                    <div className="h-24 w-24 bg-blue-100 rounded-lg flex items-center justify-center mr-6">
-                      <Building2 className="h-12 w-12 text-blue-700" />
+                    <div className="h-24 w-24 bg-blue-900 rounded-lg flex items-center justify-center mr-6">
+                      <Building2 className="h-12 w-12 text-blue-300" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold">Acme Corporation</h2>
-                      <p className="text-muted-foreground">Technology</p>
-                      <p className="mt-1 text-blue-600">https://www.acmecorp.example.com</p>
+                      <h2 className="text-2xl font-bold text-white">Acme Corporation</h2>
+                      <p className="text-gray-300">Technology</p>
+                      <p className="mt-1 text-blue-400">https://www.acmecorp.example.com</p>
                     </div>
                   </div>
                   
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-lg font-medium mb-2">About</h3>
-                      <p className="text-muted-foreground">
+                      <h3 className="text-lg font-medium mb-2 text-white">About</h3>
+                      <p className="text-gray-300">
                         Acme Corporation is a technology company focused on creating innovative solutions for businesses of all sizes. 
                         Founded in 2010, we have grown to become a leader in our space with clients worldwide.
                       </p>
                     </div>
                     
                     <div>
-                      <h3 className="text-lg font-medium mb-2">Contact Information</h3>
-                      <p className="text-muted-foreground">
-                        <strong>Email:</strong> info@acmecorp.example.com<br />
-                        <strong>Phone:</strong> (555) 123-4567<br />
-                        <strong>Address:</strong> 123 Tech Street, San Francisco, CA 94107
+                      <h3 className="text-lg font-medium mb-2 text-white">Contact Information</h3>
+                      <p className="text-gray-300">
+                        <strong className="text-white">Email:</strong> info@acmecorp.example.com<br />
+                        <strong className="text-white">Phone:</strong> (555) 123-4567<br />
+                        <strong className="text-white">Address:</strong> 123 Tech Street, San Francisco, CA 94107
                       </p>
                     </div>
                   </div>

@@ -63,7 +63,7 @@ const CompanyAITherapist = () => {
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-red-500 to-red-600 bg-clip-text text-transparent">
               Company AI Therapist
             </h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-gray-300 mt-2">
               Confidential mental health support for your team's wellbeing
             </p>
           </div>
@@ -74,43 +74,43 @@ const CompanyAITherapist = () => {
             <AnimatedSection animation="slide-in-right">
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center">
+                  <CardTitle className="flex items-center text-white">
                     <HeartPulse className="mr-2 h-5 w-5 text-red-500" />
                     Company Wellness
                   </CardTitle>
-                  <CardDescription>Tools and resources for your team</CardDescription>
+                  <CardDescription className="text-gray-300">Tools and resources for your team</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Button variant="ghost" className="w-full justify-start" onClick={() => navigate('/company/dashboard')}>
+                  <Button variant="ghost" className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/10" onClick={() => navigate('/company/dashboard')}>
                     <Building2 className="mr-2 h-4 w-4" />
                     Dashboard
                   </Button>
-                  <Button variant="ghost" className="w-full justify-start text-red-600">
+                  <Button variant="ghost" className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-950/30">
                     <HeartPulse className="mr-2 h-4 w-4" />
                     AI Therapist
                   </Button>
-                  <Button variant="ghost" className="w-full justify-start" onClick={() => navigate('/company/peer-chat')}>
+                  <Button variant="ghost" className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/10" onClick={() => navigate('/company/peer-chat')}>
                     <Calendar className="mr-2 h-4 w-4" />
                     Peer Chat
                   </Button>
-                  <Button variant="ghost" className="w-full justify-start" onClick={() => navigate('/company/entertainment')}>
+                  <Button variant="ghost" className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/10" onClick={() => navigate('/company/entertainment')}>
                     <Clock className="mr-2 h-4 w-4" />
                     Entertainment
                   </Button>
-                  <Button variant="ghost" className="w-full justify-start" disabled>
+                  <Button variant="ghost" className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/10" disabled>
                     <BarChart className="mr-2 h-4 w-4" />
                     Analytics
-                    <Badge variant="outline" className="ml-auto">Soon</Badge>
+                    <Badge variant="outline" className="ml-auto text-gray-400 border-gray-600">Soon</Badge>
                   </Button>
                 </CardContent>
               </Card>
 
               <Card className="mt-4">
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium">How to Use This Service</CardTitle>
+                  <CardTitle className="text-sm font-medium text-white">How to Use This Service</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm">
-                  <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+                  <ul className="space-y-2 list-disc list-inside text-gray-300">
                     <li>Completely confidential and private</li>
                     <li>Ask about team mental health strategies</li>
                     <li>Get leadership wellness support</li>
@@ -124,15 +124,15 @@ const CompanyAITherapist = () => {
           
           <div className="lg:col-span-3">
             <Card className="h-[600px] flex flex-col">
-              <CardHeader className="pb-3 border-b">
+              <CardHeader className="pb-3 border-b border-gray-700">
                 <div className="flex items-center">
                   <Avatar className="h-10 w-10 mr-3">
                     <AvatarImage src="" />
-                    <AvatarFallback className="bg-red-100 text-red-800">ET</AvatarFallback>
+                    <AvatarFallback className="bg-red-900 text-red-200">ET</AvatarFallback>
                   </Avatar>
                   <div>
-                    <CardTitle>Dr. Emma Thompson</CardTitle>
-                    <CardDescription>AI Therapist | Workplace Wellness Expert</CardDescription>
+                    <CardTitle className="text-white">Dr. Emma Thompson</CardTitle>
+                    <CardDescription className="text-gray-300">AI Therapist | Workplace Wellness Expert</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -144,7 +144,7 @@ const CompanyAITherapist = () => {
                       <div className={`max-w-[80%] rounded-lg p-3 ${
                         msg.role === "user" 
                           ? "bg-blue-600 text-white" 
-                          : "bg-muted"
+                          : "bg-gray-800 text-gray-200"
                       }`}>
                         {msg.content}
                       </div>
@@ -153,11 +153,11 @@ const CompanyAITherapist = () => {
                 </div>
               </CardContent>
               
-              <CardFooter className="pt-3 border-t">
+              <CardFooter className="pt-3 border-t border-gray-700">
                 <div className="flex items-center w-full space-x-2">
                   <Textarea 
                     placeholder="Type a message to the AI therapist..." 
-                    className="flex-1"
+                    className="flex-1 bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={handleKeyDown}
