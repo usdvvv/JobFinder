@@ -1,9 +1,10 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Building2, FileText, FileSearch, PlusCircle, Users, ArrowUpRight, Briefcase, Trophy } from 'lucide-react';
 import CompanyNavBar from '@/components/company/CompanyNavBar';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -167,7 +168,7 @@ const CompanyDashboard = () => {
                         <Card key={index} className={`border ${index === 0 ? 'bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800' : ''}`}>
                           <CardContent className="p-4 flex items-center space-x-4">
                             <Avatar className="h-12 w-12 bg-primary text-white">
-                              <span>{["AJ", "SL", "MC"][userIndex]}</span>
+                              <AvatarFallback>{["AJ", "SL", "MC"][userIndex]}</AvatarFallback>
                             </Avatar>
                             <div>
                               <h3 className="font-medium">{["Alex Johnson", "Samantha Lee", "Michael Chen"][userIndex]}</h3>
