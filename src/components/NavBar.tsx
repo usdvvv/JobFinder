@@ -30,12 +30,15 @@ const NavBar = () => {
     navigate('/home');
   };
 
-  // For demo purposes, let's consider the user as logged in when they've visited certain pages
+  // For demo purposes, we should check for actual authentication
+  // instead of just inferring from URL visits
   useEffect(() => {
-    // Check if user is coming from login page or has visited pages that require login
-    if (location.pathname.includes('/resume') || 
-        location.pathname.includes('/interview') || 
-        location.pathname.includes('/practice')) {
+    // Check localStorage or a more reliable auth state
+    // Instead of assuming logged in based on page visits
+    const hasAuthToken = localStorage.getItem('authToken');
+    
+    // Only set logged in if we have actual auth evidence
+    if (hasAuthToken) {
       setIsLoggedIn(true);
     }
   }, [location.pathname]);
