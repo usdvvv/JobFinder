@@ -270,7 +270,7 @@ const Sudoku = () => {
             <p>Generating puzzle...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-9 gap-px bg-gray-600">
+          <div className="grid grid-cols-9 gap-px bg-card">
             {board.map((row, rowIndex) => (
               row.map((cell, colIndex) => {
                 const isSelected = 
@@ -303,8 +303,6 @@ const Sudoku = () => {
                     className={`
                       aspect-square flex items-center justify-center text-lg font-semibold 
                       cursor-pointer select-none
-                      ${(rowIndex + 1) % 3 === 0 && rowIndex < 8 ? 'border-b-2 border-gray-600' : ''}
-                      ${(colIndex + 1) % 3 === 0 && colIndex < 8 ? 'border-r-2 border-gray-600' : ''}
                       ${isSelected ? 'bg-blue-500 text-white' : 
                         isInSameRow || isInSameCol || isInSameBlock ? 'bg-blue-100 dark:bg-blue-900' : 
                         'bg-card'}
