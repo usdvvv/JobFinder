@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -626,7 +625,7 @@ const ApplicationsManager = () => {
               
               <CardFooter className="flex justify-between border-t p-6">
                 <div className="space-x-2">
-                  {currentApplication.plagiarismScore > 0 && (
+                  {currentApplication.plagiarismScore > 0 ? (
                     <>
                       <Button 
                         variant="outline" 
