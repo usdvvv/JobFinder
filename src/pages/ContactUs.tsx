@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "@/hooks/use-toast";
 
 const ContactUs = () => {
   const [name, setName] = useState("");
@@ -19,7 +19,9 @@ const ContactUs = () => {
     
     // Simulate form submission
     setTimeout(() => {
-      toast.success("Message sent successfully! We'll get back to you soon.");
+      toast({
+        title: "Message sent successfully! We'll get back to you soon."
+      });
       setName("");
       setEmail("");
       setMessage("");
