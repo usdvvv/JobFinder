@@ -1,14 +1,16 @@
+
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar } from "@/components/ui/avatar";
-import { Video, MessageSquare, Code, Play, FileText, Upload, ArrowRight, Trophy } from 'lucide-react';
+import { Video, MessageSquare, Code, Play, FileText, Upload, ArrowRight, Trophy, BriefcaseIcon } from 'lucide-react';
 import NavBar from '@/components/NavBar';
 import AnimatedSection from '@/components/AnimatedSection';
 import CodingLeaderboard from '@/components/CodingLeaderboard';
 import CodingChallenge from '@/components/CodingChallenge';
 import { useState as useStateEffect } from 'react';
+import { Textarea } from "@/components/ui/textarea";
 
 const InterviewPrep = () => {
   const [showCodingChallenge, setShowCodingChallenge] = useState(false);
@@ -98,6 +100,8 @@ const InterviewPrep = () => {
 };
 
 const MockInterviews = () => {
+  const [jobDescription, setJobDescription] = useState('');
+
   return (
     <div className="space-y-6">
       <AnimatedSection animation="slide-up" delay={100}>
@@ -122,6 +126,24 @@ const MockInterviews = () => {
                     <Play className="h-8 w-8" />
                   </Button>
                 </div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 gap-4 mb-4">
+              <div className="p-4 rounded-md bg-muted/50">
+                <h3 className="font-medium text-sm mb-2 flex items-center">
+                  <BriefcaseIcon className="h-4 w-4 mr-2 text-primary" />
+                  Job Description
+                </h3>
+                <Textarea 
+                  placeholder="Paste the job description here for a more personalized interview experience..."
+                  className="resize-none min-h-[100px]"
+                  value={jobDescription}
+                  onChange={(e) => setJobDescription(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  Adding a job description helps our AI tailor questions specific to the role you're applying for
+                </p>
               </div>
             </div>
             
