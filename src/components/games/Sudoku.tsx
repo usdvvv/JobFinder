@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -270,7 +269,7 @@ const Sudoku = () => {
             <p>Generating puzzle...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-9 gap-px bg-card">
+          <div className="grid grid-cols-9 gap-px bg-gray-600">
             {board.map((row, rowIndex) => (
               row.map((cell, colIndex) => {
                 const isSelected = 
@@ -278,35 +277,15 @@ const Sudoku = () => {
                   selectedCell[0] === rowIndex && 
                   selectedCell[1] === colIndex;
                 
-                const isInSameRow = 
-                  selectedCell && 
-                  selectedCell[0] === rowIndex;
-                
-                const isInSameCol = 
-                  selectedCell && 
-                  selectedCell[1] === colIndex;
-                
-                const isInSameBlock = 
-                  selectedCell && 
-                  Math.floor(selectedCell[0] / 3) === Math.floor(rowIndex / 3) && 
-                  Math.floor(selectedCell[1] / 3) === Math.floor(colIndex / 3);
-                
-                const isSameNumber = 
-                  selectedCell && 
-                  board[selectedCell[0]][selectedCell[1]] !== null && 
-                  board[selectedCell[0]][selectedCell[1]] === cell && 
-                  cell !== null;
-                
                 return (
                   <div
                     key={`${rowIndex}-${colIndex}`}
                     className={`
                       aspect-square flex items-center justify-center text-lg font-semibold 
                       cursor-pointer select-none
-                      ${isSelected ? 'bg-blue-500 text-white' : 
-                        isInSameRow || isInSameCol || isInSameBlock ? 'bg-blue-100 dark:bg-blue-900' : 
-                        'bg-card'}
-                      ${isSameNumber ? 'bg-blue-200 dark:bg-blue-800' : ''}
+                      ${(rowIndex + 1) % 3 === 0 && rowIndex < 8 ? 'border-b-2 border-gray-600' : ''}
+                      ${(colIndex + 1) % 3 === 0 && colIndex < 8 ? 'border-r-2 border-gray-600' : ''}
+                      ${isSelected ? 'bg-blue-500 text-white' : 'bg-card'}
                       ${isOriginalCell(rowIndex, colIndex) ? 'font-bold' : 'font-normal'}
                     `}
                     onClick={() => handleCellClick(rowIndex, colIndex)}
