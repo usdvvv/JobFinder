@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Play, Check, RefreshCw, Code, FileText, EyeOff } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface CodingChallengeProps {
   title: string;
@@ -52,7 +52,6 @@ const CodingChallenge = ({
     setIsRunning(true);
     setOutput('');
     
-    // Capture console.log output
     const originalConsoleLog = console.log;
     let logs: string[] = [];
     
@@ -61,10 +60,8 @@ const CodingChallenge = ({
       originalConsoleLog(...args);
     };
     
-    // Simulate code execution (in a real app, you would use a safe execution environment)
     setTimeout(() => {
       try {
-        // Wrap the user code in a function to isolate it
         const userCodeFunction = new Function(`
           let output = [];
           const console = {
@@ -81,13 +78,7 @@ const CodingChallenge = ({
         const result = userCodeFunction();
         setOutput(result.join('\n'));
         
-        // Check if the solution is correct - this is a simplified check
-        // In a real app, you would run test cases
-        const userOutput = result.join('\n').trim();
-        
-        if (userOutput && userOutput.length > 0) {
-          // In a real implementation, we would check against test cases
-          // This is just a simplified demo
+        if (result.join('\n').trim()) {
           if (code.includes('return') && !code.includes('// TODO')) {
             setIsCorrect(true);
             toast({
@@ -156,44 +147,46 @@ const CodingChallenge = ({
               </TabsList>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-hidden p-4">
               <TabsContent value="problem" className="h-full mt-0">
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-medium">Problem Description</h3>
-                    <p className="mt-2 text-muted-foreground whitespace-pre-line">{description}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-medium">Examples</h3>
-                    <div className="space-y-4 mt-2">
-                      {examples.map((example, idx) => (
-                        <div key={idx} className="border rounded-md p-3">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <h4 className="text-sm font-medium">Input:</h4>
-                              <pre className="mt-1 p-2 bg-muted rounded text-xs overflow-x-auto">
-                                {example.input}
-                              </pre>
+                <ScrollArea className="h-full pr-4">
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-lg font-medium">Problem Description</h3>
+                      <p className="mt-2 text-muted-foreground whitespace-pre-line">{description}</p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-lg font-medium">Examples</h3>
+                      <div className="space-y-4 mt-2">
+                        {examples.map((example, idx) => (
+                          <div key={idx} className="border rounded-md p-3">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <h4 className="text-sm font-medium">Input:</h4>
+                                <pre className="mt-1 p-2 bg-muted rounded text-xs overflow-x-auto">
+                                  {example.input}
+                                </pre>
+                              </div>
+                              <div>
+                                <h4 className="text-sm font-medium">Output:</h4>
+                                <pre className="mt-1 p-2 bg-muted rounded text-xs overflow-x-auto">
+                                  {example.output}
+                                </pre>
+                              </div>
                             </div>
-                            <div>
-                              <h4 className="text-sm font-medium">Output:</h4>
-                              <pre className="mt-1 p-2 bg-muted rounded text-xs overflow-x-auto">
-                                {example.output}
-                              </pre>
-                            </div>
+                            {example.explanation && (
+                              <div className="mt-2">
+                                <h4 className="text-sm font-medium">Explanation:</h4>
+                                <p className="mt-1 text-sm text-muted-foreground">{example.explanation}</p>
+                              </div>
+                            )}
                           </div>
-                          {example.explanation && (
-                            <div className="mt-2">
-                              <h4 className="text-sm font-medium">Explanation:</h4>
-                              <p className="mt-1 text-sm text-muted-foreground">{example.explanation}</p>
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </ScrollArea>
               </TabsContent>
               
               <TabsContent value="code" className="h-full mt-0">
@@ -236,12 +229,14 @@ const CodingChallenge = ({
                   </div>
                   
                   {showSolution && (
-                    <div className="border rounded-md p-3">
-                      <h4 className="text-sm font-medium mb-2">Solution:</h4>
-                      <pre className="p-3 bg-muted rounded text-xs overflow-x-auto whitespace-pre-wrap">
-                        {solution}
-                      </pre>
-                    </div>
+                    <ScrollArea className="border rounded-md p-3 max-h-[300px]">
+                      <div>
+                        <h4 className="text-sm font-medium mb-2">Solution:</h4>
+                        <pre className="p-3 bg-muted rounded text-xs whitespace-pre-wrap">
+                          {solution}
+                        </pre>
+                      </div>
+                    </ScrollArea>
                   )}
                 </div>
               </TabsContent>
@@ -263,11 +258,11 @@ const CodingChallenge = ({
                     )}
                   </div>
                   
-                  <div className="flex-1 min-h-[400px] border rounded-md p-3 bg-muted overflow-auto">
+                  <ScrollArea className="flex-1 min-h-[400px] border rounded-md p-3 bg-muted">
                     <pre className="font-mono text-sm whitespace-pre-wrap">
                       {output || "Output will appear here after running your code."}
                     </pre>
-                  </div>
+                  </ScrollArea>
                 </div>
               </TabsContent>
             </div>
