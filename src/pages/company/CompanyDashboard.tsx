@@ -49,21 +49,30 @@ const CompanyDashboard = () => {
       description: 'Games and activities to help employees relax and recharge',
       icon: <Puzzle className="h-10 w-10 text-purple-500" />,
       path: '/company/entertainment',
-      color: 'bg-purple-50 border-purple-200'
+      color: 'bg-purple-100 border-purple-300',
+      textColor: 'text-purple-900',
+      iconBg: 'bg-purple-100',
+      buttonBg: 'bg-purple-700 hover:bg-purple-800 text-white'
     },
     { 
       title: 'AI Therapist', 
       description: 'Confidential AI-powered mental health support for your team',
       icon: <HeartPulse className="h-10 w-10 text-red-500" />,
       path: '/company/therapist',
-      color: 'bg-red-50 border-red-200'
+      color: 'bg-red-100 border-red-300',
+      textColor: 'text-red-900',
+      iconBg: 'bg-red-100',
+      buttonBg: 'bg-red-700 hover:bg-red-800 text-white'
     },
     { 
       title: 'Peer Chat', 
       description: 'Connect team members with AI-powered peer support',
       icon: <MessageSquare className="h-10 w-10 text-blue-500" />,
       path: '/company/peer-chat',
-      color: 'bg-blue-50 border-blue-200'
+      color: 'bg-blue-100 border-blue-300',
+      textColor: 'text-blue-900',
+      iconBg: 'bg-blue-100',
+      buttonBg: 'bg-blue-700 hover:bg-blue-800 text-white'
     }
   ];
 
@@ -132,20 +141,20 @@ const CompanyDashboard = () => {
                   <Card key={index} className={`border ${service.color} hover:shadow-md transition-shadow`}>
                     <CardHeader>
                       <div className="flex justify-between items-start">
-                        <div className="p-3 rounded-lg bg-white shadow-sm">
+                        <div className={`p-3 rounded-lg ${service.iconBg} shadow-sm`}>
                           {service.icon}
                         </div>
                         <Button variant="ghost" size="icon" asChild>
                           <Link to={service.path}>
-                            <ArrowUpRight className="h-5 w-5" />
+                            <ArrowUpRight className="h-5 w-5 text-gray-700" />
                           </Link>
                         </Button>
                       </div>
-                      <CardTitle className="mt-2 text-white">{service.title}</CardTitle>
-                      <CardDescription className="text-gray-300">{service.description}</CardDescription>
+                      <CardTitle className={`mt-2 ${service.textColor}`}>{service.title}</CardTitle>
+                      <CardDescription className="text-gray-700">{service.description}</CardDescription>
                     </CardHeader>
                     <CardFooter>
-                      <Button asChild variant="outline" className="w-full bg-white/10 text-white hover:bg-white/20 border-white/20">
+                      <Button asChild className={`w-full ${service.buttonBg}`}>
                         <Link to={service.path}>
                           Access Now
                         </Link>
@@ -349,17 +358,17 @@ const CompanyDashboard = () => {
                   <Card key={index} className={`border ${service.color} hover:shadow-md transition-all hover:translate-y-[-5px]`}>
                     <CardHeader>
                       <div className="flex justify-center mb-2">
-                        <div className="p-4 rounded-full bg-white shadow-sm">
+                        <div className={`p-4 rounded-full ${service.iconBg} shadow-sm`}>
                           {service.icon}
                         </div>
                       </div>
-                      <CardTitle className="text-center text-white">{service.title}</CardTitle>
-                      <CardDescription className="text-center text-gray-300">
+                      <CardTitle className={`text-center ${service.textColor}`}>{service.title}</CardTitle>
+                      <CardDescription className="text-center text-gray-700">
                         {service.description}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <ul className="space-y-2 text-sm text-gray-200">
+                      <ul className="space-y-2 text-sm text-gray-700">
                         {index === 0 && (
                           <>
                             <li className="flex items-center">
@@ -411,7 +420,7 @@ const CompanyDashboard = () => {
                       </ul>
                     </CardContent>
                     <CardFooter>
-                      <Button asChild className="w-full">
+                      <Button asChild className={`w-full ${service.buttonBg}`}>
                         <Link to={service.path}>
                           Launch Service
                         </Link>

@@ -72,7 +72,7 @@ const CompanyAITherapist = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-1">
             <AnimatedSection animation="slide-in-right">
-              <Card>
+              <Card className="bg-gray-800 border-gray-700">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center text-white">
                     <HeartPulse className="mr-2 h-5 w-5 text-red-500" />
@@ -105,7 +105,7 @@ const CompanyAITherapist = () => {
                 </CardContent>
               </Card>
 
-              <Card className="mt-4">
+              <Card className="mt-4 bg-gray-800 border-gray-700">
                 <CardHeader>
                   <CardTitle className="text-sm font-medium text-white">How to Use This Service</CardTitle>
                 </CardHeader>
@@ -123,7 +123,7 @@ const CompanyAITherapist = () => {
           </div>
           
           <div className="lg:col-span-3">
-            <Card className="h-[600px] flex flex-col">
+            <Card className="h-[600px] flex flex-col bg-gray-800 border-gray-700">
               <CardHeader className="pb-3 border-b border-gray-700">
                 <div className="flex items-center">
                   <Avatar className="h-10 w-10 mr-3">
@@ -144,7 +144,7 @@ const CompanyAITherapist = () => {
                       <div className={`max-w-[80%] rounded-lg p-3 ${
                         msg.role === "user" 
                           ? "bg-blue-600 text-white" 
-                          : "bg-gray-800 text-gray-200"
+                          : "bg-gray-700 text-gray-200"
                       }`}>
                         {msg.content}
                       </div>
@@ -157,12 +157,12 @@ const CompanyAITherapist = () => {
                 <div className="flex items-center w-full space-x-2">
                   <Textarea 
                     placeholder="Type a message to the AI therapist..." 
-                    className="flex-1 bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
+                    className="flex-1 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={handleKeyDown}
                   />
-                  <Button onClick={handleSendMessage} size="icon" className="bg-blue-600 hover:bg-blue-700">
+                  <Button onClick={handleSendMessage} size="icon" className="bg-blue-600 hover:bg-blue-700 text-white">
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
