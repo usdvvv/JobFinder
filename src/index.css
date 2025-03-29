@@ -93,7 +93,7 @@
 
   .choice-button::before {
     content: '';
-    @apply absolute inset-[-4px] rounded-inherit opacity-0;
+    @apply absolute inset-[-4px] rounded-2xl opacity-0;
     background: linear-gradient(45deg, #60a5fa, #3b82f6, #2563eb);
     transform: translateZ(-10px);
     filter: blur(8px);
