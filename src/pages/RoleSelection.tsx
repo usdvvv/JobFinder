@@ -159,12 +159,12 @@ const RoleSelection = () => {
           </div>
         </button>
 
-        {/* Super User Button */}
+        {/* Company Button */}
         <button className="choice-button" onClick={handleCompanyClick}>
           <div className="button-content">
             <span className="button-icon">🏢</span>
-            <span className="button-title">Super User</span>
-            <span className="button-subtitle">Companies and Organizations</span>
+            <span className="button-title">Company</span>
+            <span className="button-subtitle">Employers and Recruiters</span>
           </div>
         </button>
       </div>

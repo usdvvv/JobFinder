@@ -15,28 +15,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  FileCheck, 
-  FileWarning, 
-  Search, 
-  Clock, 
-  Check, 
-  X, 
-  Download, 
-  ExternalLink, 
-  AlertTriangle, 
-  ThumbsUp, 
-  ThumbsDown, 
-  MessageSquare,
-  FileText 
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, FileCheck, FileWarning, Search, Clock, Check, X, Download, ExternalLink, AlertTriangle, ThumbsUp, ThumbsDown, MessageSquare, FileText } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import CompanyNavBar from '@/components/company/CompanyNavBar';
 import AnimatedSection from '@/components/AnimatedSection';
 
-// Mock data
 const jobApplications = [
   { 
     id: 1, 
@@ -104,7 +87,6 @@ const jobApplications = [
   },
 ];
 
-// Function to get status color
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'new': return 'bg-blue-100 text-blue-800';
@@ -117,7 +99,6 @@ const getStatusColor = (status: string) => {
   }
 };
 
-// Function to get plagiarism score color
 const getPlagiarismColor = (score: number) => {
   if (score < 5) return 'text-green-600';
   if (score < 20) return 'text-amber-600';
@@ -133,7 +114,6 @@ const ApplicationsManager = () => {
   const [selectedApplication, setSelectedApplication] = useState<number | null>(1); // Default to first application
   const [isPlagiarismModalOpen, setIsPlagiarismModalOpen] = useState(false);
   
-  // Function to filter applications
   const filteredApplications = jobApplications.filter(app => {
     const matchesSearch = app.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -144,7 +124,6 @@ const ApplicationsManager = () => {
     return matchesSearch && matchesStatus;
   });
   
-  // Get the currently selected application
   const currentApplication = jobApplications.find(app => app.id === selectedApplication);
   
   const runPlagiarismCheck = () => {
@@ -191,7 +170,6 @@ const ApplicationsManager = () => {
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Application list panel */}
           <div className="lg:col-span-1">
             <AnimatedSection animation="slide-up" delay={100}>
               <Card>
@@ -273,7 +251,6 @@ const ApplicationsManager = () => {
             </AnimatedSection>
           </div>
           
-          {/* Application details panel */}
           <div className="lg:col-span-2">
             {currentApplication ? (
               <AnimatedSection animation="fade-in" delay={200}>
@@ -470,7 +447,6 @@ const ApplicationsManager = () => {
               </AnimatedSection>
             )}
             
-            {/* Pagination for applications */}
             {currentApplication && (
               <AnimatedSection animation="fade-in" delay={300}>
                 <div className="flex justify-between items-center mt-4">
@@ -515,14 +491,13 @@ const ApplicationsManager = () => {
           </div>
         </div>
         
-        {/* Plagiarism Modal */}
         {isPlagiarismModalOpen && currentApplication && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
             <Card className="w-full max-w-3xl max-h-[90vh] overflow-y-auto">
               <CardHeader>
                 <CardTitle>Plagiarism Analysis Results</CardTitle>
                 <CardDescription>
-                  Showing potential matches for {currentApplication.name}&apos;s application
+                  Showing potential matches for {currentApplication.name}'s application
                 </CardDescription>
               </CardHeader>
               
@@ -555,20 +530,20 @@ const ApplicationsManager = () => {
                           <p className="mb-2 text-muted-foreground text-sm">Submitted content:</p>
                           <div className="border-l-4 border-red-500 pl-4 py-2 bg-red-50 mb-4">
                             <p>
-                              &quot;I am a <span className="bg-red-200">passionate and innovative professional with extensive experience in developing 
+                              "I am a <span className="bg-red-200">passionate and innovative professional with extensive experience in developing 
                               user-friendly interfaces that enhance the overall user experience. My approach to design 
                               combines creativity with data-driven insights to create solutions that are both 
-                              visually appealing and functionally effective.</span>&quot;
+                              visually appealing and functionally effective.</span>"
                             </p>
                           </div>
                           
                           <p className="mb-2 text-muted-foreground text-sm">Similar content found online:</p>
                           <div className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50">
                             <p>
-                              &quot;I am a <span className="bg-blue-200">passionate and innovative professional with extensive experience in developing 
+                              "I am a <span className="bg-blue-200">passionate and innovative professional with extensive experience in developing 
                               user-friendly interfaces that enhance the overall user experience. My approach to design 
                               combines creativity with data-driven insights to create solutions that are both 
-                              visually appealing and functionally effective.</span>&quot;
+                              visually appealing and functionally effective.</span>"
                             </p>
                             <p className="mt-2 text-sm text-muted-foreground">
                               Source: exampleportfolio.com/about - Last updated March 2023
@@ -584,20 +559,20 @@ const ApplicationsManager = () => {
                             <p className="mb-2 text-muted-foreground text-sm">Submitted content:</p>
                             <div className="border-l-4 border-red-500 pl-4 py-2 bg-red-50 mb-4">
                               <p>
-                                &quot;<span className="bg-red-200">In my previous role at XYZ Company, I led the development of a responsive web application 
+                                "<span className="bg-red-200">In my previous role at XYZ Company, I led the development of a responsive web application 
                                 that increased user engagement by 45% within three months of launch. I collaborated 
                                 closely with cross-functional teams to ensure that all aspects of the user experience 
-                                were optimized, resulting in a significant improvement in customer satisfaction metrics.</span>&quot;
+                                were optimized, resulting in a significant improvement in customer satisfaction metrics.</span>"
                               </p>
                             </div>
                             
                             <p className="mb-2 text-muted-foreground text-sm">Similar content found online:</p>
                             <div className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50">
                               <p>
-                                &quot;<span className="bg-blue-200">In my previous role at ABC Agency, I led the development of a responsive web application 
+                                "<span className="bg-blue-200">In my previous role at ABC Agency, I led the development of a responsive web application 
                                 that increased user engagement by 45% within three months of launch. I collaborated 
                                 closely with cross-functional teams to ensure that all aspects of the user experience 
-                                were optimized, resulting in a significant improvement in customer satisfaction metrics.</span>&quot;
+                                were optimized, resulting in a significant improvement in customer satisfaction metrics.</span>"
                               </p>
                               <p className="mt-2 text-sm text-muted-foreground">
                                 Source: resumeexamples.com/cover-letters - Last updated January 2023
