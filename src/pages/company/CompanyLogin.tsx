@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -62,10 +62,28 @@ const CompanyLogin = () => {
     
     setIsLoading(true);
     
-    // Simulate API call
+    // Check if there are credentials in localStorage from signup
+    const storedCompanyUsers = localStorage.getItem('companyUsers');
+    const companyUsers = storedCompanyUsers ? JSON.parse(storedCompanyUsers) : [];
+    
+    // Find user with matching credentials
+    const userMatch = companyUsers.find(
+      (user: {email: string, password: string}) => 
+        user.email === email && user.password === password
+    );
+    
+    // Demo credentials for testing
+    const isDemoCredentials = email === 'company@example.com' && password === 'password';
+    
     setTimeout(() => {
-      // Simulate successful login
-      if (email === 'company@example.com' && password === 'password') {
+      // Successful login if credentials match stored user or demo credentials
+      if (userMatch || isDemoCredentials) {
+        // For real app, you'd do JWT token storage here
+        if (rememberMe) {
+          localStorage.setItem('companyLoggedIn', 'true');
+          localStorage.setItem('companyEmail', email);
+        }
+        
         toast({
           title: "Login successful",
           description: "Welcome to JobFinder!",
@@ -83,7 +101,7 @@ const CompanyLogin = () => {
         });
       }
       setIsLoading(false);
-    }, 1500);
+    }, 1000);
   };
 
   const toggleShowPassword = () => {

@@ -114,15 +114,63 @@ const CompanySignup = () => {
     
     setIsLoading(true);
     
-    // Simulate API call
+    // Store user credentials in localStorage
     setTimeout(() => {
-      toast({
-        title: "Company account created successfully",
-        description: "Welcome to JobFinder! You can now log in.",
-      });
-      navigate('/company/login');
+      try {
+        // Get existing users or initialize empty array
+        const storedCompanyUsers = localStorage.getItem('companyUsers');
+        const companyUsers = storedCompanyUsers ? JSON.parse(storedCompanyUsers) : [];
+        
+        // Check if email already exists
+        const emailExists = companyUsers.some(
+          (user: {email: string}) => user.email === formData.email
+        );
+        
+        if (emailExists) {
+          setErrors({
+            ...errors,
+            email: 'This email is already registered',
+            general: 'Account with this email already exists'
+          });
+          toast({
+            variant: "destructive",
+            title: "Registration failed",
+            description: "An account with this email already exists.",
+          });
+          setIsLoading(false);
+          return;
+        }
+        
+        // Add new user
+        companyUsers.push({
+          companyName: formData.companyName,
+          email: formData.email,
+          password: formData.password,
+          industry: formData.industry,
+          website: formData.website,
+          createdAt: new Date().toISOString()
+        });
+        
+        // Save to localStorage
+        localStorage.setItem('companyUsers', JSON.stringify(companyUsers));
+        
+        toast({
+          title: "Company account created successfully",
+          description: "Welcome to JobFinder! You can now log in.",
+        });
+        
+        navigate('/company/login');
+      } catch (error) {
+        console.error("Error saving user data:", error);
+        toast({
+          variant: "destructive",
+          title: "Registration failed",
+          description: "There was an error creating your account. Please try again.",
+        });
+      }
+      
       setIsLoading(false);
-    }, 1500);
+    }, 1000);
   };
 
   const toggleShowPassword = () => {
