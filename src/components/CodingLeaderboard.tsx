@@ -167,7 +167,8 @@ const CodingLeaderboard = ({ isCompanyView = false }: CodingLeaderboardProps) =>
           {/* Top 3 users with special styling */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             {leaderboardData.slice(0, 3).map((user) => (
-              <Card key={user.id} className={`border ${user.rank === 1 ? 'bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800' : ''}`}>
+              <Card key={user.id} className={`border ${user.rank === 1 ? 
+                'bg-yellow-600/20 dark:bg-yellow-900/40 border-yellow-600 dark:border-yellow-700' : ''}`}>
                 <CardContent className="p-4 flex flex-col items-center text-center">
                   <div className="relative">
                     <Avatar className="h-16 w-16 mt-2 bg-primary text-white text-lg">
