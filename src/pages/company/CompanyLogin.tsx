@@ -109,27 +109,27 @@ const CompanyLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0f172a]">
       <div className="absolute top-0 left-0 w-full h-full bg-hero-pattern opacity-50 z-0"></div>
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-blue-900/30 to-blue-950/50 z-1"></div>
       
       <div className="flex min-h-screen items-center justify-center px-4 py-12">
         <AnimatedSection animation="slide-up" className="w-full max-w-md z-10">
-          <Card className="w-full backdrop-blur-sm bg-white/95 border-primary/10 shadow-xl">
+          <Card className="w-full backdrop-blur-sm bg-[#1e293b]/90 border-blue-500/20 shadow-xl text-white">
             <CardHeader className="space-y-1">
               <div className="w-full flex justify-center mb-2">
                 <div className="h-12 w-12 rounded-full bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 flex items-center justify-center">
                   <Building2 className="h-6 w-6 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl font-bold text-center">Company Portal</CardTitle>
-              <CardDescription className="text-center">
+              <CardTitle className="text-2xl font-bold text-center text-white">Company Portal</CardTitle>
+              <CardDescription className="text-center text-blue-200">
                 Enter your credentials to access your company account
               </CardDescription>
             </CardHeader>
             
             {errors.general && (
-              <div className="mx-6 mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md flex items-center text-destructive text-sm">
+              <div className="mx-6 mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-md flex items-center text-red-300 text-sm">
                 <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
                 {errors.general}
               </div>
@@ -138,26 +138,26 @@ const CompanyLogin = () => {
             <form onSubmit={handleSubmit}>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-blue-100">Email</Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder="your.company@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className={`${errors.email ? 'border-destructive' : ''}`}
+                    className={`${errors.email ? 'border-red-500' : 'border-blue-500/30'} bg-blue-900/30 text-white placeholder:text-blue-300/50`}
                   />
                   {errors.email && (
-                    <p className="text-destructive text-xs mt-1">{errors.email}</p>
+                    <p className="text-red-300 text-xs mt-1">{errors.email}</p>
                   )}
                 </div>
                 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password" className="text-blue-100">Password</Label>
                     <Link 
                       to="/company/forgot-password" 
-                      className="text-xs text-blue-600 hover:underline"
+                      className="text-xs text-blue-300 hover:text-blue-100"
                     >
                       Forgot password?
                     </Link>
@@ -168,12 +168,12 @@ const CompanyLogin = () => {
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className={`pr-10 ${errors.password ? 'border-destructive' : ''}`}
+                      className={`pr-10 ${errors.password ? 'border-red-500' : 'border-blue-500/30'} bg-blue-900/30 text-white`}
                     />
                     <button
                       type="button"
                       onClick={toggleShowPassword}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-300 hover:text-blue-100"
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -183,7 +183,7 @@ const CompanyLogin = () => {
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-destructive text-xs mt-1">{errors.password}</p>
+                    <p className="text-red-300 text-xs mt-1">{errors.password}</p>
                   )}
                 </div>
                 
@@ -194,10 +194,11 @@ const CompanyLogin = () => {
                     onCheckedChange={(checked) => {
                       setRememberMe(checked as boolean);
                     }}
+                    className="border-blue-500/50 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                   />
                   <Label 
                     htmlFor="remember" 
-                    className="text-sm font-normal cursor-pointer"
+                    className="text-sm font-normal cursor-pointer text-blue-200"
                   >
                     Remember me
                   </Label>
@@ -223,9 +224,9 @@ const CompanyLogin = () => {
                   )}
                 </Button>
                 
-                <p className="text-center text-sm text-muted-foreground">
+                <p className="text-center text-sm text-blue-300">
                   Don't have a company account?{' '}
-                  <Link to="/company/signup" className="text-blue-600 hover:underline">
+                  <Link to="/company/signup" className="text-blue-400 hover:text-blue-300 hover:underline">
                     Register your company
                   </Link>
                 </p>
