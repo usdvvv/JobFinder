@@ -18,35 +18,39 @@ import AITherapist from "./pages/AITherapist";
 import AILiveAssistant from "./pages/AILiveAssistant";
 import NotFound from "./pages/NotFound";
 import AIFloatingAssistant from "./components/AIFloatingAssistant";
+import { useState } from "react";
 
-const queryClient = new QueryClient();
+const App = () => {
+  // Create a new QueryClient inside the component
+  const [queryClient] = useState(() => new QueryClient());
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<RoleSelection />} />
-          <Route path="/home" element={<LandingPage />} />
-          <Route path="/choose" element={<ChooseSearchType />} />
-          <Route path="/jobs" element={<JobListings />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/apply/:id" element={<ApplicationForm />} />
-          <Route path="/resume" element={<ResumeMaker />} />
-          <Route path="/interview" element={<InterviewPrep />} />
-          <Route path="/practice" element={<PracticeCoding />} />
-          <Route path="/therapist" element={<AITherapist />} />
-          <Route path="/assistant" element={<AILiveAssistant />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <AIFloatingAssistant />
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<RoleSelection />} />
+            <Route path="/home" element={<LandingPage />} />
+            <Route path="/choose" element={<ChooseSearchType />} />
+            <Route path="/jobs" element={<JobListings />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/apply/:id" element={<ApplicationForm />} />
+            <Route path="/resume" element={<ResumeMaker />} />
+            <Route path="/interview" element={<InterviewPrep />} />
+            <Route path="/practice" element={<PracticeCoding />} />
+            <Route path="/therapist" element={<AITherapist />} />
+            <Route path="/assistant" element={<AILiveAssistant />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <AIFloatingAssistant />
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
