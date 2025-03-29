@@ -16,7 +16,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChevronLeft, ChevronRight, FileCheck, FileWarning, Search, Clock, Check, X, Download, ExternalLink, AlertTriangle, ThumbsUp, ThumbsDown, MessageSquare } from 'lucide-react';
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  FileCheck, 
+  FileWarning, 
+  Search, 
+  Clock, 
+  Check, 
+  X, 
+  Download, 
+  ExternalLink, 
+  AlertTriangle, 
+  ThumbsUp, 
+  ThumbsDown, 
+  MessageSquare,
+  FileText 
+} from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import CompanyNavBar from '@/components/company/CompanyNavBar';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -507,7 +523,7 @@ const ApplicationsManager = () => {
               <CardHeader>
                 <CardTitle>Plagiarism Analysis Results</CardTitle>
                 <CardDescription>
-                  Showing potential matches for {currentApplication.name}'s application
+                  Showing potential matches for {currentApplication.name}&apos;s application
                 </CardDescription>
               </CardHeader>
               
@@ -540,20 +556,20 @@ const ApplicationsManager = () => {
                           <p className="mb-2 text-muted-foreground text-sm">Submitted content:</p>
                           <div className="border-l-4 border-red-500 pl-4 py-2 bg-red-50 mb-4">
                             <p>
-                              "I am a <span className="bg-red-200">passionate and innovative professional with extensive experience in developing 
+                              &quot;I am a <span className="bg-red-200">passionate and innovative professional with extensive experience in developing 
                               user-friendly interfaces that enhance the overall user experience. My approach to design 
                               combines creativity with data-driven insights to create solutions that are both 
-                              visually appealing and functionally effective.</span>"
+                              visually appealing and functionally effective.</span>&quot;
                             </p>
                           </div>
                           
                           <p className="mb-2 text-muted-foreground text-sm">Similar content found online:</p>
                           <div className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50">
                             <p>
-                              "I am a <span className="bg-blue-200">passionate and innovative professional with extensive experience in developing 
+                              &quot;I am a <span className="bg-blue-200">passionate and innovative professional with extensive experience in developing 
                               user-friendly interfaces that enhance the overall user experience. My approach to design 
                               combines creativity with data-driven insights to create solutions that are both 
-                              visually appealing and functionally effective.</span>"
+                              visually appealing and functionally effective.</span>&quot;
                             </p>
                             <p className="mt-2 text-sm text-muted-foreground">
                               Source: exampleportfolio.com/about - Last updated March 2023
@@ -569,20 +585,20 @@ const ApplicationsManager = () => {
                             <p className="mb-2 text-muted-foreground text-sm">Submitted content:</p>
                             <div className="border-l-4 border-red-500 pl-4 py-2 bg-red-50 mb-4">
                               <p>
-                                "<span className="bg-red-200">In my previous role at XYZ Company, I led the development of a responsive web application 
+                                &quot;<span className="bg-red-200">In my previous role at XYZ Company, I led the development of a responsive web application 
                                 that increased user engagement by 45% within three months of launch. I collaborated 
                                 closely with cross-functional teams to ensure that all aspects of the user experience 
-                                were optimized, resulting in a significant improvement in customer satisfaction metrics.</span>"
+                                were optimized, resulting in a significant improvement in customer satisfaction metrics.</span>&quot;
                               </p>
                             </div>
                             
                             <p className="mb-2 text-muted-foreground text-sm">Similar content found online:</p>
                             <div className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50">
                               <p>
-                                "<span className="bg-blue-200">In my previous role at ABC Agency, I led the development of a responsive web application 
+                                &quot;<span className="bg-blue-200">In my previous role at ABC Agency, I led the development of a responsive web application 
                                 that increased user engagement by 45% within three months of launch. I collaborated 
                                 closely with cross-functional teams to ensure that all aspects of the user experience 
-                                were optimized, resulting in a significant improvement in customer satisfaction metrics.</span>"
+                                were optimized, resulting in a significant improvement in customer satisfaction metrics.</span>&quot;
                               </p>
                               <p className="mt-2 text-sm text-muted-foreground">
                                 Source: resumeexamples.com/cover-letters - Last updated January 2023
