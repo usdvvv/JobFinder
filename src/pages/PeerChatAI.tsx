@@ -224,7 +224,7 @@ const PeerChatAI = () => {
                   <div 
                     className={`p-4 rounded-lg cursor-pointer transition-all ${
                       currentPeer === 'alex' 
-                        ? 'bg-blue-50 border-blue-200 border' 
+                        ? 'bg-blue-100 border-blue-300 border' 
                         : 'hover:bg-muted border border-transparent'
                     }`}
                     onClick={() => setCurrentPeer('alex')}
@@ -234,9 +234,9 @@ const PeerChatAI = () => {
                         <AvatarFallback className="bg-blue-100 text-blue-700">AJ</AvatarFallback>
                       </Avatar>
                       <div>
-                        <div className="font-medium">{peers.alex.name}</div>
-                        <div className="text-sm text-muted-foreground">{peers.alex.role}</div>
-                        <div className="text-xs text-muted-foreground">{peers.alex.company}</div>
+                        <div className={`font-medium ${currentPeer === 'alex' ? 'text-blue-900' : 'text-white'}`}>{peers.alex.name}</div>
+                        <div className={`text-sm ${currentPeer === 'alex' ? 'text-blue-800' : 'text-blue-200'}`}>{peers.alex.role}</div>
+                        <div className={`text-xs ${currentPeer === 'alex' ? 'text-blue-700' : 'text-blue-300'}`}>{peers.alex.company}</div>
                       </div>
                     </div>
                   </div>
@@ -244,7 +244,7 @@ const PeerChatAI = () => {
                   <div 
                     className={`p-4 rounded-lg cursor-pointer transition-all ${
                       currentPeer === 'sarah' 
-                        ? 'bg-blue-50 border-blue-200 border' 
+                        ? 'bg-purple-100 border-purple-300 border' 
                         : 'hover:bg-muted border border-transparent'
                     }`}
                     onClick={() => setCurrentPeer('sarah')}
@@ -254,9 +254,9 @@ const PeerChatAI = () => {
                         <AvatarFallback className="bg-purple-100 text-purple-700">SL</AvatarFallback>
                       </Avatar>
                       <div>
-                        <div className="font-medium">{peers.sarah.name}</div>
-                        <div className="text-sm text-muted-foreground">{peers.sarah.role}</div>
-                        <div className="text-xs text-muted-foreground">{peers.sarah.company}</div>
+                        <div className={`font-medium ${currentPeer === 'sarah' ? 'text-purple-900' : 'text-white'}`}>{peers.sarah.name}</div>
+                        <div className={`text-sm ${currentPeer === 'sarah' ? 'text-purple-800' : 'text-purple-200'}`}>{peers.sarah.role}</div>
+                        <div className={`text-xs ${currentPeer === 'sarah' ? 'text-purple-700' : 'text-purple-300'}`}>{peers.sarah.company}</div>
                       </div>
                     </div>
                   </div>
@@ -264,7 +264,7 @@ const PeerChatAI = () => {
                   <div 
                     className={`p-4 rounded-lg cursor-pointer transition-all ${
                       currentPeer === 'michael' 
-                        ? 'bg-blue-50 border-blue-200 border' 
+                        ? 'bg-green-100 border-green-300 border' 
                         : 'hover:bg-muted border border-transparent'
                     }`}
                     onClick={() => setCurrentPeer('michael')}
@@ -274,9 +274,9 @@ const PeerChatAI = () => {
                         <AvatarFallback className="bg-green-100 text-green-700">MC</AvatarFallback>
                       </Avatar>
                       <div>
-                        <div className="font-medium">{peers.michael.name}</div>
-                        <div className="text-sm text-muted-foreground">{peers.michael.role}</div>
-                        <div className="text-xs text-muted-foreground">{peers.michael.company}</div>
+                        <div className={`font-medium ${currentPeer === 'michael' ? 'text-green-900' : 'text-white'}`}>{peers.michael.name}</div>
+                        <div className={`text-sm ${currentPeer === 'michael' ? 'text-green-800' : 'text-green-200'}`}>{peers.michael.role}</div>
+                        <div className={`text-xs ${currentPeer === 'michael' ? 'text-green-700' : 'text-green-300'}`}>{peers.michael.company}</div>
                       </div>
                     </div>
                   </div>
