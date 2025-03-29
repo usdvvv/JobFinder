@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, FileText, FileSearch, PlusCircle, Users, ArrowUpRight, Briefcase } from 'lucide-react';
+import { Building2, FileText, FileSearch, PlusCircle, Users, ArrowUpRight, Briefcase, Trophy } from 'lucide-react';
 import CompanyNavBar from '@/components/company/CompanyNavBar';
 import AnimatedSection from '@/components/AnimatedSection';
+import CodingLeaderboard from '@/components/CodingLeaderboard';
 
 // Dummy data for job postings
 const jobPostings = [
@@ -55,9 +56,10 @@ const CompanyDashboard = () => {
         </div>
         
         <Tabs defaultValue="overview" className="w-full" onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-3 w-full max-w-md mb-8">
+          <TabsList className="grid grid-cols-4 w-full max-w-md mb-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="jobs">Job Postings</TabsTrigger>
+            <TabsTrigger value="talents">Top Talents</TabsTrigger>
             <TabsTrigger value="company">Company Profile</TabsTrigger>
           </TabsList>
           
@@ -141,6 +143,53 @@ const CompanyDashboard = () => {
                 </CardContent>
               </Card>
             </AnimatedSection>
+
+            <AnimatedSection animation="slide-up" delay={300} className="mt-8">
+              <Card className="border border-border/40 shadow-sm">
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <CardTitle className="flex items-center">
+                      <Trophy className="mr-2 h-5 w-5 text-yellow-500" />
+                      Top Coding Talents
+                    </CardTitle>
+                    <Button variant="outline" size="sm" asChild>
+                      <Link to="#talents" onClick={() => setActiveTab('talents')}>
+                        View Full Leaderboard <ArrowUpRight className="ml-1 h-3 w-3" />
+                      </Link>
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {Array(3).fill(0).map((_, index) => {
+                      const userIndex = index;
+                      return (
+                        <Card key={index} className={`border ${index === 0 ? 'bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800' : ''}`}>
+                          <CardContent className="p-4 flex items-center space-x-4">
+                            <Avatar className="h-12 w-12 bg-primary text-white">
+                              <span>{["AJ", "SL", "MC"][userIndex]}</span>
+                            </Avatar>
+                            <div>
+                              <h3 className="font-medium">{["Alex Johnson", "Samantha Lee", "Michael Chen"][userIndex]}</h3>
+                              <p className="text-sm text-muted-foreground">
+                                {[950, 920, 890][userIndex]} points • {[48, 45, 43][userIndex]} problems
+                              </p>
+                              <div className="flex gap-1 mt-1">
+                                {[["JavaScript", "Python"], ["C++", "Python"], ["JavaScript", "TypeScript"]][userIndex].map((lang, i) => (
+                                  <Badge key={i} variant="secondary" className="text-xs">
+                                    {lang}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            </AnimatedSection>
           </TabsContent>
           
           <TabsContent value="jobs">
@@ -211,6 +260,18 @@ const CompanyDashboard = () => {
                   </div>
                 </CardContent>
               </Card>
+            </AnimatedSection>
+          </TabsContent>
+          
+          <TabsContent value="talents">
+            <AnimatedSection animation="fade-in">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold mb-2">Top Coding Talents</h2>
+                <p className="text-muted-foreground">
+                  Browse the leaderboard of top performers from our coding challenges. You can contact candidates directly to discuss opportunities.
+                </p>
+              </div>
+              <CodingLeaderboard isCompanyView={true} />
             </AnimatedSection>
           </TabsContent>
           

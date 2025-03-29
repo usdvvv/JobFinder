@@ -1,14 +1,32 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar } from "@/components/ui/avatar";
-import { Video, MessageSquare, Code, Play, FileText, Upload, ArrowRight } from 'lucide-react';
+import { Video, MessageSquare, Code, Play, FileText, Upload, ArrowRight, Trophy } from 'lucide-react';
 import NavBar from '@/components/NavBar';
 import AnimatedSection from '@/components/AnimatedSection';
+import CodingLeaderboard from '@/components/CodingLeaderboard';
+import CodingChallenge from '@/components/CodingChallenge';
+import { useState as useStateEffect } from 'react';
 
 const InterviewPrep = () => {
+  const [showCodingChallenge, setShowCodingChallenge] = useState(false);
+  const [selectedChallenge, setSelectedChallenge] = useState({
+    title: '',
+    description: '',
+    difficulty: 'Medium' as 'Easy' | 'Medium' | 'Hard',
+    category: '',
+    examples: [],
+    starterCode: '',
+    solution: ''
+  });
+
+  const handleOpenChallenge = (challenge: any) => {
+    setSelectedChallenge(challenge);
+    setShowCodingChallenge(true);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <NavBar />
@@ -24,7 +42,7 @@ const InterviewPrep = () => {
 
           <AnimatedSection animation="fade-in" className="mb-8">
             <Tabs defaultValue="mock" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="mock" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   <Video className="h-4 w-4 mr-2" />
                   Mock Interviews
@@ -37,6 +55,10 @@ const InterviewPrep = () => {
                   <Code className="h-4 w-4 mr-2" />
                   Technical Interviews
                 </TabsTrigger>
+                <TabsTrigger value="leaderboard" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Trophy className="h-4 w-4 mr-2" />
+                  Leaderboard
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="mock" className="mt-6">
@@ -48,12 +70,29 @@ const InterviewPrep = () => {
               </TabsContent>
               
               <TabsContent value="technical" className="mt-6">
-                <TechnicalInterviews />
+                <TechnicalInterviews onOpenChallenge={handleOpenChallenge} />
+              </TabsContent>
+              
+              <TabsContent value="leaderboard" className="mt-6">
+                <CodingLeaderboard />
               </TabsContent>
             </Tabs>
           </AnimatedSection>
         </div>
       </div>
+
+      {showCodingChallenge && (
+        <CodingChallenge
+          title={selectedChallenge.title}
+          description={selectedChallenge.description}
+          difficulty={selectedChallenge.difficulty}
+          category={selectedChallenge.category}
+          examples={selectedChallenge.examples}
+          starterCode={selectedChallenge.starterCode}
+          solution={selectedChallenge.solution}
+          onClose={() => setShowCodingChallenge(false)}
+        />
+      )}
     </div>
   );
 };
@@ -299,7 +338,51 @@ const PracticeQuestions = () => {
   );
 };
 
-const TechnicalInterviews = () => {
+const TechnicalInterviews = ({ onOpenChallenge }: { onOpenChallenge: (challenge: any) => void }) => {
+  const handleOpenChallenge = () => {
+    const challenge = {
+      title: 'Two Sum',
+      description: 'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.',
+      difficulty: 'Easy' as 'Easy' | 'Medium' | 'Hard',
+      category: 'Arrays',
+      examples: [
+        {
+          input: 'nums = [2,7,11,15], target = 9',
+          output: '[0,1]',
+          explanation: 'Because nums[0] + nums[1] == 9, we return [0, 1].'
+        },
+        {
+          input: 'nums = [3,2,4], target = 6',
+          output: '[1,2]',
+        },
+        {
+          input: 'nums = [3,3], target = 6',
+          output: '[0,1]',
+        }
+      ],
+      starterCode: `function twoSum(nums, target) {
+  // Your code here
+}`,
+      solution: `function twoSum(nums, target) {
+  const map = new Map();
+  
+  for (let i = 0; i < nums.length; i++) {
+    const complement = target - nums[i];
+    
+    if (map.has(complement)) {
+      return [map.get(complement), i];
+    }
+    
+    map.set(nums[i], i);
+  }
+  
+  return null;
+}`
+    };
+    
+    onOpenChallenge(challenge);
+  };
+
   return (
     <AnimatedSection animation="fade-in">
       <Card>
@@ -343,7 +426,8 @@ const TechnicalInterviews = () => {
             <div className="border rounded-md p-4 bg-muted/30">
               <h3 className="font-medium mb-3">Popular Coding Challenges</h3>
               <div className="space-y-3">
-                <div className="p-3 bg-background rounded-md flex items-center justify-between hover:shadow-sm transition-shadow cursor-pointer">
+                <div className="p-3 bg-background rounded-md flex items-center justify-between hover:shadow-sm transition-shadow cursor-pointer"
+                     onClick={handleOpenChallenge}>
                   <div>
                     <p className="font-medium text-sm">Two Sum</p>
                     <div className="flex items-center mt-1">
@@ -351,12 +435,13 @@ const TechnicalInterviews = () => {
                       <span className="text-xs text-muted-foreground ml-2">Array, Hash Table</span>
                     </div>
                   </div>
-                  <Button size="sm" variant="ghost">
+                  <Button size="sm" variant="ghost" onClick={handleOpenChallenge}>
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
                 
-                <div className="p-3 bg-background rounded-md flex items-center justify-between hover:shadow-sm transition-shadow cursor-pointer">
+                <div className="p-3 bg-background rounded-md flex items-center justify-between hover:shadow-sm transition-shadow cursor-pointer"
+                     onClick={handleOpenChallenge}>
                   <div>
                     <p className="font-medium text-sm">Merge Intervals</p>
                     <div className="flex items-center mt-1">
@@ -364,12 +449,13 @@ const TechnicalInterviews = () => {
                       <span className="text-xs text-muted-foreground ml-2">Array, Sorting</span>
                     </div>
                   </div>
-                  <Button size="sm" variant="ghost">
+                  <Button size="sm" variant="ghost" onClick={handleOpenChallenge}>
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
                 
-                <div className="p-3 bg-background rounded-md flex items-center justify-between hover:shadow-sm transition-shadow cursor-pointer">
+                <div className="p-3 bg-background rounded-md flex items-center justify-between hover:shadow-sm transition-shadow cursor-pointer"
+                     onClick={handleOpenChallenge}>
                   <div>
                     <p className="font-medium text-sm">LRU Cache</p>
                     <div className="flex items-center mt-1">
@@ -377,7 +463,7 @@ const TechnicalInterviews = () => {
                       <span className="text-xs text-muted-foreground ml-2">Hash Table, Linked List</span>
                     </div>
                   </div>
-                  <Button size="sm" variant="ghost">
+                  <Button size="sm" variant="ghost" onClick={handleOpenChallenge}>
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -386,7 +472,7 @@ const TechnicalInterviews = () => {
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full">
+          <Button className="w-full" onClick={handleOpenChallenge}>
             Start Coding Challenge <Code className="ml-2 h-4 w-4" />
           </Button>
         </CardFooter>
