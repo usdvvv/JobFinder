@@ -124,7 +124,7 @@ const CompanyPeerChat = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           <div className="md:col-span-3">
-            <AnimatedSection animation="slide-right">
+            <AnimatedSection animation="slide-in-right">
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center">

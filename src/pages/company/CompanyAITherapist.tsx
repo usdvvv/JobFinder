@@ -71,7 +71,7 @@ const CompanyAITherapist = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-1">
-            <AnimatedSection animation="slide-right">
+            <AnimatedSection animation="slide-in-right">
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center">
