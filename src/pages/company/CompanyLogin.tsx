@@ -1,6 +1,6 @@
 
-import { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -13,14 +13,12 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
-import { Eye, EyeOff, LogIn, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Building2, AlertCircle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import NavBar from '@/components/NavBar';
 import AnimatedSection from '@/components/AnimatedSection';
 
-const Login = () => {
+const CompanyLogin = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -31,9 +29,6 @@ const Login = () => {
     password: '',
     general: ''
   });
-
-  // Check if coming from the company route
-  const isCompanyLogin = location.pathname.includes('/company');
 
   const validateForm = () => {
     let valid = true;
@@ -69,45 +64,23 @@ const Login = () => {
     
     // Simulate API call
     setTimeout(() => {
-      // Different login logic for users vs companies
-      if (isCompanyLogin) {
-        // Company login
-        if (email === 'company@example.com' && password === 'password') {
-          toast({
-            title: "Login successful",
-            description: "Welcome to JobFinder's company portal!",
-          });
-          navigate('/company/dashboard');
-        } else {
-          setErrors({
-            ...errors,
-            general: 'Invalid email or password'
-          });
-          toast({
-            variant: "destructive",
-            title: "Login failed",
-            description: "Invalid email or password. Please try again.",
-          });
-        }
+      // Simulate successful login
+      if (email === 'company@example.com' && password === 'password') {
+        toast({
+          title: "Login successful",
+          description: "Welcome to JobFinder!",
+        });
+        navigate('/company/dashboard');
       } else {
-        // Regular user login
-        if (email === 'user@example.com' && password === 'password') {
-          toast({
-            title: "Login successful",
-            description: "Welcome back to JobFinder!",
-          });
-          navigate('/jobs');
-        } else {
-          setErrors({
-            ...errors,
-            general: 'Invalid email or password'
-          });
-          toast({
-            variant: "destructive",
-            title: "Login failed",
-            description: "Invalid email or password. Please try again.",
-          });
-        }
+        setErrors({
+          ...errors,
+          general: 'Invalid email or password'
+        });
+        toast({
+          variant: "destructive",
+          title: "Login failed",
+          description: "Invalid email or password. Please try again.",
+        });
       }
       setIsLoading(false);
     }, 1500);
@@ -117,34 +90,23 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
-  // Change title based on login type
-  useEffect(() => {
-    document.title = isCompanyLogin ? "Company Login - JobFinder" : "Login - JobFinder";
-  }, [isCompanyLogin]);
-
   return (
     <div className="min-h-screen bg-background">
-      {!isCompanyLogin && <NavBar />}
+      <div className="absolute top-0 left-0 w-full h-full bg-hero-pattern opacity-50 z-0"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-blue-900/30 to-blue-950/50 z-1"></div>
       
       <div className="flex min-h-screen items-center justify-center px-4 py-12">
-        <div className="absolute top-0 left-0 w-full h-full bg-hero-pattern opacity-50 z-0"></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-blue-900/30 to-blue-950/50 z-1"></div>
-        
         <AnimatedSection animation="slide-up" className="w-full max-w-md z-10">
           <Card className="w-full backdrop-blur-sm bg-white/95 border-primary/10 shadow-xl">
             <CardHeader className="space-y-1">
               <div className="w-full flex justify-center mb-2">
                 <div className="h-12 w-12 rounded-full bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 flex items-center justify-center">
-                  <LogIn className="h-6 w-6 text-white" />
+                  <Building2 className="h-6 w-6 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl font-bold text-center">
-                {isCompanyLogin ? "Company Login" : "Welcome back"}
-              </CardTitle>
+              <CardTitle className="text-2xl font-bold text-center">Company Portal</CardTitle>
               <CardDescription className="text-center">
-                {isCompanyLogin 
-                  ? "Enter your credentials to access your company account" 
-                  : "Enter your credentials to access your account"}
+                Enter your credentials to access your company account
               </CardDescription>
             </CardHeader>
             
@@ -162,7 +124,7 @@ const Login = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder={isCompanyLogin ? "your.company@example.com" : "your.email@example.com"}
+                    placeholder="your.company@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className={`${errors.email ? 'border-destructive' : ''}`}
@@ -176,7 +138,7 @@ const Login = () => {
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password">Password</Label>
                     <Link 
-                      to={isCompanyLogin ? "/company/forgot-password" : "/forgot-password"} 
+                      to="/company/forgot-password" 
                       className="text-xs text-blue-600 hover:underline"
                     >
                       Forgot password?
@@ -244,22 +206,11 @@ const Login = () => {
                 </Button>
                 
                 <p className="text-center text-sm text-muted-foreground">
-                  Don't have an account?{' '}
-                  <Link 
-                    to={isCompanyLogin ? "/company/signup" : "/signup"} 
-                    className="text-blue-600 hover:underline"
-                  >
-                    {isCompanyLogin ? "Register your company" : "Create an account"}
+                  Don't have a company account?{' '}
+                  <Link to="/company/signup" className="text-blue-600 hover:underline">
+                    Register your company
                   </Link>
                 </p>
-
-                {isCompanyLogin && (
-                  <p className="text-center text-sm text-muted-foreground">
-                    <Link to="/" className="text-blue-600 hover:underline">
-                      Return to role selection
-                    </Link>
-                  </p>
-                )}
               </CardFooter>
             </form>
           </Card>
@@ -269,4 +220,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default CompanyLogin;

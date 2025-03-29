@@ -137,7 +137,7 @@ const RoleSelection = () => {
   };
 
   const handleCompanyClick = () => {
-    navigate('/login');
+    navigate('/company/login');
   };
 
   return (

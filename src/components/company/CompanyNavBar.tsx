@@ -2,9 +2,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Menu, X, Briefcase, Home, FileText, Video, UserRound, Code, Brain, Bot, MessageSquare } from 'lucide-react';
+import { Menu, X, Building2, LayoutDashboard, FileText, FileSearch, LogOut, PlusCircle, User } from 'lucide-react';
 
-const NavBar = () => {
+const CompanyNavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
@@ -43,30 +43,32 @@ const NavBar = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link 
-              to="/home" 
+              to="/company/dashboard" 
               className="flex items-center space-x-2"
             >
               <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 flex items-center justify-center">
-                <Briefcase className="h-4 w-4 text-white" />
+                <Building2 className="h-4 w-4 text-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">JobFinder</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">JobFinder Business</span>
             </Link>
           </div>
           
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-4">
-              <NavLink to="/home" icon={<Home className="h-4 w-4" />} text="Home" />
-              <NavLink to="/jobs" icon={<Briefcase className="h-4 w-4" />} text="Browse Jobs" />
-              <NavLink to="/resume" icon={<FileText className="h-4 w-4" />} text="Resume Maker" />
-              <NavLink to="/interview" icon={<Video className="h-4 w-4" />} text="Interview Prep" />
-              <NavLink to="/practice" icon={<Code className="h-4 w-4" />} text="Practice Coding" />
-              <NavLink to="/therapist" icon={<Brain className="h-4 w-4" />} text="AI Therapist" />
-              <NavLink to="/peer-chat" icon={<MessageSquare className="h-4 w-4" />} text="Peer Chat" />
-              <NavLink to="/assistant" icon={<Bot className="h-4 w-4" />} text="AI Assistant" />
-              <Link to="/login">
-                <Button variant="outline" size="sm" className="ml-2">
-                  <UserRound className="h-4 w-4 mr-2" />
-                  Login
+              <NavLink to="/company/dashboard" icon={<LayoutDashboard className="h-4 w-4" />} text="Dashboard" />
+              <NavLink to="/company/jobs" icon={<FileText className="h-4 w-4" />} text="Job Postings" />
+              <NavLink to="/company/applications" icon={<FileSearch className="h-4 w-4" />} text="Applications" />
+              <NavLink to="/company/profile" icon={<User className="h-4 w-4" />} text="Profile" />
+              <Link to="/company/jobs/create">
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 ml-2">
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  Post Job
+                </Button>
+              </Link>
+              <Link to="/">
+                <Button variant="ghost" size="sm" className="ml-2">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
                 </Button>
               </Link>
             </div>
@@ -92,15 +94,28 @@ const NavBar = () => {
       {isOpen && (
         <div className="md:hidden glass-effect animate-fade-in">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <MobileNavLink to="/home" icon={<Home className="h-5 w-5" />} text="Home" />
-            <MobileNavLink to="/jobs" icon={<Briefcase className="h-5 w-5" />} text="Browse Jobs" />
-            <MobileNavLink to="/resume" icon={<FileText className="h-5 w-5" />} text="Resume Maker" />
-            <MobileNavLink to="/interview" icon={<Video className="h-5 w-5" />} text="Interview Prep" />
-            <MobileNavLink to="/practice" icon={<Code className="h-5 w-5" />} text="Practice Coding" />
-            <MobileNavLink to="/therapist" icon={<Brain className="h-5 w-5" />} text="AI Therapist" />
-            <MobileNavLink to="/peer-chat" icon={<MessageSquare className="h-5 w-5" />} text="Peer Chat" />
-            <MobileNavLink to="/assistant" icon={<Bot className="h-5 w-5" />} text="AI Assistant" />
-            <MobileNavLink to="/login" icon={<UserRound className="h-5 w-5" />} text="Login" />
+            <MobileNavLink to="/company/dashboard" icon={<LayoutDashboard className="h-5 w-5" />} text="Dashboard" />
+            <MobileNavLink to="/company/jobs" icon={<FileText className="h-5 w-5" />} text="Job Postings" />
+            <MobileNavLink to="/company/applications" icon={<FileSearch className="h-5 w-5" />} text="Applications" />
+            <MobileNavLink to="/company/profile" icon={<User className="h-5 w-5" />} text="Profile" />
+            <div className="pt-2 border-t border-gray-200/30 mt-2">
+              <Link 
+                to="/company/jobs/create"
+                className="w-full px-3 py-2 rounded-md text-base font-medium text-white bg-blue-600 hover:bg-blue-700 flex items-center"
+              >
+                <PlusCircle className="h-5 w-5 mr-3" />
+                Post New Job
+              </Link>
+            </div>
+            <div className="pt-2">
+              <Link 
+                to="/"
+                className="w-full px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted hover:text-blue-500 flex items-center"
+              >
+                <LogOut className="h-5 w-5 mr-3" />
+                Logout
+              </Link>
+            </div>
           </div>
         </div>
       )}
@@ -149,4 +164,4 @@ const MobileNavLink = ({ to, icon, text }: { to: string; icon: React.ReactNode; 
   );
 };
 
-export default NavBar;
+export default CompanyNavBar;
