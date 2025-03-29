@@ -20,6 +20,7 @@ import PracticeCoding from "./pages/PracticeCoding";
 import AITherapist from "./pages/AITherapist";
 import AILiveAssistant from "./pages/AILiveAssistant";
 import PeerChatAI from "./pages/PeerChatAI";
+import Entertainment from "./pages/Entertainment";
 
 // Company pages
 import CompanyLogin from "./pages/company/CompanyLogin";
@@ -67,6 +68,7 @@ const App = () => {
             <Route path="/therapist" element={<AITherapist />} />
             <Route path="/assistant" element={<AILiveAssistant />} />
             <Route path="/peer-chat" element={<PeerChatAI />} />
+            <Route path="/entertainment" element={<Entertainment />} />
             
             {/* Company routes */}
             <Route path="/company/login" element={<CompanyLogin />} />

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Menu, X, Briefcase, Home, FileText, Video, UserRound, Code, Brain, Bot, MessageSquare, LogOut } from 'lucide-react';
+import { Menu, X, Briefcase, Home, FileText, Video, UserRound, Code, Brain, Bot, MessageSquare, LogOut, Puzzle } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 
 const NavBar = () => {
@@ -93,6 +93,7 @@ const NavBar = () => {
               <NavLink to="/therapist" icon={<Brain className="h-4 w-4" />} text="AI Therapist" />
               <NavLink to="/peer-chat" icon={<MessageSquare className="h-4 w-4" />} text="Peer Chat" />
               <NavLink to="/assistant" icon={<Bot className="h-4 w-4" />} text="AI Assistant" />
+              <NavLink to="/entertainment" icon={<Puzzle className="h-4 w-4" />} text="Entertainment" />
               
               {isLoggedIn ? (
                 <Button 
@@ -146,6 +147,7 @@ const NavBar = () => {
             <MobileNavLink to="/therapist" icon={<Brain className="h-5 w-5" />} text="AI Therapist" />
             <MobileNavLink to="/peer-chat" icon={<MessageSquare className="h-5 w-5" />} text="Peer Chat" />
             <MobileNavLink to="/assistant" icon={<Bot className="h-5 w-5" />} text="AI Assistant" />
+            <MobileNavLink to="/entertainment" icon={<Puzzle className="h-5 w-5" />} text="Entertainment" />
             
             <div className="pt-2 border-t border-gray-200/30 mt-2">
               {isLoggedIn ? (
