@@ -141,7 +141,7 @@ const RoleSelection = () => {
   };
 
   return (
-    <div className="role-selection-page">
+    <div className="min-h-screen w-full flex items-center justify-center">
       <div className="background"></div>
       <div ref={particlesRef} className="particles"></div>
       <div ref={glowRef} className="glow"></div>
