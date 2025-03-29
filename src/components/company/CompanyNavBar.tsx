@@ -1,16 +1,27 @@
 
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Menu, X, Building2, LayoutDashboard, FileText, FileSearch, LogOut, PlusCircle, User } from 'lucide-react';
+import { toast } from "@/hooks/use-toast";
 
 const CompanyNavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleLogout = () => {
+    // In a real app, this would clear authentication state
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    });
+    navigate('/');
   };
 
   useEffect(() => {
@@ -65,12 +76,15 @@ const CompanyNavBar = () => {
                   Post Job
                 </Button>
               </Link>
-              <Link to="/">
-                <Button variant="ghost" size="sm" className="ml-2">
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </Button>
-              </Link>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="ml-2"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
             </div>
           </div>
           
@@ -108,13 +122,13 @@ const CompanyNavBar = () => {
               </Link>
             </div>
             <div className="pt-2">
-              <Link 
-                to="/"
+              <button 
                 className="w-full px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted hover:text-blue-500 flex items-center"
+                onClick={handleLogout}
               >
                 <LogOut className="h-5 w-5 mr-3" />
                 Logout
-              </Link>
+              </button>
             </div>
           </div>
         </div>

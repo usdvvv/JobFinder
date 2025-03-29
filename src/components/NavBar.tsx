@@ -1,17 +1,44 @@
 
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Menu, X, Briefcase, Home, FileText, Video, UserRound, Code, Brain, Bot, MessageSquare } from 'lucide-react';
+import { Menu, X, Briefcase, Home, FileText, Video, UserRound, Code, Brain, Bot, MessageSquare, LogOut } from 'lucide-react';
+import { toast } from "@/hooks/use-toast";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
+  const handleLogin = () => {
+    navigate('/login');
+  };
+
+  const handleLogout = () => {
+    // In a real app, this would clear authentication state
+    setIsLoggedIn(false);
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    });
+    navigate('/home');
+  };
+
+  // For demo purposes, let's consider the user as logged in when they've visited certain pages
+  useEffect(() => {
+    // Check if user is coming from login page or has visited pages that require login
+    if (location.pathname.includes('/resume') || 
+        location.pathname.includes('/interview') || 
+        location.pathname.includes('/practice')) {
+      setIsLoggedIn(true);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,12 +90,28 @@ const NavBar = () => {
               <NavLink to="/therapist" icon={<Brain className="h-4 w-4" />} text="AI Therapist" />
               <NavLink to="/peer-chat" icon={<MessageSquare className="h-4 w-4" />} text="Peer Chat" />
               <NavLink to="/assistant" icon={<Bot className="h-4 w-4" />} text="AI Assistant" />
-              <Link to="/login">
-                <Button variant="outline" size="sm" className="ml-2">
+              
+              {isLoggedIn ? (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="ml-2"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              ) : (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="ml-2"
+                  onClick={handleLogin}
+                >
                   <UserRound className="h-4 w-4 mr-2" />
                   Login
                 </Button>
-              </Link>
+              )}
             </div>
           </div>
           
@@ -100,7 +143,26 @@ const NavBar = () => {
             <MobileNavLink to="/therapist" icon={<Brain className="h-5 w-5" />} text="AI Therapist" />
             <MobileNavLink to="/peer-chat" icon={<MessageSquare className="h-5 w-5" />} text="Peer Chat" />
             <MobileNavLink to="/assistant" icon={<Bot className="h-5 w-5" />} text="AI Assistant" />
-            <MobileNavLink to="/login" icon={<UserRound className="h-5 w-5" />} text="Login" />
+            
+            <div className="pt-2 border-t border-gray-200/30 mt-2">
+              {isLoggedIn ? (
+                <button 
+                  className="w-full px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted hover:text-blue-500 flex items-center"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-5 w-5 mr-3" />
+                  Logout
+                </button>
+              ) : (
+                <button 
+                  className="w-full px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted hover:text-blue-500 flex items-center"
+                  onClick={handleLogin}
+                >
+                  <UserRound className="h-5 w-5 mr-3" />
+                  Login
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

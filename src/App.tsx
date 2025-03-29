@@ -25,6 +25,8 @@ import PeerChatAI from "./pages/PeerChatAI";
 import CompanyLogin from "./pages/company/CompanyLogin";
 import CompanySignup from "./pages/company/CompanySignup";
 import CompanyDashboard from "./pages/company/CompanyDashboard";
+import CompanyJobs from "./pages/company/CompanyJobs";
+import CompanyProfile from "./pages/company/CompanyProfile";
 import CreateJobPosting from "./pages/company/CreateJobPosting";
 import ApplicationsManager from "./pages/company/ApplicationsManager";
 
@@ -64,8 +66,12 @@ const App = () => {
             <Route path="/company/login" element={<CompanyLogin />} />
             <Route path="/company/signup" element={<CompanySignup />} />
             <Route path="/company/dashboard" element={<CompanyDashboard />} />
+            <Route path="/company/jobs" element={<CompanyJobs />} />
             <Route path="/company/jobs/create" element={<CreateJobPosting />} />
+            <Route path="/company/jobs/:id" element={<CompanyJobs />} />
+            <Route path="/company/jobs/:id/edit" element={<CreateJobPosting />} />
             <Route path="/company/applications" element={<ApplicationsManager />} />
+            <Route path="/company/profile" element={<CompanyProfile />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
