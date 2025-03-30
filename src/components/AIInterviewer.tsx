@@ -17,12 +17,12 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [conversation, setConversation] = useState<{role: 'ai' | 'user', message: string}[]>([]);
+  const [ollamaUrl, setOllamaUrl] = useState('http://localhost:11434');
+  const [isMuted, setIsMuted] = useState(false);
   const { toast } = useToast();
   
-  // Text-to-Speech
-  const [elevenlabsApiKey, setElevenlabsApiKey] = useState('');
-  const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const recognitionRef = useRef<any>(null);
 
   // Setup audio element
   useEffect(() => {
@@ -35,56 +35,94 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
     };
   }, []);
 
-  // Text-to-speech function
-  const speakText = async (text: string) => {
-    if (isMuted || !elevenlabsApiKey || !text) return;
+  // Web Speech API for speech recognition
+  useEffect(() => {
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      
+      recognitionRef.current.onresult = (event: any) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        setTranscript(transcript);
+      };
+      
+      recognitionRef.current.onend = () => {
+        if (isInterviewing) {
+          recognitionRef.current.start();
+        }
+      };
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Speech recognition not supported",
+        description: "Your browser doesn't support speech recognition. Please use Chrome.",
+      });
+    }
+    
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, [toast]);
+
+  // Update recognition status when interviewing state changes
+  useEffect(() => {
+    if (isInterviewing && recognitionRef.current) {
+      recognitionRef.current.start();
+    } else if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+  }, [isInterviewing]);
+
+  // Web Speech API for text-to-speech (free solution)
+  const speakText = (text: string) => {
+    if (isMuted || !text) return;
     
     setIsSpeaking(true);
     
     try {
-      const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL/stream', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'xi-api-key': elevenlabsApiKey,
-        },
-        body: JSON.stringify({
-          text,
-          model_id: 'eleven_multilingual_v2',
-          voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.8,
-          }
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to convert text to speech');
-      }
-
-      // Create a blob URL from the response
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
       
-      if (audioRef.current) {
-        audioRef.current.src = url;
-        
-        audioRef.current.onended = () => {
-          setIsSpeaking(false);
-          URL.revokeObjectURL(url);
-        };
-        
-        audioRef.current.onerror = () => {
-          setIsSpeaking(false);
-          toast({
-            variant: "destructive",
-            title: "Audio playback error",
-            description: "There was an error playing the audio.",
-          });
-        };
-        
-        audioRef.current.play();
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      // Get available voices
+      const voices = window.speechSynthesis.getVoices();
+      
+      // Try to find a good male voice
+      const preferredVoice = voices.find(voice => 
+        voice.name.includes('Male') || 
+        voice.name.includes('Daniel') || 
+        voice.name.includes('Google UK English Male')
+      );
+      
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
       }
+      
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      
+      utterance.onend = () => {
+        setIsSpeaking(false);
+      };
+      
+      utterance.onerror = () => {
+        setIsSpeaking(false);
+        toast({
+          variant: "destructive",
+          title: "Speech synthesis error",
+          description: "There was an error with text-to-speech.",
+        });
+      };
+      
+      window.speechSynthesis.speak(utterance);
     } catch (error) {
       console.error('TTS Error:', error);
       setIsSpeaking(false);
@@ -96,33 +134,81 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
     }
   };
 
-  const handleStartInterview = () => {
-    if (!elevenlabsApiKey) {
+  // Function to communicate with local Ollama Mistral model
+  const askMistral = async (prompt: string) => {
+    try {
+      const response = await fetch(`${ollamaUrl}/api/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'mistral',
+          prompt: prompt,
+          stream: false
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to communicate with Ollama');
+      }
+
+      const data = await response.json();
+      return data.response;
+    } catch (error) {
+      console.error('Ollama API Error:', error);
       toast({
         variant: "destructive",
-        title: "API Key Required",
-        description: "Please enter your ElevenLabs API key to enable text-to-speech.",
+        title: "Ollama API Error",
+        description: "Make sure Ollama is running locally with the Mistral model. Run: 'ollama run mistral'",
+      });
+      return "I'm having trouble connecting to my AI brain right now. Please check that Ollama is running with the Mistral model.";
+    }
+  };
+
+  const handleStartInterview = async () => {
+    // Test connection to Ollama
+    try {
+      await fetch(`${ollamaUrl}/api/tags`, { method: 'GET' });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Cannot connect to Ollama",
+        description: "Make sure Ollama is running locally. Run: 'ollama run mistral'",
       });
       return;
     }
     
     // Request microphone access
     navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(() => {
+      .then(async () => {
         setIsInterviewing(true);
         
-        // Add welcome message from AI
-        const welcomeMessage = `Hello! I'm your AI interviewer for this ${industry} position. This will be a ${difficulty} interview. ${jobDescription ? "I've reviewed the job description you provided." : ""} Let's start with a simple question: Could you please introduce yourself and tell me about your background?`;
+        // Build context for Mistral
+        const context = `You are an AI interviewer for a ${industry} position. 
+This is a ${difficulty} interview. 
+${jobDescription ? "The job description is: " + jobDescription : ""}
+Please provide a brief welcome message and ask the first interview question.
+Keep responses concise, professional, and encouraging.`;
+
+        // Get AI response
+        const aiResponse = await askMistral(context);
         
-        setConversation([{ role: 'ai', message: welcomeMessage }]);
+        // Add welcome message from AI
+        setConversation([{ role: 'ai', message: aiResponse }]);
         
         // Speak welcome message
-        speakText(welcomeMessage);
+        speakText(aiResponse);
         
         toast({
           title: "Interview started",
           description: "You can now speak to the AI interviewer.",
         });
+        
+        // Start listening for user speech
+        if (recognitionRef.current) {
+          recognitionRef.current.start();
+        }
       })
       .catch(error => {
         console.error('Error accessing microphone:', error);
@@ -138,7 +224,13 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
     setIsInterviewing(false);
     setIsSpeaking(false);
     
+    // Stop speech recognition
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+    
     // Stop any playing audio
+    window.speechSynthesis.cancel();
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -150,74 +242,73 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
     });
   };
 
-  const handleUserSpeech = (userMessage: string) => {
-    // Add user message to conversation
-    setConversation(prev => [...prev, { role: 'user', message: userMessage }]);
-    
-    // Simulate AI response after 1 second
-    setTimeout(() => {
-      // Example responses - in a real implementation, this would come from an API
-      const aiResponses = [
-        "That's an interesting background. Can you tell me about a challenging project you worked on recently?",
-        "Thank you for sharing. How do you handle conflict in the workplace?",
-        "Great answer. What would you say is your greatest professional achievement?",
-        "I see. Could you describe your ideal work environment?",
-        "Interesting perspective. Where do you see yourself in five years?"
-      ];
-      
-      const randomResponse = aiResponses[Math.floor(Math.random() * aiResponses.length)];
-      setConversation(prev => [...prev, { role: 'ai', message: randomResponse }]);
-      
-      // Speak AI response
-      speakText(randomResponse);
-    }, 1000);
-  };
-
-  // Simulated speech recognition - in a real app you would use the Web Speech API
+  // Handle speech recognition results and send to AI when user pauses
   useEffect(() => {
-    if (!isInterviewing) return;
+    if (!isInterviewing || !transcript) return;
     
-    // Simulate user speaking after 8 seconds
-    const timer = setTimeout(() => {
-      const userResponses = [
-        "Hi, I'm Alex. I have 5 years of experience in software development, specializing in React and Node.js.",
-        "I recently led a project to rebuild our company's dashboard, which improved load times by 40%.",
-        "I believe communication is key to resolving conflicts. I always try to understand others' perspectives."
-      ];
-      
-      const randomUserResponse = userResponses[Math.floor(Math.random() * userResponses.length)];
-      handleUserSpeech(randomUserResponse);
-    }, 8000);
+    const timer = setTimeout(async () => {
+      if (transcript.trim() && !isSpeaking) {
+        const userMessage = transcript;
+        setTranscript('');
+        
+        // Add user message to conversation
+        setConversation(prev => [...prev, { role: 'user', message: userMessage }]);
+        
+        // Get conversation history for context
+        const conversationHistory = conversation.map(entry => 
+          `${entry.role === 'ai' ? 'Interviewer' : 'Candidate'}: ${entry.message}`
+        ).join('\n');
+        
+        // Build prompt for Mistral
+        const prompt = `You are an AI interviewer for a ${industry} position conducting a ${difficulty} interview.
+        
+Previous conversation:
+${conversationHistory}
+
+Candidate: ${userMessage}
+
+Provide a brief, professional response and ask the next relevant interview question. Keep your response under 100 words.`;
+
+        // Get AI response
+        const aiResponse = await askMistral(prompt);
+        
+        // Add AI response to conversation
+        setConversation(prev => [...prev, { role: 'ai', message: aiResponse }]);
+        
+        // Speak AI response
+        speakText(aiResponse);
+      }
+    }, 1500); // Wait for 1.5 seconds of silence before sending
     
     return () => clearTimeout(timer);
-  }, [isInterviewing, conversation.length]);
+  }, [transcript, isInterviewing, isSpeaking, conversation, industry, difficulty, jobDescription]);
 
   // Toggle mute function
   const toggleMute = () => {
     setIsMuted(!isMuted);
-    if (audioRef.current) {
-      audioRef.current.muted = !isMuted;
+    if (isMuted) {
+      window.speechSynthesis.cancel();
     }
   };
 
   return (
     <div className="relative w-full space-y-6">
-      {/* ElevenLabs API Key Input */}
+      {/* Ollama URL Input */}
       {!isInterviewing && (
         <div className="mb-4">
-          <label htmlFor="elevenlabs-api-key" className="block text-sm font-medium mb-2">
-            ElevenLabs API Key (Required for Text-to-Speech)
+          <label htmlFor="ollama-url" className="block text-sm font-medium mb-2">
+            Ollama API URL (Local Mistral Model)
           </label>
           <Input
-            id="elevenlabs-api-key"
-            type="password"
-            placeholder="Enter your ElevenLabs API key"
-            value={elevenlabsApiKey}
-            onChange={(e) => setElevenlabsApiKey(e.target.value)}
+            id="ollama-url"
+            type="text"
+            placeholder="http://localhost:11434"
+            value={ollamaUrl}
+            onChange={(e) => setOllamaUrl(e.target.value)}
             className="w-full"
           />
           <p className="mt-1 text-xs text-muted-foreground">
-            Get your API key from <a href="https://elevenlabs.io/" target="_blank" rel="noopener noreferrer" className="underline">ElevenLabs</a>
+            Make sure Ollama is running with Mistral model: <code>ollama run mistral</code>
           </p>
         </div>
       )}
@@ -257,6 +348,13 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
         )}
       </div>
       
+      {/* User's current speech */}
+      {isInterviewing && transcript && (
+        <div className="p-3 rounded-lg bg-muted/50 border border-primary/10">
+          <p className="text-sm italic">{transcript}</p>
+        </div>
+      )}
+      
       {/* Controls */}
       <div className="flex justify-center">
         {!isInterviewing ? (
@@ -264,7 +362,6 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
             onClick={handleStartInterview} 
             className="px-6 gap-2"
             size="lg"
-            disabled={!elevenlabsApiKey}
           >
             <Play className="w-4 h-4" />
             Start Interview
