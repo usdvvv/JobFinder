@@ -1,17 +1,13 @@
 
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Environment } from '@react-three/drei';
+import { OrbitControls, Environment } from '@react-three/drei';
 import { Group } from 'three';
 
 // 3D Model component
 const InterviewerModel = () => {
   const group = useRef<Group>(null);
   
-  // Using a default robot/character model from the public folder
-  // You can replace this with any other GLTF model
-  const { nodes, materials } = useGLTF('/robot.glb');
-
   // Animation for subtle movement
   useFrame((state) => {
     if (group.current) {
@@ -19,14 +15,16 @@ const InterviewerModel = () => {
     }
   });
 
-  // Fallback to basic head shape if model isn't available
+  // Using custom geometry for robot head
   return (
     <group ref={group} position={[0, -1, 0]} scale={1.5}>
-      {/* Fallback geometry if the model doesn't load */}
+      {/* Robot head (sphere) */}
       <mesh castShadow receiveShadow>
         <sphereGeometry args={[0.8, 32, 32]} />
         <meshStandardMaterial color="#4F46E5" metalness={0.7} roughness={0.2} />
       </mesh>
+      
+      {/* Robot eyes */}
       <mesh castShadow position={[0.35, 0.2, 0.7]} scale={0.15}>
         <sphereGeometry args={[1, 16, 16]} />
         <meshStandardMaterial color="white" />
@@ -34,6 +32,22 @@ const InterviewerModel = () => {
       <mesh castShadow position={[-0.35, 0.2, 0.7]} scale={0.15}>
         <sphereGeometry args={[1, 16, 16]} />
         <meshStandardMaterial color="white" />
+      </mesh>
+      
+      {/* Robot antenna */}
+      <mesh castShadow position={[0, 1.1, 0]} scale={[0.1, 0.3, 0.1]}>
+        <cylinderGeometry />
+        <meshStandardMaterial color="#FF0000" />
+      </mesh>
+      <mesh castShadow position={[0, 1.3, 0]} scale={0.08}>
+        <sphereGeometry />
+        <meshStandardMaterial color="#FF0000" emissive="#FF0000" emissiveIntensity={0.5} />
+      </mesh>
+      
+      {/* Robot mouth */}
+      <mesh castShadow position={[0, -0.2, 0.7]} scale={[0.4, 0.1, 0.1]}>
+        <boxGeometry />
+        <meshStandardMaterial color="#222222" />
       </mesh>
     </group>
   );
@@ -50,6 +64,7 @@ const InterviewerAvatar = ({ speaking = false, size = 300 }) => {
         overflow: 'hidden',
         margin: '0 auto',
         backgroundColor: '#111',
+        position: 'relative',
       }}
     >
       <Canvas camera={{ position: [0, 0, 4], fov: 50 }}>

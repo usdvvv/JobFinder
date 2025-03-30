@@ -1,3 +1,6 @@
 
-<!-- This is a placeholder file. In a real implementation, you would need to upload an actual GLB file here.
-     For this example, we're using fallback geometry in the InterviewerAvatar component. -->
+<!-- 
+This is a placeholder file.
+The application no longer attempts to load this GLB file.
+Instead, it uses custom Three.js geometry directly in the InterviewerAvatar component.
+-->
