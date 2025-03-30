@@ -2,84 +2,107 @@
 import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { useFrame, Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 
 interface Interviewer3DAvatarProps {
   speaking?: boolean;
   size?: number;
 }
 
-// This component represents our 3D model with animations
+// This component creates a 3D interviewer head model
 function InterviewerModel({ speaking }: { speaking?: boolean }) {
   const group = useRef<THREE.Group>(null);
-  const jawBone = useRef<THREE.Bone | null>(null);
+  const jaw = useRef<THREE.Mesh>(null);
   
-  // Load the 3D model (using a placeholder path - we'll need to update this)
-  const { scene, animations } = useGLTF('/robot.glb');
-  
-  useEffect(() => {
-    if (scene) {
-      // Set realistic materials
-      scene.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
-          // Create realistic skin material
-          if (child.name.includes('head') || child.name.includes('face')) {
-            child.material = new THREE.MeshStandardMaterial({
-              color: 0xf2d2bd, // Skin tone
-              roughness: 0.5,
-              metalness: 0.1,
-            });
-          }
-          
-          // Create suit material
-          if (child.name.includes('suit') || child.name.includes('jacket')) {
-            child.material = new THREE.MeshStandardMaterial({
-              color: 0x2c3e50, // Dark blue suit
-              roughness: 0.7,
-              metalness: 0.2,
-            });
-          }
-          
-          // Hair material
-          if (child.name.includes('hair')) {
-            child.material = new THREE.MeshStandardMaterial({
-              color: 0x3a3a3a, // Dark hair
-              roughness: 0.8,
-              metalness: 0.1,
-            });
-          }
-        }
-      });
-      
-      // Find jaw/mouth bones for animation
-      scene.traverse((node) => {
-        if (node.name.includes('jaw') || node.name.includes('mouth')) {
-          jawBone.current = node as THREE.Bone;
-        }
-      });
-    }
-  }, [scene]);
-  
-  // Animation frame
-  useFrame((state, delta) => {
+  useFrame((state) => {
     if (group.current) {
       // Subtle head movement to make it look alive
       group.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.05;
       
       // Mouth animation when speaking
-      if (speaking && jawBone.current) {
-        // Animate jaw movement when speaking
-        jawBone.current.rotation.x = Math.sin(state.clock.elapsedTime * 10) * 0.1;
-      } else if (jawBone.current) {
-        // Close mouth when not speaking
-        jawBone.current.rotation.x = 0;
+      if (speaking && jaw.current) {
+        jaw.current.rotation.x = Math.sin(state.clock.elapsedTime * 10) * 0.1;
+      } else if (jaw.current) {
+        jaw.current.rotation.x = 0;
       }
     }
   });
   
   return (
     <group ref={group}>
-      <primitive object={scene} scale={1.8} position={[0, -1.8, 0]} />
+      <group position={[0, 0, 0]} scale={1.8}>
+        {/* Head */}
+        <mesh position={[0, 0, 0]}>
+          <sphereGeometry args={[0.5, 32, 32]} />
+          <meshStandardMaterial color="#f2d2bd" roughness={0.5} metalness={0.1} />
+        </mesh>
+        
+        {/* Hair */}
+        <mesh position={[0, 0.2, 0]}>
+          <sphereGeometry args={[0.51, 32, 32, 0, Math.PI * 2, 0, Math.PI * 0.5]} />
+          <meshStandardMaterial color="#3a3a3a" roughness={0.8} metalness={0.1} />
+        </mesh>
+        
+        {/* Ears */}
+        <mesh position={[0.5, 0, 0]}>
+          <sphereGeometry args={[0.15, 16, 16]} />
+          <meshStandardMaterial color="#f2d2bd" roughness={0.5} metalness={0.1} />
+        </mesh>
+        <mesh position={[-0.5, 0, 0]}>
+          <sphereGeometry args={[0.15, 16, 16]} />
+          <meshStandardMaterial color="#f2d2bd" roughness={0.5} metalness={0.1} />
+        </mesh>
+        
+        {/* Eyes */}
+        <mesh position={[0.2, 0.1, 0.4]}>
+          <sphereGeometry args={[0.08, 16, 16]} />
+          <meshStandardMaterial color="white" roughness={0.1} metalness={0} />
+        </mesh>
+        <mesh position={[-0.2, 0.1, 0.4]}>
+          <sphereGeometry args={[0.08, 16, 16]} />
+          <meshStandardMaterial color="white" roughness={0.1} metalness={0} />
+        </mesh>
+        
+        {/* Pupils */}
+        <mesh position={[0.2, 0.1, 0.48]}>
+          <sphereGeometry args={[0.04, 16, 16]} />
+          <meshStandardMaterial color="#3a3a3a" roughness={0.1} metalness={0.1} />
+        </mesh>
+        <mesh position={[-0.2, 0.1, 0.48]}>
+          <sphereGeometry args={[0.04, 16, 16]} />
+          <meshStandardMaterial color="#3a3a3a" roughness={0.1} metalness={0.1} />
+        </mesh>
+        
+        {/* Nose */}
+        <mesh position={[0, -0.05, 0.5]}>
+          <coneGeometry args={[0.08, 0.2, 16]} />
+          <meshStandardMaterial color="#f2d2bd" roughness={0.7} metalness={0.1} />
+        </mesh>
+        
+        {/* Face */}
+        <mesh position={[0, -0.15, 0.3]} ref={jaw}>
+          <boxGeometry args={[0.4, 0.1, 0.3]} />
+          <meshStandardMaterial color="#f2d2bd" roughness={0.5} metalness={0.1} />
+        </mesh>
+        
+        {/* Neck */}
+        <mesh position={[0, -0.5, 0]}>
+          <cylinderGeometry args={[0.2, 0.2, 0.5, 32]} />
+          <meshStandardMaterial color="#f2d2bd" roughness={0.5} metalness={0.1} />
+        </mesh>
+        
+        {/* Suit */}
+        <mesh position={[0, -1.1, 0]}>
+          <boxGeometry args={[1, 1, 0.5]} />
+          <meshStandardMaterial color="#2c3e50" roughness={0.7} metalness={0.2} />
+        </mesh>
+        
+        {/* Tie */}
+        <mesh position={[0, -0.9, 0.3]}>
+          <boxGeometry args={[0.1, 0.4, 0.1]} />
+          <meshStandardMaterial color="#b71c1c" roughness={0.4} metalness={0.2} />
+        </mesh>
+      </group>
     </group>
   );
 }
