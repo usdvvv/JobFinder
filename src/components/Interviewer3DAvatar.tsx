@@ -1,4 +1,3 @@
-
 import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { useFrame, Canvas } from '@react-three/fiber';
@@ -37,10 +36,10 @@ function InterviewerModel({ speaking }: { speaking?: boolean }) {
       
       // Realistic mouth movement when speaking
       if (speaking && jaw.current) {
-        const mouthOpenAmount = Math.abs(Math.sin(state.clock.elapsedTime * 3)) * 0.05;
-        jaw.current.position.y = -0.1 - mouthOpenAmount;
+        const mouthOpenAmount = Math.abs(Math.sin(state.clock.elapsedTime * 3)) * 0.08; // Increased range of motion
+        jaw.current.position.y = -0.12 - mouthOpenAmount;
       } else if (jaw.current) {
-        jaw.current.position.y = -0.1 - Math.sin(state.clock.elapsedTime) * 0.002;
+        jaw.current.position.y = -0.12 - Math.sin(state.clock.elapsedTime) * 0.003;
       }
     }
   });
@@ -126,17 +125,17 @@ function InterviewerModel({ speaking }: { speaking?: boolean }) {
           <meshStandardMaterial color="#e1c0ac" />
         </mesh>
         
-        {/* Upper lip */}
-        <mesh position={[0, -0.14, 0.42]}>
-          <boxGeometry args={[0.2, 0.03, 0.1]} />
-          <meshStandardMaterial color="#cc9999" />
+        {/* Upper lip - made wider and more visible */}
+        <mesh position={[0, -0.17, 0.42]}>
+          <boxGeometry args={[0.25, 0.04, 0.12]} />
+          <meshStandardMaterial color="#d88c8c" />
         </mesh>
         
-        {/* Lower jaw and lip */}
-        <group ref={jaw} position={[0, -0.1, 0]}>
+        {/* Lower jaw and lip - made more prominent */}
+        <group ref={jaw} position={[0, -0.12, 0]}>
           <mesh position={[0, -0.08, 0.42]}>
-            <boxGeometry args={[0.2, 0.05, 0.1]} />
-            <meshStandardMaterial color="#cc9999" />
+            <boxGeometry args={[0.25, 0.06, 0.12]} />
+            <meshStandardMaterial color="#d88c8c" />
           </mesh>
           
           {/* Chin */}
@@ -145,6 +144,12 @@ function InterviewerModel({ speaking }: { speaking?: boolean }) {
             <meshStandardMaterial color="#e1c0ac" />
           </mesh>
         </group>
+        
+        {/* Mouth interior - new, adding depth */}
+        <mesh position={[0, -0.17, 0.44]}>
+          <boxGeometry args={[0.2, 0.08, 0.05]} />
+          <meshStandardMaterial color="#701a1a" />
+        </mesh>
         
         {/* Neck */}
         <mesh position={[0, -0.5, 0]} rotation={[0.1, 0, 0]}>
@@ -191,6 +196,8 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
           color="#fff5eb"
         />
         <pointLight position={[-3, 0, 2]} intensity={0.4} color="#d0f0ff" />
+        {/* Additional light to highlight the mouth area */}
+        <pointLight position={[0, -0.2, 2]} intensity={0.3} color="#ffffff" />
         
         <InterviewerModel speaking={speaking} />
         <OrbitControls 
