@@ -3,11 +3,13 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Upload, FileCheck, Sparkles, ArrowRight, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { FileText, Upload, FileCheck, Sparkles, ArrowRight, CheckCircle2, ArrowLeft, X } from 'lucide-react';
 import NavBar from '@/components/NavBar';
 import AnimatedSection from '@/components/AnimatedSection';
 import { useToast } from "@/components/ui/use-toast";
 import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
+import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 
 const ResumeMaker = () => {
   const [activeTab, setActiveTab] = useState("generator");
@@ -67,6 +69,33 @@ const ResumeGenerator = () => {
   const [activeStep, setActiveStep] = useState(0);
   const steps = ["Personal Information", "Work Experience", "Education", "Skills & Certifications", "Preview"];
   
+  // State for multiple job experiences
+  const [workExperiences, setWorkExperiences] = useState([{ 
+    id: 1, 
+    jobTitle: '', 
+    company: '', 
+    startDate: '', 
+    endDate: '', 
+    description: '' 
+  }]);
+  
+  // State for multiple education entries
+  const [educations, setEducations] = useState([{ 
+    id: 1, 
+    degree: '', 
+    institution: '', 
+    startYear: '', 
+    endYear: '', 
+    additionalInfo: '' 
+  }]);
+  
+  // State for multiple certifications
+  const [certifications, setCertifications] = useState([{ 
+    id: 1, 
+    name: '', 
+    year: '' 
+  }]);
+
   const handleStartBuilding = () => {
     setBuildingStarted(true);
     setActiveStep(0);
@@ -94,6 +123,84 @@ const ResumeGenerator = () => {
   const handleBack = () => {
     if (activeStep > 0) {
       setActiveStep(activeStep - 1);
+    }
+  };
+
+  // Add new work experience
+  const addWorkExperience = () => {
+    setWorkExperiences([...workExperiences, { 
+      id: workExperiences.length + 1, 
+      jobTitle: '', 
+      company: '', 
+      startDate: '', 
+      endDate: '', 
+      description: '' 
+    }]);
+    toast({
+      title: "Added new job experience",
+      description: "You can now fill in the details for this job",
+    });
+  };
+
+  // Remove work experience
+  const removeWorkExperience = (id: number) => {
+    if (workExperiences.length > 1) {
+      setWorkExperiences(workExperiences.filter(experience => experience.id !== id));
+      toast({
+        title: "Removed job experience",
+        description: "The job experience has been removed",
+      });
+    }
+  };
+
+  // Add new education
+  const addEducation = () => {
+    setEducations([...educations, { 
+      id: educations.length + 1, 
+      degree: '', 
+      institution: '', 
+      startYear: '', 
+      endYear: '', 
+      additionalInfo: '' 
+    }]);
+    toast({
+      title: "Added new education",
+      description: "You can now fill in the details for this education",
+    });
+  };
+
+  // Remove education
+  const removeEducation = (id: number) => {
+    if (educations.length > 1) {
+      setEducations(educations.filter(education => education.id !== id));
+      toast({
+        title: "Removed education",
+        description: "The education entry has been removed",
+      });
+    }
+  };
+
+  // Add new certification
+  const addCertification = () => {
+    setCertifications([...certifications, { 
+      id: certifications.length + 1, 
+      name: '', 
+      year: '' 
+    }]);
+    toast({
+      title: "Added new certification",
+      description: "You can now fill in the details for this certification",
+    });
+  };
+
+  // Remove certification
+  const removeCertification = (id: number) => {
+    if (certifications.length > 1) {
+      setCertifications(certifications.filter(certification => certification.id !== id));
+      toast({
+        title: "Removed certification",
+        description: "The certification has been removed",
+      });
     }
   };
   
@@ -145,41 +252,175 @@ const ResumeGenerator = () => {
 
                 {/* Work Experience Section */}
                 {activeStep === 1 && (
-                  <div className="p-6 border border-primary/20 rounded-md bg-primary/5">
+                  <div className="p-6 border border-primary/20 rounded-md bg-primary/5 max-h-[500px] overflow-y-auto">
                     <h3 className="font-medium mb-3">Work Experience</h3>
-                    <div className="grid gap-4">
-                      <input type="text" placeholder="Job Title" className="p-2 rounded-md border border-border bg-background" />
-                      <input type="text" placeholder="Company" className="p-2 rounded-md border border-border bg-background" />
-                      <div className="grid grid-cols-2 gap-4">
-                        <input type="text" placeholder="Start Date" className="p-2 rounded-md border border-border bg-background" />
-                        <input type="text" placeholder="End Date" className="p-2 rounded-md border border-border bg-background" />
+                    {workExperiences.map((experience, index) => (
+                      <div key={experience.id} className="mb-6 relative">
+                        {index > 0 && (
+                          <div className="absolute -top-1 -right-1">
+                            <Button 
+                              variant="outline" 
+                              size="icon" 
+                              className="h-6 w-6 rounded-full bg-destructive hover:bg-destructive/90 text-white border-none"
+                              onClick={() => removeWorkExperience(experience.id)}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )}
+                        <div className="grid gap-4 p-4 border border-border rounded-md bg-background/50 mt-2">
+                          <input 
+                            type="text" 
+                            placeholder="Job Title" 
+                            className="p-2 rounded-md border border-border bg-background" 
+                            value={experience.jobTitle}
+                            onChange={(e) => {
+                              const updated = [...workExperiences];
+                              updated[index].jobTitle = e.target.value;
+                              setWorkExperiences(updated);
+                            }}
+                          />
+                          <input 
+                            type="text" 
+                            placeholder="Company" 
+                            className="p-2 rounded-md border border-border bg-background" 
+                            value={experience.company}
+                            onChange={(e) => {
+                              const updated = [...workExperiences];
+                              updated[index].company = e.target.value;
+                              setWorkExperiences(updated);
+                            }}
+                          />
+                          <div className="grid grid-cols-2 gap-4">
+                            <input 
+                              type="text" 
+                              placeholder="Start Date" 
+                              className="p-2 rounded-md border border-border bg-background" 
+                              value={experience.startDate}
+                              onChange={(e) => {
+                                const updated = [...workExperiences];
+                                updated[index].startDate = e.target.value;
+                                setWorkExperiences(updated);
+                              }}
+                            />
+                            <input 
+                              type="text" 
+                              placeholder="End Date" 
+                              className="p-2 rounded-md border border-border bg-background" 
+                              value={experience.endDate}
+                              onChange={(e) => {
+                                const updated = [...workExperiences];
+                                updated[index].endDate = e.target.value;
+                                setWorkExperiences(updated);
+                              }}
+                            />
+                          </div>
+                          <Textarea 
+                            placeholder="Job Description and Achievements" 
+                            className="p-2 rounded-md border border-border bg-background min-h-[100px]" 
+                            value={experience.description}
+                            onChange={(e) => {
+                              const updated = [...workExperiences];
+                              updated[index].description = e.target.value;
+                              setWorkExperiences(updated);
+                            }}
+                          />
+                        </div>
                       </div>
-                      <Textarea placeholder="Job Description and Achievements" className="p-2 rounded-md border border-border bg-background min-h-[100px]" />
-                      <Button variant="outline" size="sm" className="self-start">+ Add Another Job</Button>
-                    </div>
+                    ))}
+                    <Button variant="outline" size="sm" className="mt-2" onClick={addWorkExperience}>
+                      + Add Another Job
+                    </Button>
                   </div>
                 )}
 
                 {/* Education Section */}
                 {activeStep === 2 && (
-                  <div className="p-6 border border-primary/20 rounded-md bg-primary/5">
+                  <div className="p-6 border border-primary/20 rounded-md bg-primary/5 max-h-[500px] overflow-y-auto">
                     <h3 className="font-medium mb-3">Education</h3>
-                    <div className="grid gap-4">
-                      <input type="text" placeholder="Degree / Certificate" className="p-2 rounded-md border border-border bg-background" />
-                      <input type="text" placeholder="Institution" className="p-2 rounded-md border border-border bg-background" />
-                      <div className="grid grid-cols-2 gap-4">
-                        <input type="text" placeholder="Start Year" className="p-2 rounded-md border border-border bg-background" />
-                        <input type="text" placeholder="End Year" className="p-2 rounded-md border border-border bg-background" />
+                    {educations.map((education, index) => (
+                      <div key={education.id} className="mb-6 relative">
+                        {index > 0 && (
+                          <div className="absolute -top-1 -right-1">
+                            <Button 
+                              variant="outline" 
+                              size="icon" 
+                              className="h-6 w-6 rounded-full bg-destructive hover:bg-destructive/90 text-white border-none"
+                              onClick={() => removeEducation(education.id)}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )}
+                        <div className="grid gap-4 p-4 border border-border rounded-md bg-background/50 mt-2">
+                          <input 
+                            type="text" 
+                            placeholder="Degree / Certificate" 
+                            className="p-2 rounded-md border border-border bg-background" 
+                            value={education.degree}
+                            onChange={(e) => {
+                              const updated = [...educations];
+                              updated[index].degree = e.target.value;
+                              setEducations(updated);
+                            }}
+                          />
+                          <input 
+                            type="text" 
+                            placeholder="Institution" 
+                            className="p-2 rounded-md border border-border bg-background" 
+                            value={education.institution}
+                            onChange={(e) => {
+                              const updated = [...educations];
+                              updated[index].institution = e.target.value;
+                              setEducations(updated);
+                            }}
+                          />
+                          <div className="grid grid-cols-2 gap-4">
+                            <input 
+                              type="text" 
+                              placeholder="Start Year" 
+                              className="p-2 rounded-md border border-border bg-background" 
+                              value={education.startYear}
+                              onChange={(e) => {
+                                const updated = [...educations];
+                                updated[index].startYear = e.target.value;
+                                setEducations(updated);
+                              }}
+                            />
+                            <input 
+                              type="text" 
+                              placeholder="End Year" 
+                              className="p-2 rounded-md border border-border bg-background" 
+                              value={education.endYear}
+                              onChange={(e) => {
+                                const updated = [...educations];
+                                updated[index].endYear = e.target.value;
+                                setEducations(updated);
+                              }}
+                            />
+                          </div>
+                          <Textarea 
+                            placeholder="Additional Information" 
+                            className="p-2 rounded-md border border-border bg-background min-h-[100px]" 
+                            value={education.additionalInfo}
+                            onChange={(e) => {
+                              const updated = [...educations];
+                              updated[index].additionalInfo = e.target.value;
+                              setEducations(updated);
+                            }}
+                          />
+                        </div>
                       </div>
-                      <Textarea placeholder="Additional Information" className="p-2 rounded-md border border-border bg-background min-h-[100px]" />
-                      <Button variant="outline" size="sm" className="self-start">+ Add Another Education</Button>
-                    </div>
+                    ))}
+                    <Button variant="outline" size="sm" className="mt-2" onClick={addEducation}>
+                      + Add Another Education
+                    </Button>
                   </div>
                 )}
 
                 {/* Skills Section */}
                 {activeStep === 3 && (
-                  <div className="p-6 border border-primary/20 rounded-md bg-primary/5">
+                  <div className="p-6 border border-primary/20 rounded-md bg-primary/5 max-h-[500px] overflow-y-auto">
                     <h3 className="font-medium mb-3">Skills & Certifications</h3>
                     <div className="grid gap-4">
                       <div>
@@ -189,11 +430,49 @@ const ResumeGenerator = () => {
                       <div>
                         <label className="text-sm text-muted-foreground mb-2 block">Certifications</label>
                         <div className="space-y-3">
-                          <div className="flex gap-3">
-                            <input type="text" placeholder="Certification Name" className="p-2 rounded-md border border-border bg-background flex-1" />
-                            <input type="text" placeholder="Year" className="p-2 rounded-md border border-border bg-background w-24" />
-                          </div>
-                          <Button variant="outline" size="sm" className="self-start">+ Add Certification</Button>
+                          {certifications.map((cert, index) => (
+                            <div key={cert.id} className="relative">
+                              {index > 0 && (
+                                <div className="absolute -top-1 -right-1">
+                                  <Button 
+                                    variant="outline" 
+                                    size="icon" 
+                                    className="h-6 w-6 rounded-full bg-destructive hover:bg-destructive/90 text-white border-none"
+                                    onClick={() => removeCertification(cert.id)}
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              )}
+                              <div className="flex gap-3 p-3 border border-border rounded-md bg-background/50">
+                                <input 
+                                  type="text" 
+                                  placeholder="Certification Name" 
+                                  className="p-2 rounded-md border border-border bg-background flex-1" 
+                                  value={cert.name}
+                                  onChange={(e) => {
+                                    const updated = [...certifications];
+                                    updated[index].name = e.target.value;
+                                    setCertifications(updated);
+                                  }}
+                                />
+                                <input 
+                                  type="text" 
+                                  placeholder="Year" 
+                                  className="p-2 rounded-md border border-border bg-background w-24" 
+                                  value={cert.year}
+                                  onChange={(e) => {
+                                    const updated = [...certifications];
+                                    updated[index].year = e.target.value;
+                                    setCertifications(updated);
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                          <Button variant="outline" size="sm" className="mt-2" onClick={addCertification}>
+                            + Add Certification
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -398,4 +677,3 @@ const CoverLetterMaker = () => {
 };
 
 export default ResumeMaker;
-
