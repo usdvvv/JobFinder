@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Upload, FileCheck, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { FileText, Upload, FileCheck, Sparkles, ArrowRight, CheckCircle2, ArrowLeft } from 'lucide-react';
 import NavBar from '@/components/NavBar';
 import AnimatedSection from '@/components/AnimatedSection';
 import { useToast } from "@/components/ui/use-toast";
+import { Textarea } from "@/components/ui/textarea";
 
 const ResumeMaker = () => {
   const [activeTab, setActiveTab] = useState("generator");
@@ -63,13 +64,37 @@ const ResumeMaker = () => {
 const ResumeGenerator = () => {
   const { toast } = useToast();
   const [buildingStarted, setBuildingStarted] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
+  const steps = ["Personal Information", "Work Experience", "Education", "Skills & Certifications", "Preview"];
   
   const handleStartBuilding = () => {
     setBuildingStarted(true);
+    setActiveStep(0);
     toast({
       title: "Resume building started",
       description: "You can now fill in your resume details",
     });
+  };
+
+  const handleContinue = () => {
+    if (activeStep < steps.length - 1) {
+      setActiveStep(activeStep + 1);
+      toast({
+        title: `${steps[activeStep]} completed`,
+        description: `Now completing ${steps[activeStep + 1]}`,
+      });
+    } else {
+      toast({
+        title: "Resume completed!",
+        description: "Your resume is ready to download",
+      });
+    }
+  };
+
+  const handleBack = () => {
+    if (activeStep > 0) {
+      setActiveStep(activeStep - 1);
+    }
   };
   
   return (
@@ -85,57 +110,135 @@ const ResumeGenerator = () => {
           <CardContent className="space-y-4">
             {!buildingStarted ? (
               <div className="space-y-4">
-                <div className="p-4 border border-border rounded-md bg-muted/50">
-                  <h3 className="font-medium mb-2 flex items-center">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
-                    Personal Information
-                  </h3>
-                  <p className="text-sm text-muted-foreground">Add your contact details and basic information</p>
-                </div>
-                
-                <div className="p-4 border border-border rounded-md bg-muted/50">
-                  <h3 className="font-medium mb-2 flex items-center">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
-                    Work Experience
-                  </h3>
-                  <p className="text-sm text-muted-foreground">List your work history and achievements</p>
-                </div>
-                
-                <div className="p-4 border border-border rounded-md bg-muted/50">
-                  <h3 className="font-medium mb-2 flex items-center">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
-                    Education
-                  </h3>
-                  <p className="text-sm text-muted-foreground">Add your educational background</p>
-                </div>
-                
-                <div className="p-4 border border-border rounded-md bg-muted/50">
-                  <h3 className="font-medium mb-2 flex items-center">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
-                    Skills & Certifications
-                  </h3>
-                  <p className="text-sm text-muted-foreground">Highlight your key skills and certifications</p>
-                </div>
+                {steps.slice(0, -1).map((step, index) => (
+                  <div key={index} className="p-4 border border-border rounded-md bg-muted/50">
+                    <h3 className="font-medium mb-2 flex items-center">
+                      <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
+                      {step}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {index === 0 && "Add your contact details and basic information"}
+                      {index === 1 && "List your work history and achievements"}
+                      {index === 2 && "Add your educational background"}
+                      {index === 3 && "Highlight your key skills and certifications"}
+                    </p>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="space-y-6">
-                <div className="p-6 border border-primary/20 rounded-md bg-primary/5">
-                  <h3 className="font-medium mb-3">Personal Information</h3>
-                  <div className="grid gap-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <input type="text" placeholder="First Name" className="p-2 rounded-md border border-border bg-background" />
-                      <input type="text" placeholder="Last Name" className="p-2 rounded-md border border-border bg-background" />
+                {/* Personal Information Section */}
+                {activeStep === 0 && (
+                  <div className="p-6 border border-primary/20 rounded-md bg-primary/5">
+                    <h3 className="font-medium mb-3">Personal Information</h3>
+                    <div className="grid gap-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <input type="text" placeholder="First Name" className="p-2 rounded-md border border-border bg-background" />
+                        <input type="text" placeholder="Last Name" className="p-2 rounded-md border border-border bg-background" />
+                      </div>
+                      <input type="email" placeholder="Email Address" className="p-2 rounded-md border border-border bg-background" />
+                      <input type="tel" placeholder="Phone Number" className="p-2 rounded-md border border-border bg-background" />
+                      <Textarea placeholder="Professional Summary" className="p-2 rounded-md border border-border bg-background min-h-[100px]" />
                     </div>
-                    <input type="email" placeholder="Email Address" className="p-2 rounded-md border border-border bg-background" />
-                    <input type="tel" placeholder="Phone Number" className="p-2 rounded-md border border-border bg-background" />
-                    <textarea placeholder="Professional Summary" className="p-2 rounded-md border border-border bg-background min-h-[100px]" />
                   </div>
+                )}
+
+                {/* Work Experience Section */}
+                {activeStep === 1 && (
+                  <div className="p-6 border border-primary/20 rounded-md bg-primary/5">
+                    <h3 className="font-medium mb-3">Work Experience</h3>
+                    <div className="grid gap-4">
+                      <input type="text" placeholder="Job Title" className="p-2 rounded-md border border-border bg-background" />
+                      <input type="text" placeholder="Company" className="p-2 rounded-md border border-border bg-background" />
+                      <div className="grid grid-cols-2 gap-4">
+                        <input type="text" placeholder="Start Date" className="p-2 rounded-md border border-border bg-background" />
+                        <input type="text" placeholder="End Date" className="p-2 rounded-md border border-border bg-background" />
+                      </div>
+                      <Textarea placeholder="Job Description and Achievements" className="p-2 rounded-md border border-border bg-background min-h-[100px]" />
+                      <Button variant="outline" size="sm" className="self-start">+ Add Another Job</Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Education Section */}
+                {activeStep === 2 && (
+                  <div className="p-6 border border-primary/20 rounded-md bg-primary/5">
+                    <h3 className="font-medium mb-3">Education</h3>
+                    <div className="grid gap-4">
+                      <input type="text" placeholder="Degree / Certificate" className="p-2 rounded-md border border-border bg-background" />
+                      <input type="text" placeholder="Institution" className="p-2 rounded-md border border-border bg-background" />
+                      <div className="grid grid-cols-2 gap-4">
+                        <input type="text" placeholder="Start Year" className="p-2 rounded-md border border-border bg-background" />
+                        <input type="text" placeholder="End Year" className="p-2 rounded-md border border-border bg-background" />
+                      </div>
+                      <Textarea placeholder="Additional Information" className="p-2 rounded-md border border-border bg-background min-h-[100px]" />
+                      <Button variant="outline" size="sm" className="self-start">+ Add Another Education</Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Skills Section */}
+                {activeStep === 3 && (
+                  <div className="p-6 border border-primary/20 rounded-md bg-primary/5">
+                    <h3 className="font-medium mb-3">Skills & Certifications</h3>
+                    <div className="grid gap-4">
+                      <div>
+                        <label className="text-sm text-muted-foreground mb-2 block">Skills (separated by commas)</label>
+                        <Textarea placeholder="e.g., Project Management, JavaScript, Communication" className="p-2 rounded-md border border-border bg-background min-h-[80px]" />
+                      </div>
+                      <div>
+                        <label className="text-sm text-muted-foreground mb-2 block">Certifications</label>
+                        <div className="space-y-3">
+                          <div className="flex gap-3">
+                            <input type="text" placeholder="Certification Name" className="p-2 rounded-md border border-border bg-background flex-1" />
+                            <input type="text" placeholder="Year" className="p-2 rounded-md border border-border bg-background w-24" />
+                          </div>
+                          <Button variant="outline" size="sm" className="self-start">+ Add Certification</Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Preview Section */}
+                {activeStep === 4 && (
+                  <div className="p-6 border border-primary/20 rounded-md bg-primary/5">
+                    <h3 className="font-medium mb-3">Resume Preview</h3>
+                    <div className="p-4 border border-dashed border-border rounded-md bg-muted/30 flex items-center justify-center min-h-[300px]">
+                      <div className="text-center">
+                        <FileText className="h-12 w-12 text-primary mx-auto mb-2" />
+                        <h3 className="font-medium">Your Resume is Ready!</h3>
+                        <p className="text-sm text-muted-foreground mt-1 mb-4">Click download below to get your completed resume</p>
+                        <Button>Download Resume</Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex justify-between">
+                  {activeStep > 0 && (
+                    <Button variant="outline" onClick={handleBack}>
+                      <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                    </Button>
+                  )}
+                  {activeStep < steps.length - 1 ? (
+                    <Button 
+                      onClick={handleContinue} 
+                      className={activeStep > 0 ? "ml-auto" : "w-full"}
+                    >
+                      Continue to {steps[activeStep + 1]}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="default" 
+                      onClick={handleContinue}
+                      className="ml-auto"
+                    >
+                      Finish
+                    </Button>
+                  )}
                 </div>
-                
-                <Button variant="outline" className="w-full">
-                  Continue to Work Experience
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
               </div>
             )}
           </CardContent>
@@ -182,7 +285,7 @@ const ResumeGenerator = () => {
               </div>
               
               <div className="border rounded-md overflow-hidden hover:border-primary transition-colors cursor-pointer aspect-[0.7]">
-                <div className="bg-gradient-to-br from-gray-500 to-gray-700 w-full h-full flex items-center justify-center p-4">
+                <div className="bg-gradient-to-br from-gray-500/90 to-gray-700/90 w-full h-full flex items-center justify-center p-4">
                   <p className="text-center text-sm font-medium text-white">Executive Template</p>
                 </div>
               </div>
@@ -295,3 +398,4 @@ const CoverLetterMaker = () => {
 };
 
 export default ResumeMaker;
+
