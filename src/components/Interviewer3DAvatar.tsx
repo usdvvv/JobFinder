@@ -9,12 +9,12 @@ interface Interviewer3DAvatarProps {
   size?: number;
 }
 
-// More realistic 3D interviewer head model
+// More stylized yet realistic 3D interviewer model
 function InterviewerModel({ speaking }: { speaking?: boolean }) {
   const group = useRef<THREE.Group>(null);
-  const jaw = useRef<THREE.Group>(null);
   const eyeLeft = useRef<THREE.Mesh>(null);
   const eyeRight = useRef<THREE.Mesh>(null);
+  const mouth = useRef<THREE.Mesh>(null);
   
   // Subtle animations for realistic movement
   useFrame((state) => {
@@ -35,12 +35,20 @@ function InterviewerModel({ speaking }: { speaking?: boolean }) {
         }
       }
       
-      // More pronounced mouth movement when speaking
-      if (speaking && jaw.current) {
-        const mouthOpenAmount = Math.abs(Math.sin(state.clock.elapsedTime * 4)) * 0.12; // Larger movement
-        jaw.current.position.y = -0.15 - mouthOpenAmount;
-      } else if (jaw.current) {
-        jaw.current.position.y = -0.15 - Math.sin(state.clock.elapsedTime) * 0.004;
+      // Stylized mouth animation when speaking
+      if (speaking && mouth.current) {
+        // Using a more pronounced, cartoon-like mouth animation
+        const mouthScaleY = 0.3 + Math.abs(Math.sin(state.clock.elapsedTime * 5)) * 0.7;
+        mouth.current.scale.y = mouthScaleY;
+        // Change mouth color slightly to add depth when open
+        (mouth.current.material as THREE.MeshStandardMaterial).color.setRGB(
+          0.8 - mouthScaleY * 0.2,
+          0.2 - mouthScaleY * 0.1,
+          0.2 - mouthScaleY * 0.1
+        );
+      } else if (mouth.current) {
+        mouth.current.scale.y = 0.3;
+        (mouth.current.material as THREE.MeshStandardMaterial).color.setRGB(0.8, 0.2, 0.2);
       }
     }
   });
@@ -126,51 +134,38 @@ function InterviewerModel({ speaking }: { speaking?: boolean }) {
           <meshStandardMaterial color="#e1c0ac" />
         </mesh>
         
-        {/* Mouth area - completely redesigned for more realism */}
-        {/* Mouth outline - adds definition */}
-        <mesh position={[0, -0.2, 0.43]}>
-          <ringGeometry args={[0.12, 0.15, 32, 1, 0, Math.PI]} />
-          <meshStandardMaterial color="#be8276" side={THREE.DoubleSide} />
+        {/* Stylized 2D-looking mouth that stands out */}
+        <mesh 
+          ref={mouth} 
+          position={[0, -0.2, 0.47]} 
+          rotation={[Math.PI * 0.1, 0, 0]}
+          scale={[1, 0.3, 0.1]} // Initially thin
+        >
+          <planeGeometry args={[0.4, 0.2]} />
+          <meshStandardMaterial 
+            color="#cc3333" 
+            side={THREE.DoubleSide}
+            roughness={0.3}
+            metalness={0.1}
+          />
         </mesh>
         
-        {/* Upper lip - more natural shape */}
-        <mesh position={[0, -0.17, 0.45]}>
-          <boxGeometry args={[0.28, 0.04, 0.07]} />
-          <meshStandardMaterial color="#c9817c" />
-        </mesh>
-        
-        {/* Lower jaw and lip - more realistic movement */}
-        <group ref={jaw} position={[0, -0.15, 0]}>
-          {/* Lower lip with better shape */}
-          <mesh position={[0, -0.1, 0.44]}>
-            <boxGeometry args={[0.28, 0.06, 0.07]} />
-            <meshStandardMaterial color="#c9817c" />
+        {/* Stylized teeth - visible when speaking */}
+        {speaking && (
+          <mesh 
+            position={[0, -0.18, 0.48]} 
+            rotation={[Math.PI * 0.1, 0, 0]}
+            scale={[0.38, 0.06, 0.01]}
+          >
+            <planeGeometry args={[1, 1]} />
+            <meshStandardMaterial 
+              color="white"
+              emissive="white"
+              emissiveIntensity={0.2}
+              side={THREE.DoubleSide}
+            />
           </mesh>
-          
-          {/* Chin */}
-          <mesh position={[0, -0.15, 0.3]}>
-            <sphereGeometry args={[0.2, 16, 16, 0, Math.PI * 2, 0, Math.PI * 0.5]} />
-            <meshStandardMaterial color="#e1c0ac" />
-          </mesh>
-        </group>
-        
-        {/* Mouth interior - deeper and more visible */}
-        <mesh position={[0, -0.2, 0.47]}>
-          <boxGeometry args={[0.25, 0.10, 0.1]} />
-          <meshStandardMaterial color="#5e0505" />
-        </mesh>
-        
-        {/* Teeth - adding teeth for realism */}
-        <mesh position={[0, -0.17, 0.47]}>
-          <boxGeometry args={[0.24, 0.03, 0.03]} />
-          <meshStandardMaterial color="white" />
-        </mesh>
-        
-        {/* Lower teeth */}
-        <mesh position={[0, -0.24, 0.47]} visible={speaking}>
-          <boxGeometry args={[0.24, 0.03, 0.03]} />
-          <meshStandardMaterial color="white" />
-        </mesh>
+        )}
         
         {/* Neck */}
         <mesh position={[0, -0.5, 0]} rotation={[0.1, 0, 0]}>
@@ -207,7 +202,7 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
         camera={{ position: [0, 0, 4.8], fov: 45 }}
         style={{ background: 'transparent' }}
       >
-        {/* Improved lighting setup for better facial features */}
+        {/* Enhanced lighting setup for better facial features */}
         <ambientLight intensity={0.5} />
         <spotLight 
           position={[3, 2, 5]} 
@@ -218,7 +213,7 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
         />
         <pointLight position={[-3, 0, 2]} intensity={0.4} color="#d0f0ff" />
         {/* Enhanced light to highlight mouth movements */}
-        <pointLight position={[0, -0.2, 2]} intensity={0.5} color="#ffffff" />
+        <pointLight position={[0, -0.2, 2]} intensity={0.8} color="#ffffff" />
         {/* Soft fill light from below */}
         <pointLight position={[0, -1, 1]} intensity={0.2} color="#ffe0d0" />
         
@@ -241,6 +236,35 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
           </div>
         </div>
       )}
+      
+      {/* New: Animated sound waves overlay when speaking */}
+      {speaking && (
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+          <div className="flex space-x-1">
+            {[...Array(4)].map((_, i) => (
+              <div 
+                key={i}
+                className="w-1 bg-primary/30 rounded-full"
+                style={{
+                  height: `${20 + i * 10}px`,
+                  animation: `speechWave ${0.5 + i * 0.1}s ease-in-out infinite alternate`
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+      
+      <style jsx>{`
+        @keyframes speechWave {
+          0% {
+            transform: scaleY(0.3);
+          }
+          100% {
+            transform: scaleY(1);
+          }
+        }
+      `}</style>
     </div>
   );
 };
