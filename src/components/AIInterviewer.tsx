@@ -6,6 +6,41 @@ import { useToast } from "@/components/ui/use-toast";
 import InterviewerAvatar from './InterviewerAvatar';
 import { Input } from "@/components/ui/input";
 
+// Add proper TypeScript declarations for Web Speech API
+interface SpeechRecognitionEvent extends Event {
+  resultIndex: number;
+  results: {
+    [index: number]: {
+      [index: number]: {
+        transcript: string;
+        confidence: number;
+      };
+    };
+    length: number;
+  };
+}
+
+// Define the SpeechRecognition interface
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  abort(): void;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onend: ((event: Event) => void) | null;
+  onerror: ((event: Event) => void) | null;
+}
+
+// Extend Window interface to include SpeechRecognition
+declare global {
+  interface Window {
+    SpeechRecognition?: new () => SpeechRecognition;
+    webkitSpeechRecognition?: new () => SpeechRecognition;
+  }
+}
+
 interface AIInterviewerProps {
   jobDescription?: string;
   industry?: string;
@@ -22,7 +57,7 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
   const { toast } = useToast();
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   // Setup audio element
   useEffect(() => {
@@ -37,23 +72,23 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
 
   // Web Speech API for speech recognition
   useEffect(() => {
-    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
+    if (window.SpeechRecognition || window.webkitSpeechRecognition) {
+      const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognitionAPI();
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
       
-      recognitionRef.current.onresult = (event: any) => {
-        let transcript = '';
+      recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
+        let transcriptText = '';
         for (let i = event.resultIndex; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
+          transcriptText += event.results[i][0].transcript;
         }
-        setTranscript(transcript);
+        setTranscript(transcriptText);
       };
       
       recognitionRef.current.onend = () => {
         if (isInterviewing) {
-          recognitionRef.current.start();
+          recognitionRef.current?.start();
         }
       };
     } else {
