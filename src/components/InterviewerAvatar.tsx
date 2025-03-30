@@ -1,12 +1,27 @@
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
 import { Group } from 'three';
 
-// Simplified 3D Model component for a professional appearance
-const InterviewerModel = () => {
+// Enhanced 3D Model component with better mouth animation
+const InterviewerModel = ({ speaking = false }) => {
   const group = useRef<Group>(null);
+  const [mouthOpen, setMouthOpen] = useState(0);
+  
+  // Add mouth animation when speaking
+  useEffect(() => {
+    if (speaking) {
+      // Simulate mouth movement when speaking
+      const interval = setInterval(() => {
+        setMouthOpen(Math.random() * 0.5);
+      }, 150);
+      
+      return () => clearInterval(interval);
+    } else {
+      setMouthOpen(0);
+    }
+  }, [speaking]);
   
   // Subtle animation for natural movement
   useFrame((state) => {
@@ -61,11 +76,19 @@ const InterviewerModel = () => {
         <meshStandardMaterial color="#e0ac85" />
       </mesh>
       
-      {/* Mouth - simple line */}
-      <mesh position={[0, 0.3, 0.6]} scale={[0.3, 0.03, 0.1]}>
+      {/* Enhanced mouth with animation */}
+      <mesh position={[0, 0.3, 0.6]} scale={[0.3, 0.03 + mouthOpen, 0.1]}>
         <boxGeometry />
         <meshStandardMaterial color="#333" />
       </mesh>
+      
+      {/* Mouth interior - visible when mouth opens */}
+      {mouthOpen > 0 && (
+        <mesh position={[0, 0.3 - mouthOpen/4, 0.59]} scale={[0.28, mouthOpen, 0.09]}>
+          <boxGeometry />
+          <meshStandardMaterial color="#8B0000" />
+        </mesh>
+      )}
       
       {/* Simple hair */}
       <mesh position={[0, 0.9, 0]} scale={[0.82, 0.4, 0.77]}>
@@ -107,7 +130,7 @@ const InterviewerAvatar = ({ speaking = false, size = 300 }) => {
         <ambientLight intensity={0.8} /> {/* Increased ambient light */}
         <spotLight position={[5, 5, 5]} angle={0.15} penumbra={1} intensity={0.8} />
         <spotLight position={[-5, 5, 5]} angle={0.15} penumbra={1} intensity={0.4} />
-        <InterviewerModel />
+        <InterviewerModel speaking={speaking} />
         <Environment preset="city" />
         <OrbitControls
           enableZoom={false}

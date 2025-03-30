@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Play, MicIcon, StopCircle, Volume2, VolumeX } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import InterviewerAvatar from './InterviewerAvatar';
-import { Input } from "@/components/ui/input";
 
 // Add proper TypeScript declarations for Web Speech API
 interface SpeechRecognitionEvent extends Event {
@@ -52,7 +51,8 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [conversation, setConversation] = useState<{role: 'ai' | 'user', message: string}[]>([]);
-  const [ollamaUrl, setOllamaUrl] = useState('http://localhost:11434');
+  // Use a default Ollama URL rather than exposing it to the user
+  const ollamaUrl = 'http://localhost:11434';
   const [isMuted, setIsMuted] = useState(false);
   const { toast } = useToast();
   
@@ -328,26 +328,6 @@ Provide a brief, professional response and ask the next relevant interview quest
 
   return (
     <div className="relative w-full space-y-6">
-      {/* Ollama URL Input */}
-      {!isInterviewing && (
-        <div className="mb-4">
-          <label htmlFor="ollama-url" className="block text-sm font-medium mb-2">
-            Ollama API URL (Local Mistral Model)
-          </label>
-          <Input
-            id="ollama-url"
-            type="text"
-            placeholder="http://localhost:11434"
-            value={ollamaUrl}
-            onChange={(e) => setOllamaUrl(e.target.value)}
-            className="w-full"
-          />
-          <p className="mt-1 text-xs text-muted-foreground">
-            Make sure Ollama is running with Mistral model: <code>ollama run mistral</code>
-          </p>
-        </div>
-      )}
-      
       {/* 3D Avatar */}
       <div className="relative flex justify-center">
         <InterviewerAvatar speaking={isSpeaking} size={320} />
