@@ -77,14 +77,14 @@ const InterviewerModel = ({ speaking = false }) => {
       </mesh>
       
       {/* Enhanced mouth with animation */}
-      <mesh position={[0, 0.3, 0.6]} scale={[0.3, 0.03 + mouthOpen, 0.1]}>
+      <mesh position={[0, 0.3, 0.6]} scale={[0.3, mouthOpen > 0 ? 0.03 + mouthOpen : 0.03, 0.1]}>
         <boxGeometry />
         <meshStandardMaterial color="#333" />
       </mesh>
       
       {/* Mouth interior - visible when mouth opens */}
       {mouthOpen > 0 && (
-        <mesh position={[0, 0.3 - mouthOpen/4, 0.59]} scale={[0.28, mouthOpen, 0.09]}>
+        <mesh position={[0, 0.3 - mouthOpen/4, 0.65]} scale={[0.28, mouthOpen, 0.05]}>
           <boxGeometry />
           <meshStandardMaterial color="#8B0000" />
         </mesh>
