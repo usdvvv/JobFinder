@@ -4,7 +4,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
 import { Group } from 'three';
 
-// Enhanced 3D Model component with clearer mouth animation
+// Simple abstract 3D Model with clear mouth animation
 const InterviewerModel = ({ speaking = false }) => {
   const group = useRef<Group>(null);
   const [mouthOpen, setMouthOpen] = useState(0);
@@ -12,9 +12,9 @@ const InterviewerModel = ({ speaking = false }) => {
   // Add mouth animation when speaking
   useEffect(() => {
     if (speaking) {
-      // Simulate mouth movement when speaking with more pronounced animation
+      // Simple mouth movement pattern
       const interval = setInterval(() => {
-        setMouthOpen(Math.random() * 0.8 + 0.2); // Increase range for more visible movement
+        setMouthOpen(Math.random() * 0.6 + 0.2); // Good visible range
       }, 150);
       
       return () => clearInterval(interval);
@@ -26,111 +26,51 @@ const InterviewerModel = ({ speaking = false }) => {
   // Subtle animation for natural movement
   useFrame((state) => {
     if (group.current) {
-      // Gentle breathing movement
-      group.current.rotation.y = Math.sin(state.clock.getElapsedTime() * 0.2) * 0.02;
-      group.current.position.y = Math.sin(state.clock.getElapsedTime() * 0.4) * 0.01;
+      // Gentle floating movement
+      group.current.position.y = Math.sin(state.clock.getElapsedTime() * 0.5) * 0.05;
     }
   });
 
   return (
-    <group ref={group} position={[0, -0.2, 0]}>
-      {/* Head - simplified to abstract shape */}
-      <mesh position={[0, 0.5, 0]} scale={[0.8, 0.95, 0.75]}>
+    <group ref={group}>
+      {/* Simple abstract head - just a sphere */}
+      <mesh position={[0, 0, 0]}>
         <sphereGeometry args={[1, 32, 32]} />
         <meshStandardMaterial 
-          color="#e0ac85" 
-          roughness={0.4} 
-          metalness={0.1}
+          color="#6a89cc" 
+          roughness={0.4}
         />
       </mesh>
       
-      {/* Neck */}
-      <mesh position={[0, -0.2, 0]} scale={[0.3, 0.5, 0.3]}>
-        <cylinderGeometry args={[0.5, 0.6, 1, 32]} />
-        <meshStandardMaterial color="#e0ac85" roughness={0.3} />
-      </mesh>
-      
-      {/* Upper body - Simplified suit */}
-      <mesh position={[0, -1.2, 0]} scale={[1.6, 1.5, 0.8]}>
-        <boxGeometry />
-        <meshStandardMaterial color="#2c3e50" roughness={0.6} />
-      </mesh>
-      
-      {/* Eyes */}
-      <mesh position={[0.25, 0.7, 0.6]} scale={[0.15, 0.08, 0.1]}>
-        <sphereGeometry args={[1, 16, 16]} />
-        <meshStandardMaterial color="#3c6382" />
-      </mesh>
-      <mesh position={[-0.25, 0.7, 0.6]} scale={[0.15, 0.08, 0.1]}>
-        <sphereGeometry args={[1, 16, 16]} />
-        <meshStandardMaterial color="#3c6382" />
-      </mesh>
-      
-      {/* Simplified ears */}
-      <mesh position={[0.8, 0.5, 0]} scale={[0.1, 0.2, 0.1]}>
-        <sphereGeometry args={[1, 16, 16]} />
-        <meshStandardMaterial color="#e0ac85" />
-      </mesh>
-      <mesh position={[-0.8, 0.5, 0]} scale={[0.1, 0.2, 0.1]}>
-        <sphereGeometry args={[1, 16, 16]} />
-        <meshStandardMaterial color="#e0ac85" />
-      </mesh>
-      
-      {/* HIGHLIGHTED MOUTH - Make it more prominent and clearly visible */}
-      <group position={[0, 0.3, 0.7]}>
-        {/* Outer lips */}
-        <mesh position={[0, 0, 0]} scale={[0.35, speaking ? 0.15 : 0.05, 0.1]}>
-          <boxGeometry />
-          <meshStandardMaterial color="#c0392b" roughness={0.7} />
-        </mesh>
-        
-        {/* Mouth interior - always visible but expands when speaking */}
-        <mesh position={[0, 0, 0.05]} scale={[0.32, speaking ? mouthOpen * 0.12 : 0.02, 0.1]}>
-          <boxGeometry />
-          <meshStandardMaterial color="#581845" roughness={1} />
-        </mesh>
-        
-        {/* Teeth - visible when speaking */}
-        {speaking && mouthOpen > 0.3 && (
-          <>
-            <mesh position={[0, 0.03, 0.06]} scale={[0.3, 0.02, 0.05]}>
-              <boxGeometry />
-              <meshStandardMaterial color="#f9f9f9" roughness={0.2} />
-            </mesh>
-            <mesh position={[0, -0.03, 0.06]} scale={[0.3, 0.02, 0.05]}>
-              <boxGeometry />
-              <meshStandardMaterial color="#f9f9f9" roughness={0.2} />
-            </mesh>
-          </>
-        )}
-      </group>
-      
-      {/* Enhanced eyebrows - for more expressiveness */}
-      <mesh position={[0.25, 0.85, 0.6]} rotation={[0, 0, speaking ? -0.2 : 0]} scale={[0.2, 0.03, 0.05]}>
-        <boxGeometry />
-        <meshStandardMaterial color="#2c3e50" />
-      </mesh>
-      <mesh position={[-0.25, 0.85, 0.6]} rotation={[0, 0, speaking ? 0.2 : 0]} scale={[0.2, 0.03, 0.05]}>
-        <boxGeometry />
-        <meshStandardMaterial color="#2c3e50" />
-      </mesh>
-      
-      {/* Simple hair */}
-      <mesh position={[0, 0.9, 0]} scale={[0.82, 0.4, 0.77]}>
-        <sphereGeometry args={[1, 24, 24, 0, Math.PI * 2, 0, Math.PI * 0.5]} />
-        <meshStandardMaterial color="#2c3e50" roughness={0.8} />
-      </mesh>
-      
-      {/* Shirt collar */}
-      <mesh position={[0, -0.5, 0.35]} scale={[0.6, 0.1, 0.1]}>
-        <boxGeometry />
+      {/* Simple eyes - white circles */}
+      <mesh position={[0.4, 0.2, 0.85]} rotation={[0, 0, 0]} scale={[0.15, 0.15, 0.05]}>
+        <circleGeometry args={[1, 32]} />
         <meshStandardMaterial color="white" />
       </mesh>
       
-      {/* Tie */}
-      <mesh position={[0, -0.8, 0.4]} scale={[0.1, 0.3, 0.05]}>
-        <boxGeometry />
-        <meshStandardMaterial color="#c0392b" />
+      <mesh position={[-0.4, 0.2, 0.85]} rotation={[0, 0, 0]} scale={[0.15, 0.15, 0.05]}>
+        <circleGeometry args={[1, 32]} />
+        <meshStandardMaterial color="white" />
+      </mesh>
+      
+      {/* Eye pupils */}
+      <mesh position={[0.4, 0.2, 0.9]} rotation={[0, 0, 0]} scale={[0.06, 0.06, 0.01]}>
+        <circleGeometry args={[1, 32]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+      
+      <mesh position={[-0.4, 0.2, 0.9]} rotation={[0, 0, 0]} scale={[0.06, 0.06, 0.01]}>
+        <circleGeometry args={[1, 32]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+      
+      {/* Very simple mouth - just a line that scales when speaking */}
+      <mesh 
+        position={[0, -0.2, 0.85]} 
+        scale={[0.4, speaking ? mouthOpen * 0.2 : 0.02, 0.01]}
+      >
+        <planeGeometry />
+        <meshBasicMaterial color="black" />
       </mesh>
     </group>
   );
@@ -146,24 +86,21 @@ const InterviewerAvatar = ({ speaking = false, size = 300 }) => {
         borderRadius: '50%',
         overflow: 'hidden',
         margin: '0 auto',
-        backgroundColor: '#f5f5f5', // Lighter background for better visibility
+        backgroundColor: '#e0f7fa', // Light blue background
         position: 'relative',
         boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
       }}
     >
-      <Canvas camera={{ position: [0, 0, 3.2], fov: 40 }}> {/* Adjusted camera for better view */}
-        <ambientLight intensity={0.8} /> {/* Increased ambient light */}
-        <spotLight position={[5, 5, 5]} angle={0.15} penumbra={1} intensity={0.8} />
-        <spotLight position={[-5, 5, 5]} angle={0.15} penumbra={1} intensity={0.4} />
-        {/* Front light to highlight the face and mouth */}
-        <spotLight position={[0, 0, 5]} angle={0.3} penumbra={1} intensity={0.6} />
+      <Canvas camera={{ position: [0, 0, 2.5], fov: 35 }}>
+        <ambientLight intensity={1.2} />
+        <spotLight position={[0, 1, 5]} angle={0.3} penumbra={1} intensity={1} />
         <InterviewerModel speaking={speaking} />
-        <Environment preset="city" />
+        <Environment preset="dawn" />
         <OrbitControls
           enableZoom={false}
           enablePan={false}
           minPolarAngle={Math.PI / 2.2}
-          maxPolarAngle={Math.PI / 1.9}
+          maxPolarAngle={Math.PI / 1.8}
           rotateSpeed={0.3}
         />
       </Canvas>
