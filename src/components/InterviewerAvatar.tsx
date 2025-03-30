@@ -86,13 +86,13 @@ const InterviewerModel = () => {
         <meshPhongMaterial color="#A54E4E" shininess={100} />
       </mesh>
       
-      {/* Ears */}
-      <mesh position={[0.8, 0, 0]} rotation={[0, 0, 0]} scale={[0.1, 0.2, 0.1]}>
-        <ellipsoidGeometry args={[1, 2, 0.5, 8, 8]} />
+      {/* Ears - replaced ellipsoidGeometry with scaled sphereGeometry */}
+      <mesh position={[0.8, 0, 0]} scale={[0.1, 0.2, 0.05]}>
+        <sphereGeometry args={[1, 16, 16]} />
         <meshStandardMaterial color="#e1c0ac" roughness={0.3} />
       </mesh>
-      <mesh position={[-0.8, 0, 0]} rotation={[0, 0, 0]} scale={[0.1, 0.2, 0.1]}>
-        <ellipsoidGeometry args={[1, 2, 0.5, 8, 8]} />
+      <mesh position={[-0.8, 0, 0]} scale={[0.1, 0.2, 0.05]}>
+        <sphereGeometry args={[1, 16, 16]} />
         <meshStandardMaterial color="#e1c0ac" roughness={0.3} />
       </mesh>
       
