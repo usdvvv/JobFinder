@@ -55,47 +55,47 @@ function InterviewerModel({ speaking }: { speaking?: boolean }) {
     }
   });
   
-  // More realistic skin tone
-  const skinMaterial = new THREE.MeshStandardMaterial({
+  // Define material properties
+  const skinMaterialProps = {
     color: new THREE.Color('#e1c0ac'),
     roughness: 0.5,
     metalness: 0.1
-  });
+  };
   
   // Suit material with subtle shine
-  const suitMaterial = new THREE.MeshStandardMaterial({
+  const suitMaterialProps = {
     color: new THREE.Color('#1A1F2C'),
     roughness: 0.6,
     metalness: 0.4
-  });
+  };
   
   // Hair material with some shine
-  const hairMaterial = new THREE.MeshStandardMaterial({
+  const hairMaterialProps = {
     color: new THREE.Color('#222222'),
     roughness: 0.7,
     metalness: 0.2
-  });
+  };
   
   // Eye whites
-  const eyeWhiteMaterial = new THREE.MeshStandardMaterial({
+  const eyeWhiteMaterialProps = {
     color: new THREE.Color('#ffffff'),
     roughness: 0.1,
     metalness: 0.1
-  });
+  };
   
   // Eye iris
-  const irisMaterial = new THREE.MeshStandardMaterial({
+  const irisMaterialProps = {
     color: new THREE.Color('#3a6186'),
     roughness: 0.1,
     metalness: 0.2
-  });
+  };
   
   // Lips material with subtle redness
-  const lipMaterial = new THREE.MeshStandardMaterial({
+  const lipMaterialProps = {
     color: new THREE.Color('#cc9999'),
     roughness: 0.3,
     metalness: 0.1
-  });
+  };
   
   return (
     <group ref={group}>
@@ -103,49 +103,49 @@ function InterviewerModel({ speaking }: { speaking?: boolean }) {
         {/* Head - more realistic oval shape */}
         <mesh position={[0, 0, 0]}>
           <sphereGeometry args={[0.5, 32, 32]} />
-          {skinMaterial.clone()}
+          <meshStandardMaterial {...skinMaterialProps} />
         </mesh>
         
         {/* Slightly wider at the back for a more realistic skull shape */}
         <mesh position={[0, -0.05, -0.1]}>
           <sphereGeometry args={[0.51, 32, 32]} />
-          {skinMaterial.clone()}
+          <meshStandardMaterial {...skinMaterialProps} />
         </mesh>
         
         {/* Hair - more realistic styling */}
         <mesh position={[0, 0.1, 0]}>
           <sphereGeometry args={[0.52, 32, 32, 0, Math.PI * 2, 0, Math.PI * 0.53]} />
-          {hairMaterial.clone()}
+          <meshStandardMaterial {...hairMaterialProps} />
         </mesh>
         
         {/* Hair volume on sides */}
         <mesh position={[0.35, 0.1, 0]} rotation={[0, 0, Math.PI * 0.25]}>
           <boxGeometry args={[0.2, 0.3, 0.4]} />
-          {hairMaterial.clone()}
+          <meshStandardMaterial {...hairMaterialProps} />
         </mesh>
         
         <mesh position={[-0.35, 0.1, 0]} rotation={[0, 0, -Math.PI * 0.25]}>
           <boxGeometry args={[0.2, 0.3, 0.4]} />
-          {hairMaterial.clone()}
+          <meshStandardMaterial {...hairMaterialProps} />
         </mesh>
         
         {/* Ears with more detail */}
         <mesh position={[0.5, 0, 0]}>
           <sphereGeometry args={[0.15, 16, 16]} />
-          {skinMaterial.clone()}
+          <meshStandardMaterial {...skinMaterialProps} />
         </mesh>
         <mesh position={[0.55, 0, 0]}>
           <sphereGeometry args={[0.1, 16, 16]} />
-          {skinMaterial.clone()}
+          <meshStandardMaterial {...skinMaterialProps} />
         </mesh>
         
         <mesh position={[-0.5, 0, 0]}>
           <sphereGeometry args={[0.15, 16, 16]} />
-          {skinMaterial.clone()}
+          <meshStandardMaterial {...skinMaterialProps} />
         </mesh>
         <mesh position={[-0.55, 0, 0]}>
           <sphereGeometry args={[0.1, 16, 16]} />
-          {skinMaterial.clone()}
+          <meshStandardMaterial {...skinMaterialProps} />
         </mesh>
         
         {/* Eyebrows */}
@@ -162,21 +162,21 @@ function InterviewerModel({ speaking }: { speaking?: boolean }) {
         {/* Eyes with better shaping */}
         <mesh ref={eyeLeft} position={[-0.2, 0.1, 0.4]}>
           <sphereGeometry args={[0.08, 16, 16]} />
-          {eyeWhiteMaterial.clone()}
+          <meshStandardMaterial {...eyeWhiteMaterialProps} />
         </mesh>
         <mesh ref={eyeRight} position={[0.2, 0.1, 0.4]}>
           <sphereGeometry args={[0.08, 16, 16]} />
-          {eyeWhiteMaterial.clone()}
+          <meshStandardMaterial {...eyeWhiteMaterialProps} />
         </mesh>
         
         {/* Iris with more vibrant coloring */}
         <mesh position={[-0.2, 0.1, 0.47]}>
           <sphereGeometry args={[0.04, 16, 16]} />
-          {irisMaterial.clone()}
+          <meshStandardMaterial {...irisMaterialProps} />
         </mesh>
         <mesh position={[0.2, 0.1, 0.47]}>
           <sphereGeometry args={[0.04, 16, 16]} />
-          {irisMaterial.clone()}
+          <meshStandardMaterial {...irisMaterialProps} />
         </mesh>
         
         {/* Pupils */}
@@ -192,7 +192,7 @@ function InterviewerModel({ speaking }: { speaking?: boolean }) {
         {/* Nose with more realistic shape */}
         <mesh position={[0, -0.05, 0.45]} rotation={[Math.PI * 0.1, 0, 0]}>
           <coneGeometry args={[0.07, 0.2, 16]} />
-          {skinMaterial.clone()}
+          <meshStandardMaterial {...skinMaterialProps} />
         </mesh>
         
         {/* Nostrils */}
@@ -208,43 +208,43 @@ function InterviewerModel({ speaking }: { speaking?: boolean }) {
         {/* Cheeks - add volume to face */}
         <mesh position={[0.25, -0.1, 0.25]}>
           <sphereGeometry args={[0.15, 16, 16]} />
-          {skinMaterial.clone()}
+          <meshStandardMaterial {...skinMaterialProps} />
         </mesh>
         <mesh position={[-0.25, -0.1, 0.25]}>
           <sphereGeometry args={[0.15, 16, 16]} />
-          {skinMaterial.clone()}
+          <meshStandardMaterial {...skinMaterialProps} />
         </mesh>
         
         {/* Upper lip */}
         <mesh position={[0, -0.14, 0.42]}>
           <boxGeometry args={[0.2, 0.03, 0.1]} />
-          {lipMaterial.clone()}
+          <meshStandardMaterial {...lipMaterialProps} />
         </mesh>
         
         {/* Lower jaw and lip */}
         <group ref={jaw} position={[0, -0.1, 0]}>
           <mesh position={[0, -0.08, 0.42]}>
             <boxGeometry args={[0.2, 0.05, 0.1]} />
-            {lipMaterial.clone()}
+            <meshStandardMaterial {...lipMaterialProps} />
           </mesh>
           
           {/* Chin */}
           <mesh position={[0, -0.1, 0.3]}>
             <sphereGeometry args={[0.2, 16, 16, 0, Math.PI * 2, 0, Math.PI * 0.5]} />
-            {skinMaterial.clone()}
+            <meshStandardMaterial {...skinMaterialProps} />
           </mesh>
         </group>
         
         {/* Neck with more realistic proportions */}
         <mesh position={[0, -0.5, 0]} rotation={[0.1, 0, 0]}>
           <cylinderGeometry args={[0.2, 0.25, 0.5, 32]} />
-          {skinMaterial.clone()}
+          <meshStandardMaterial {...skinMaterialProps} />
         </mesh>
         
         {/* Suit with better tailoring */}
         <mesh position={[0, -1.1, 0]}>
           <boxGeometry args={[1, 1, 0.5]} />
-          {suitMaterial.clone()}
+          <meshStandardMaterial {...suitMaterialProps} />
         </mesh>
         
         {/* Suit collar */}
