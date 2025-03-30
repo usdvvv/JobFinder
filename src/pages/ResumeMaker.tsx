@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Upload, FileCheck, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
 import NavBar from '@/components/NavBar';
 import AnimatedSection from '@/components/AnimatedSection';
+import { useToast } from "@/components/ui/use-toast";
 
 const ResumeMaker = () => {
   const [activeTab, setActiveTab] = useState("generator");
@@ -60,6 +61,17 @@ const ResumeMaker = () => {
 };
 
 const ResumeGenerator = () => {
+  const { toast } = useToast();
+  const [buildingStarted, setBuildingStarted] = useState(false);
+  
+  const handleStartBuilding = () => {
+    setBuildingStarted(true);
+    toast({
+      title: "Resume building started",
+      description: "You can now fill in your resume details",
+    });
+  };
+  
   return (
     <div className="grid gap-6 md:grid-cols-2">
       <AnimatedSection animation="slide-up" delay={100}>
@@ -71,44 +83,72 @@ const ResumeGenerator = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-4">
-              <div className="p-4 border border-border rounded-md bg-muted/50">
-                <h3 className="font-medium mb-2 flex items-center">
-                  <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
-                  Personal Information
-                </h3>
-                <p className="text-sm text-muted-foreground">Add your contact details and basic information</p>
+            {!buildingStarted ? (
+              <div className="space-y-4">
+                <div className="p-4 border border-border rounded-md bg-muted/50">
+                  <h3 className="font-medium mb-2 flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
+                    Personal Information
+                  </h3>
+                  <p className="text-sm text-muted-foreground">Add your contact details and basic information</p>
+                </div>
+                
+                <div className="p-4 border border-border rounded-md bg-muted/50">
+                  <h3 className="font-medium mb-2 flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
+                    Work Experience
+                  </h3>
+                  <p className="text-sm text-muted-foreground">List your work history and achievements</p>
+                </div>
+                
+                <div className="p-4 border border-border rounded-md bg-muted/50">
+                  <h3 className="font-medium mb-2 flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
+                    Education
+                  </h3>
+                  <p className="text-sm text-muted-foreground">Add your educational background</p>
+                </div>
+                
+                <div className="p-4 border border-border rounded-md bg-muted/50">
+                  <h3 className="font-medium mb-2 flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
+                    Skills & Certifications
+                  </h3>
+                  <p className="text-sm text-muted-foreground">Highlight your key skills and certifications</p>
+                </div>
               </div>
-              
-              <div className="p-4 border border-border rounded-md bg-muted/50">
-                <h3 className="font-medium mb-2 flex items-center">
-                  <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
-                  Work Experience
-                </h3>
-                <p className="text-sm text-muted-foreground">List your work history and achievements</p>
+            ) : (
+              <div className="space-y-6">
+                <div className="p-6 border border-primary/20 rounded-md bg-primary/5">
+                  <h3 className="font-medium mb-3">Personal Information</h3>
+                  <div className="grid gap-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <input type="text" placeholder="First Name" className="p-2 rounded-md border border-border bg-background" />
+                      <input type="text" placeholder="Last Name" className="p-2 rounded-md border border-border bg-background" />
+                    </div>
+                    <input type="email" placeholder="Email Address" className="p-2 rounded-md border border-border bg-background" />
+                    <input type="tel" placeholder="Phone Number" className="p-2 rounded-md border border-border bg-background" />
+                    <textarea placeholder="Professional Summary" className="p-2 rounded-md border border-border bg-background min-h-[100px]" />
+                  </div>
+                </div>
+                
+                <Button variant="outline" className="w-full">
+                  Continue to Work Experience
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </div>
-              
-              <div className="p-4 border border-border rounded-md bg-muted/50">
-                <h3 className="font-medium mb-2 flex items-center">
-                  <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
-                  Education
-                </h3>
-                <p className="text-sm text-muted-foreground">Add your educational background</p>
-              </div>
-              
-              <div className="p-4 border border-border rounded-md bg-muted/50">
-                <h3 className="font-medium mb-2 flex items-center">
-                  <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
-                  Skills & Certifications
-                </h3>
-                <p className="text-sm text-muted-foreground">Highlight your key skills and certifications</p>
-              </div>
-            </div>
+            )}
           </CardContent>
           <CardFooter>
-            <Button className="w-full">
-              Start Building <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            {!buildingStarted ? (
+              <Button className="w-full" onClick={handleStartBuilding}>
+                Start Building <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            ) : (
+              <Button variant="outline" className="w-full" onClick={() => setBuildingStarted(false)}>
+                Cancel
+              </Button>
+            )}
           </CardFooter>
         </Card>
       </AnimatedSection>
@@ -142,8 +182,8 @@ const ResumeGenerator = () => {
               </div>
               
               <div className="border rounded-md overflow-hidden hover:border-primary transition-colors cursor-pointer aspect-[0.7]">
-                <div className="bg-gradient-to-br from-gray-100 to-gray-200 w-full h-full flex items-center justify-center p-4">
-                  <p className="text-center text-sm font-medium">Executive Template</p>
+                <div className="bg-gradient-to-br from-gray-500 to-gray-700 w-full h-full flex items-center justify-center p-4">
+                  <p className="text-center text-sm font-medium text-white">Executive Template</p>
                 </div>
               </div>
             </div>
