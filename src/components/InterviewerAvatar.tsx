@@ -1,7 +1,7 @@
 
 import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Environment } from '@react-three/drei';
+import { OrbitControls, Environment, RoundedBox } from '@react-three/drei';
 import { Group } from 'three';
 
 // 3D Model component representing a realistic human interviewer
@@ -145,17 +145,15 @@ const InterviewerModel = () => {
       
       {/* Mouth - more realistic lips */}
       <group position={[0, -0.3, 0.7]}>
-        {/* Upper lip */}
-        <mesh position={[0, 0.03, 0]} scale={[0.3, 0.06, 0.1]}>
-          <boxGeometry args={[1, 1, 1]} radius={0.2} />
+        {/* Upper lip - using RoundedBox from drei instead of boxGeometry with radius */}
+        <RoundedBox position={[0, 0.03, 0]} scale={[0.3, 0.06, 0.1]} radius={0.2} smoothness={4}>
           <meshStandardMaterial color="#c85a54" roughness={0.4} />
-        </mesh>
+        </RoundedBox>
         
-        {/* Lower lip - slightly bigger */}
-        <mesh position={[0, -0.05, 0]} scale={[0.32, 0.08, 0.12]}>
-          <boxGeometry args={[1, 1, 1]} radius={0.3} />
+        {/* Lower lip - slightly bigger - using RoundedBox from drei */}
+        <RoundedBox position={[0, -0.05, 0]} scale={[0.32, 0.08, 0.12]} radius={0.3} smoothness={4}>
           <meshStandardMaterial color="#c85a54" roughness={0.3} />
-        </mesh>
+        </RoundedBox>
       </group>
       
       {/* Cheeks - add more dimension to face */}
@@ -195,14 +193,12 @@ const InterviewerModel = () => {
       </mesh>
       
       {/* Hair detail - front strands */}
-      <mesh position={[0.3, 0.45, 0.5]} rotation={[0.1, 0.2, 0.1]} scale={[0.1, 0.2, 0.1]}>
-        <boxGeometry args={[1, 1, 1]} radius={0.2} />
+      <RoundedBox position={[0.3, 0.45, 0.5]} rotation={[0.1, 0.2, 0.1]} scale={[0.1, 0.2, 0.1]} radius={0.05} smoothness={4}>
         <meshStandardMaterial color="#362617" roughness={0.9} />
-      </mesh>
-      <mesh position={[-0.3, 0.45, 0.5]} rotation={[0.1, -0.2, -0.1]} scale={[0.1, 0.2, 0.1]}>
-        <boxGeometry args={[1, 1, 1]} radius={0.2} />
+      </RoundedBox>
+      <RoundedBox position={[-0.3, 0.45, 0.5]} rotation={[0.1, -0.2, -0.1]} scale={[0.1, 0.2, 0.1]} radius={0.05} smoothness={4}>
         <meshStandardMaterial color="#362617" roughness={0.9} />
-      </mesh>
+      </RoundedBox>
       
       {/* Improved suit details */}
       <mesh position={[0.9, -1.7, 0]} scale={[0.65, 0.6, 0.8]}>
