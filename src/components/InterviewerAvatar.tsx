@@ -4,7 +4,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
 import { Group } from 'three';
 
-// Enhanced 3D Model component with better mouth animation
+// Enhanced 3D Model component with clearer mouth animation
 const InterviewerModel = ({ speaking = false }) => {
   const group = useRef<Group>(null);
   const [mouthOpen, setMouthOpen] = useState(0);
@@ -12,9 +12,9 @@ const InterviewerModel = ({ speaking = false }) => {
   // Add mouth animation when speaking
   useEffect(() => {
     if (speaking) {
-      // Simulate mouth movement when speaking
+      // Simulate mouth movement when speaking with more pronounced animation
       const interval = setInterval(() => {
-        setMouthOpen(Math.random() * 0.5);
+        setMouthOpen(Math.random() * 0.8 + 0.2); // Increase range for more visible movement
       }, 150);
       
       return () => clearInterval(interval);
@@ -57,11 +57,11 @@ const InterviewerModel = ({ speaking = false }) => {
       </mesh>
       
       {/* Eyes */}
-      <mesh position={[0.25, 0.7, 0.6]} scale={[0.1, 0.1, 0.1]}>
+      <mesh position={[0.25, 0.7, 0.6]} scale={[0.15, 0.08, 0.1]}>
         <sphereGeometry args={[1, 16, 16]} />
         <meshStandardMaterial color="#3c6382" />
       </mesh>
-      <mesh position={[-0.25, 0.7, 0.6]} scale={[0.1, 0.1, 0.1]}>
+      <mesh position={[-0.25, 0.7, 0.6]} scale={[0.15, 0.08, 0.1]}>
         <sphereGeometry args={[1, 16, 16]} />
         <meshStandardMaterial color="#3c6382" />
       </mesh>
@@ -76,19 +76,44 @@ const InterviewerModel = ({ speaking = false }) => {
         <meshStandardMaterial color="#e0ac85" />
       </mesh>
       
-      {/* Enhanced mouth with animation */}
-      <mesh position={[0, 0.3, 0.6]} scale={[0.3, mouthOpen > 0 ? 0.03 + mouthOpen : 0.03, 0.1]}>
-        <boxGeometry />
-        <meshStandardMaterial color="#333" />
-      </mesh>
-      
-      {/* Mouth interior - visible when mouth opens */}
-      {mouthOpen > 0 && (
-        <mesh position={[0, 0.3 - mouthOpen/4, 0.65]} scale={[0.28, mouthOpen, 0.05]}>
+      {/* HIGHLIGHTED MOUTH - Make it more prominent and clearly visible */}
+      <group position={[0, 0.3, 0.7]}>
+        {/* Outer lips */}
+        <mesh position={[0, 0, 0]} scale={[0.35, speaking ? 0.15 : 0.05, 0.1]}>
           <boxGeometry />
-          <meshStandardMaterial color="#8B0000" />
+          <meshStandardMaterial color="#c0392b" roughness={0.7} />
         </mesh>
-      )}
+        
+        {/* Mouth interior - always visible but expands when speaking */}
+        <mesh position={[0, 0, 0.05]} scale={[0.32, speaking ? mouthOpen * 0.12 : 0.02, 0.1]}>
+          <boxGeometry />
+          <meshStandardMaterial color="#581845" roughness={1} />
+        </mesh>
+        
+        {/* Teeth - visible when speaking */}
+        {speaking && mouthOpen > 0.3 && (
+          <>
+            <mesh position={[0, 0.03, 0.06]} scale={[0.3, 0.02, 0.05]}>
+              <boxGeometry />
+              <meshStandardMaterial color="#f9f9f9" roughness={0.2} />
+            </mesh>
+            <mesh position={[0, -0.03, 0.06]} scale={[0.3, 0.02, 0.05]}>
+              <boxGeometry />
+              <meshStandardMaterial color="#f9f9f9" roughness={0.2} />
+            </mesh>
+          </>
+        )}
+      </group>
+      
+      {/* Enhanced eyebrows - for more expressiveness */}
+      <mesh position={[0.25, 0.85, 0.6]} rotation={[0, 0, speaking ? -0.2 : 0]} scale={[0.2, 0.03, 0.05]}>
+        <boxGeometry />
+        <meshStandardMaterial color="#2c3e50" />
+      </mesh>
+      <mesh position={[-0.25, 0.85, 0.6]} rotation={[0, 0, speaking ? 0.2 : 0]} scale={[0.2, 0.03, 0.05]}>
+        <boxGeometry />
+        <meshStandardMaterial color="#2c3e50" />
+      </mesh>
       
       {/* Simple hair */}
       <mesh position={[0, 0.9, 0]} scale={[0.82, 0.4, 0.77]}>
@@ -126,10 +151,12 @@ const InterviewerAvatar = ({ speaking = false, size = 300 }) => {
         boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
       }}
     >
-      <Canvas camera={{ position: [0, 0, 3.5], fov: 40 }}> {/* Adjusted camera for better view */}
+      <Canvas camera={{ position: [0, 0, 3.2], fov: 40 }}> {/* Adjusted camera for better view */}
         <ambientLight intensity={0.8} /> {/* Increased ambient light */}
         <spotLight position={[5, 5, 5]} angle={0.15} penumbra={1} intensity={0.8} />
         <spotLight position={[-5, 5, 5]} angle={0.15} penumbra={1} intensity={0.4} />
+        {/* Front light to highlight the face and mouth */}
+        <spotLight position={[0, 0, 5]} angle={0.3} penumbra={1} intensity={0.6} />
         <InterviewerModel speaking={speaking} />
         <Environment preset="city" />
         <OrbitControls
