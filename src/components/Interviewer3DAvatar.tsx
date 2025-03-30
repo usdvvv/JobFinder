@@ -12,7 +12,7 @@ interface Interviewer3DAvatarProps {
 // This component creates a more realistic 3D interviewer head model
 function InterviewerModel({ speaking }: { speaking?: boolean }) {
   const group = useRef<THREE.Group>(null);
-  const jaw = useRef<THREE.Mesh>(null);
+  const jaw = useRef<THREE.Group>(null); // Changed from Mesh to Group
   const eyeLeft = useRef<THREE.Mesh>(null);
   const eyeRight = useRef<THREE.Mesh>(null);
   const eyebrowLeft = useRef<THREE.Mesh>(null);
@@ -221,7 +221,7 @@ function InterviewerModel({ speaking }: { speaking?: boolean }) {
           <meshStandardMaterial {...lipMaterialProps} />
         </mesh>
         
-        {/* Lower jaw and lip */}
+        {/* Lower jaw and lip - Changed from mesh to group with ref */}
         <group ref={jaw} position={[0, -0.1, 0]}>
           <mesh position={[0, -0.08, 0.42]}>
             <boxGeometry args={[0.2, 0.05, 0.1]} />
