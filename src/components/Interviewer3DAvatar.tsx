@@ -255,7 +255,9 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
         </div>
       )}
       
-      <style jsx>{`
+      {/* Fix: Replace the style jsx with regular style element */}
+      <style>
+        {`
         @keyframes speechWave {
           0% {
             transform: scaleY(0.3);
@@ -264,7 +266,8 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
             transform: scaleY(1);
           }
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };
