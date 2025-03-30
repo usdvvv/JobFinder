@@ -12,14 +12,6 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
   const [interviewerState, setInterviewerState] = useState<'listening' | 'speaking' | 'thinking'>('listening');
   const [backgroundIndex, setBackgroundIndex] = useState(0);
   
-  // Interviewer expressions that cycle when speaking
-  const expressions = [
-    '/interviewer-neutral.png',
-    '/interviewer-speaking-1.png',
-    '/interviewer-speaking-2.png',
-    '/interviewer-thinking.png'
-  ];
-  
   // Office backgrounds that subtly change
   const backgrounds = [
     'linear-gradient(to right, #e6e9f0 0%, #eef1f5 100%)',
@@ -61,20 +53,6 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
     return () => clearInterval(interval);
   }, []);
   
-  // Get expression image based on state
-  const getExpressionImage = () => {
-    switch (interviewerState) {
-      case 'speaking':
-        // Cycle through speaking expressions
-        return expressions[Math.floor(Date.now() / 500) % 2 + 1];
-      case 'thinking':
-        return expressions[3];
-      case 'listening':
-      default:
-        return expressions[0];
-    }
-  };
-  
   return (
     <div style={{ width: size, height: size, margin: '0 auto', position: 'relative' }}>
       {/* Video conference frame */}
@@ -102,19 +80,36 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
         
         {/* Interviewer container */}
         <div className="w-full h-full flex items-center justify-center p-4">
-          <div className="relative w-full h-full flex items-center justify-center">
-            {/* Placeholder for interviewer image */}
-            <div className="w-full h-full flex items-center justify-center">
-              <img
-                src={getExpressionImage()}
-                alt="AI Interviewer"
-                className="max-w-full max-h-full object-contain rounded-md"
-                style={{ 
-                  filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))',
-                  transform: speaking ? 'scale(1.02)' : 'scale(1)',
-                  transition: 'transform 0.3s ease'
-                }}
-              />
+          <div className="relative w-3/4 h-3/4 flex items-center justify-center">
+            {/* Simple interviewer face representation */}
+            <div className="w-full h-full bg-gray-800 rounded-full flex items-center justify-center overflow-hidden">
+              <div className="relative w-full h-full">
+                {/* Face */}
+                <div className="absolute inset-0 bg-amber-50 rounded-full"></div>
+                
+                {/* Eyes */}
+                <div className="absolute w-full top-1/3 flex justify-center space-x-16">
+                  <div className={`w-8 h-${interviewerState === 'thinking' ? '1' : '4'} bg-gray-800 rounded-full transition-all duration-300`}></div>
+                  <div className={`w-8 h-${interviewerState === 'thinking' ? '1' : '4'} bg-gray-800 rounded-full transition-all duration-300`}></div>
+                </div>
+                
+                {/* Eyebrows */}
+                <div className="absolute w-full top-1/4 flex justify-center space-x-12">
+                  <div className={`w-12 h-2 bg-gray-700 rounded-full transform ${interviewerState === 'thinking' ? 'rotate-12' : ''} transition-transform`}></div>
+                  <div className={`w-12 h-2 bg-gray-700 rounded-full transform ${interviewerState === 'thinking' ? '-rotate-12' : ''} transition-transform`}></div>
+                </div>
+                
+                {/* Mouth */}
+                <div className="absolute bottom-1/4 left-1/2 transform -translate-x-1/2">
+                  {interviewerState === 'speaking' ? (
+                    <div className="w-24 h-16 bg-gray-800 rounded-full flex items-center justify-center">
+                      <div className="w-20 h-10 bg-red-400 rounded-full"></div>
+                    </div>
+                  ) : (
+                    <div className={`w-24 h-2 bg-gray-800 rounded-full ${interviewerState === 'thinking' ? 'transform rotate-12' : ''}`}></div>
+                  )}
+                </div>
+              </div>
             </div>
             
             {/* Mic indicator */}
