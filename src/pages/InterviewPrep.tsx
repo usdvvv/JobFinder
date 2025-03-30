@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,8 +8,8 @@ import NavBar from '@/components/NavBar';
 import AnimatedSection from '@/components/AnimatedSection';
 import CodingLeaderboard from '@/components/CodingLeaderboard';
 import CodingChallenge from '@/components/CodingChallenge';
-import { useState as useStateEffect } from 'react';
 import { Textarea } from "@/components/ui/textarea";
+import AIInterviewer from '@/components/AIInterviewer';
 
 const InterviewPrep = () => {
   const [showCodingChallenge, setShowCodingChallenge] = useState(false);
@@ -101,130 +100,163 @@ const InterviewPrep = () => {
 
 const MockInterviews = () => {
   const [jobDescription, setJobDescription] = useState('');
+  const [selectedIndustry, setSelectedIndustry] = useState('Tech');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('Mid-level');
+  const [showInterview, setShowInterview] = useState(false);
 
   return (
     <div className="space-y-6">
-      <AnimatedSection animation="slide-up" delay={100}>
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Video className="h-5 w-5 mr-2 text-primary" />
-              Live Face-to-Face Mock Interview
-            </CardTitle>
-            <CardDescription>
-              Practice with our AI interviewer who will ask you questions and provide real-time feedback
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="aspect-video rounded-md overflow-hidden relative bg-muted/80 group">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Avatar className="h-20 w-20 ring-4 ring-background/80">
-                  <Video className="h-10 w-10 text-muted-foreground" />
-                </Avatar>
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <Button className="rounded-full h-16 w-16 p-0">
-                    <Play className="h-8 w-8" />
-                  </Button>
+      {!showInterview ? (
+        <>
+          <AnimatedSection animation="slide-up" delay={100}>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Video className="h-5 w-5 mr-2 text-primary" />
+                  Live 3D Mock Interview
+                </CardTitle>
+                <CardDescription>
+                  Practice with our AI interviewer who will ask you questions and provide real-time feedback
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 mb-4">
+                  <div className="p-4 rounded-md bg-muted/50">
+                    <h3 className="font-medium text-sm mb-2 flex items-center">
+                      <BriefcaseIcon className="h-4 w-4 mr-2 text-primary" />
+                      Job Description
+                    </h3>
+                    <Textarea 
+                      placeholder="Paste the job description here for a more personalized interview experience..."
+                      className="resize-none min-h-[100px]"
+                      value={jobDescription}
+                      onChange={(e) => setJobDescription(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Adding a job description helps our AI tailor questions specific to the role you're applying for
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 gap-4 mb-4">
-              <div className="p-4 rounded-md bg-muted/50">
-                <h3 className="font-medium text-sm mb-2 flex items-center">
-                  <BriefcaseIcon className="h-4 w-4 mr-2 text-primary" />
-                  Job Description
-                </h3>
-                <Textarea 
-                  placeholder="Paste the job description here for a more personalized interview experience..."
-                  className="resize-none min-h-[100px]"
-                  value={jobDescription}
-                  onChange={(e) => setJobDescription(e.target.value)}
-                />
-                <p className="text-xs text-muted-foreground mt-2">
-                  Adding a job description helps our AI tailor questions specific to the role you're applying for
-                </p>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-md bg-muted/50">
-                <h3 className="font-medium text-sm mb-2">Select Industry</h3>
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="outline" size="sm">Tech</Button>
-                  <Button variant="outline" size="sm">Finance</Button>
-                  <Button variant="outline" size="sm">Marketing</Button>
-                  <Button variant="outline" size="sm">Healthcare</Button>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 rounded-md bg-muted/50">
+                    <h3 className="font-medium text-sm mb-2">Select Industry</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {['Tech', 'Finance', 'Marketing', 'Healthcare'].map(industry => (
+                        <Button 
+                          key={industry}
+                          variant={selectedIndustry === industry ? "default" : "outline"} 
+                          size="sm"
+                          onClick={() => setSelectedIndustry(industry)}
+                        >
+                          {industry}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 rounded-md bg-muted/50">
+                    <h3 className="font-medium text-sm mb-2">Interview Difficulty</h3>
+                    <div className="flex gap-2">
+                      {['Entry', 'Mid-level', 'Senior'].map(difficulty => (
+                        <Button 
+                          key={difficulty}
+                          variant={selectedDifficulty === difficulty ? "default" : "outline"} 
+                          size="sm"
+                          onClick={() => setSelectedDifficulty(difficulty)}
+                        >
+                          {difficulty}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </CardContent>
+              <CardFooter>
+                <Button className="w-full" onClick={() => setShowInterview(true)}>
+                  Start Mock Interview <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            </Card>
+          </AnimatedSection>
+          
+          <AnimatedSection animation="slide-up" delay={200}>
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Upload Resume for Personalized Questions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
+                    <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Upload your resume for tailored questions
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Supports PDF, DOCX, TXT (Max 5MB)
+                    </p>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline" className="w-full">Upload Resume</Button>
+                </CardFooter>
+              </Card>
               
-              <div className="p-4 rounded-md bg-muted/50">
-                <h3 className="font-medium text-sm mb-2">Interview Difficulty</h3>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm">Entry</Button>
-                  <Button variant="outline" size="sm">Mid-level</Button>
-                  <Button variant="outline" size="sm">Senior</Button>
-                </div>
-              </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Previous Interview Sessions</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center justify-between p-3 rounded-md bg-muted/50 hover:bg-muted cursor-pointer">
+                    <div className="flex items-center">
+                      <Video className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <span className="text-sm">Frontend Developer Interview</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">3 days ago</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 rounded-md bg-muted/50 hover:bg-muted cursor-pointer">
+                    <div className="flex items-center">
+                      <Video className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <span className="text-sm">Product Manager Interview</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">1 week ago</span>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline" className="w-full">View All Sessions</Button>
+                </CardFooter>
+              </Card>
             </div>
-          </CardContent>
-          <CardFooter>
-            <Button className="w-full">
-              Start Mock Interview <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </CardFooter>
-        </Card>
-      </AnimatedSection>
-      
-      <AnimatedSection animation="slide-up" delay={200}>
-        <div className="grid md:grid-cols-2 gap-6">
+          </AnimatedSection>
+        </>
+      ) : (
+        <AnimatedSection animation="fade-in">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Upload Resume for Personalized Questions</CardTitle>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Video className="h-5 w-5 mr-2 text-primary" />
+                  3D AI Interview Simulator
+                </div>
+                <Button variant="outline" size="sm" onClick={() => setShowInterview(false)}>
+                  Back
+                </Button>
+              </CardTitle>
+              <CardDescription>
+                Speak naturally with our AI interviewer and receive instant feedback
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
-                <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground mb-2">
-                  Upload your resume for tailored questions
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Supports PDF, DOCX, TXT (Max 5MB)
-                </p>
-              </div>
+              <AIInterviewer 
+                jobDescription={jobDescription} 
+                industry={selectedIndustry}
+                difficulty={selectedDifficulty}
+              />
             </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full">Upload Resume</Button>
-            </CardFooter>
           </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Previous Interview Sessions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-md bg-muted/50 hover:bg-muted cursor-pointer">
-                <div className="flex items-center">
-                  <Video className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span className="text-sm">Frontend Developer Interview</span>
-                </div>
-                <span className="text-xs text-muted-foreground">3 days ago</span>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 rounded-md bg-muted/50 hover:bg-muted cursor-pointer">
-                <div className="flex items-center">
-                  <Video className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span className="text-sm">Product Manager Interview</span>
-                </div>
-                <span className="text-xs text-muted-foreground">1 week ago</span>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full">View All Sessions</Button>
-            </CardFooter>
-          </Card>
-        </div>
-      </AnimatedSection>
+        </AnimatedSection>
+      )}
     </div>
   );
 };
@@ -286,7 +318,7 @@ const PracticeQuestions = () => {
             <div className="p-4 rounded-md border border-border hover:border-primary/50 hover:shadow-sm transition-all cursor-pointer">
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="font-medium">Where do you see yourself in 5 years?</h3>
+                  <h3 className="font-medium">Where do you see yourself in 5 Years?</h3>
                   <p className="text-sm text-muted-foreground mt-1">
                     Show ambition while aligning your goals with the company's growth trajectory.
                   </p>
