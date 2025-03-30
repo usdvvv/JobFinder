@@ -14,7 +14,7 @@ const InterviewerAvatar = ({ speaking = false, size = 300 }: InterviewerAvatarPr
     if (speaking) {
       // Simple mouth movement pattern
       const interval = setInterval(() => {
-        setMouthOpen(Math.random() * 0.6 + 0.2); // Random mouth position when speaking
+        setMouthOpen(Math.random() * 0.5 + 0.1); // Random mouth position when speaking
       }, 150);
       
       return () => clearInterval(interval);
@@ -36,136 +36,248 @@ const InterviewerAvatar = ({ speaking = false, size = 300 }: InterviewerAvatarPr
         boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
       }}
     >
-      {/* Base face image - a simple neutral face */}
+      {/* Base face - realistic human interviewer */}
       <div 
         style={{ 
           width: '100%', 
           height: '100%', 
           position: 'relative',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#F1F0FB',
+          backgroundColor: '#f2e2d2', // Skin tone
+          borderRadius: '50%',
+          overflow: 'hidden',
         }}
       >
-        {/* Head shape */}
+        {/* Hair */}
         <div style={{ 
-          width: '90%', 
-          height: '90%', 
-          borderRadius: '50%', 
-          backgroundColor: '#aaadb0',
-          position: 'relative',
+          position: 'absolute',
+          top: '-5%',
+          left: '-5%',
+          width: '110%',
+          height: '50%',
+          borderRadius: '50% 50% 0 0',
+          backgroundColor: '#3a3a3a', // Dark hair
+        }} />
+
+        {/* Hair styling */}
+        <div style={{ 
+          position: 'absolute',
+          top: '10%',
+          left: '15%',
+          width: '70%',
+          height: '25%',
+          borderRadius: '50% 50% 0 0',
+          backgroundColor: '#f2e2d2', // Skin tone - forehead
+        }} />
+        
+        {/* Forehead wrinkles - subtle */}
+        <div style={{ 
+          position: 'absolute',
+          top: '22%',
+          left: '25%',
+          width: '50%',
+          height: '1px',
+          backgroundColor: 'rgba(0,0,0,0.05)',
+        }} />
+        
+        {/* Eyebrows */}
+        <div style={{ 
+          position: 'absolute',
+          top: '30%',
+          left: '25%',
+          width: '15%',
+          height: '3%',
+          backgroundColor: '#3a3a3a',
+          borderRadius: '2px',
+          transform: speaking ? 'translateY(-2px)' : 'none',
+          transition: 'transform 0.2s',
+        }} />
+        <div style={{ 
+          position: 'absolute',
+          top: '30%',
+          right: '25%',
+          width: '15%',
+          height: '3%',
+          backgroundColor: '#3a3a3a',
+          borderRadius: '2px',
+          transform: speaking ? 'translateY(-2px)' : 'none',
+          transition: 'transform 0.2s',
+        }} />
+        
+        {/* Eyes */}
+        <div style={{ 
+          position: 'absolute',
+          top: '34%',
+          left: '28%',
+          width: '12%',
+          height: '5%',
+          borderRadius: '50%',
+          backgroundColor: 'white',
+          border: '1px solid #3a3a3a',
           overflow: 'hidden',
         }}>
-          {/* Hair */}
-          <div style={{ 
+          {/* Pupil */}
+          <div style={{
             position: 'absolute',
-            top: 0,
-            width: '100%',
-            height: '35%',
-            backgroundColor: '#1A1F2C',
-          }} />
-          
-          {/* Face */}
-          <div style={{ 
-            position: 'absolute',
-            top: '15%',
-            left: '10%',
-            width: '80%',
-            height: '75%',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '50%',
+            height: '50%',
             borderRadius: '50%',
-            backgroundColor: '#eee',
-          }}>
-            {/* Eyes */}
-            <div style={{ 
-              position: 'absolute',
-              top: '30%',
-              left: '25%',
-              width: '15%',
-              height: '8%',
-              borderRadius: '50%',
-              backgroundColor: '#000000e6',
-            }} />
-            <div style={{ 
-              position: 'absolute',
-              top: '30%',
-              right: '25%',
-              width: '15%',
-              height: '8%',
-              borderRadius: '50%',
-              backgroundColor: '#000000e6',
-            }} />
-            
-            {/* Eyebrows */}
-            <div style={{ 
-              position: 'absolute',
-              top: '22%',
-              left: '20%',
-              width: '20%',
-              height: '3%',
-              backgroundColor: '#1A1F2C',
-              borderRadius: '4px',
-              transform: speaking ? 'translateY(-2px)' : 'none',
-              transition: 'transform 0.2s',
-            }} />
-            <div style={{ 
-              position: 'absolute',
-              top: '22%',
-              right: '20%',
-              width: '20%',
-              height: '3%',
-              backgroundColor: '#1A1F2C',
-              borderRadius: '4px',
-              transform: speaking ? 'translateY(-2px)' : 'none',
-              transition: 'transform 0.2s',
-            }} />
-            
-            {/* Nose */}
-            <div style={{ 
-              position: 'absolute',
-              top: '40%',
-              left: '47%',
-              width: '6%',
-              height: '15%',
-              backgroundColor: '#ddd',
-              borderRadius: '50%',
-            }} />
-            
-            {/* Mouth - animated when speaking */}
-            <div style={{ 
-              position: 'absolute',
-              bottom: '20%',
-              left: '30%',
-              width: '40%',
-              height: speaking ? `${mouthOpen * 15}%` : '2%',
-              backgroundColor: speaking ? '#8E9196' : '#999',
-              borderRadius: speaking ? '50% / 100%' : '15px',
-              transition: 'height 0.1s',
-              overflow: 'hidden',
-              border: '1px solid #666',
-            }}>
-              {/* Mouth interior - only visible when speaking */}
-              {speaking && mouthOpen > 0.3 && (
-                <div style={{ 
-                  position: 'absolute',
-                  bottom: 0,
-                  width: '100%',
-                  height: '50%',
-                  backgroundColor: '#ea384c',
-                }} />
-              )}
-            </div>
-          </div>
-          
-          {/* Collar/Shirt */}
-          <div style={{ 
-            position: 'absolute',
-            bottom: 0,
-            width: '100%',
-            height: '15%',
-            backgroundColor: '#fff',
+            backgroundColor: '#3a3a3a',
           }} />
         </div>
+        <div style={{ 
+          position: 'absolute',
+          top: '34%',
+          right: '28%',
+          width: '12%',
+          height: '5%',
+          borderRadius: '50%',
+          backgroundColor: 'white',
+          border: '1px solid #3a3a3a',
+          overflow: 'hidden',
+        }}>
+          {/* Pupil */}
+          <div style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '50%',
+            height: '50%',
+            borderRadius: '50%',
+            backgroundColor: '#3a3a3a',
+          }} />
+        </div>
+        
+        {/* Nose */}
+        <div style={{ 
+          position: 'absolute',
+          top: '40%',
+          left: '47%',
+          width: '6%',
+          height: '15%',
+          borderRadius: '30% 30% 50% 50%',
+          backgroundColor: '#e6d0c0', // Slightly darker skin tone for depth
+          boxShadow: '2px 2px 2px rgba(0,0,0,0.05)',
+        }} />
+        
+        {/* Cheeks - subtle shading */}
+        <div style={{ 
+          position: 'absolute',
+          top: '50%',
+          left: '20%',
+          width: '15%',
+          height: '10%',
+          borderRadius: '50%',
+          backgroundColor: 'rgba(235,137,137,0.1)', // Very subtle blush
+        }} />
+        <div style={{ 
+          position: 'absolute',
+          top: '50%',
+          right: '20%',
+          width: '15%',
+          height: '10%',
+          borderRadius: '50%',
+          backgroundColor: 'rgba(235,137,137,0.1)', // Very subtle blush
+        }} />
+        
+        {/* Mouth */}
+        <div style={{ 
+          position: 'absolute',
+          bottom: '25%',
+          left: '35%',
+          width: '30%',
+          height: speaking ? `${mouthOpen * 8}%` : '2%',
+          backgroundColor: speaking ? '#701c28' : 'transparent', // Darker interior when open
+          borderRadius: speaking ? '30% 30% 50% 40%' : '30% 30% 30% 30%',
+          border: '1px solid #701c28',
+          transition: 'height 0.1s',
+          overflow: 'hidden',
+        }}>
+          {/* Lips */}
+          <div style={{ 
+            position: 'absolute',
+            top: '0',
+            width: '100%',
+            height: '30%',
+            backgroundColor: '#b25959', // Lip color
+            borderBottom: '1px solid #701c28',
+          }} />
+          
+          {/* Lower lip */}
+          <div style={{ 
+            position: 'absolute',
+            bottom: '0',
+            width: '100%',
+            height: '40%',
+            backgroundColor: '#b25959', // Lip color
+            borderTop: '1px solid #701c28',
+          }} />
+          
+          {/* Teeth - only visible when speaking with mouth open */}
+          {speaking && mouthOpen > 0.3 && (
+            <div style={{ 
+              position: 'absolute',
+              top: '30%',
+              width: '100%',
+              height: '30%',
+              backgroundColor: 'white',
+            }} />
+          )}
+        </div>
+        
+        {/* Chin/jawline definition */}
+        <div style={{ 
+          position: 'absolute',
+          bottom: '15%',
+          left: '35%',
+          width: '30%',
+          height: '2%',
+          borderRadius: '50%',
+          backgroundColor: 'rgba(0,0,0,0.03)', // Very subtle shadow
+        }} />
+        
+        {/* Neck */}
+        <div style={{ 
+          position: 'absolute',
+          bottom: '-5%',
+          left: '35%',
+          width: '30%',
+          height: '15%',
+          backgroundColor: '#f2e2d2', // Skin tone
+        }} />
+        
+        {/* Collar/suit */}
+        <div style={{ 
+          position: 'absolute',
+          bottom: '-15%',
+          left: '20%',
+          width: '60%',
+          height: '25%',
+          backgroundColor: '#2c3e50', // Dark suit color
+        }} />
+        
+        {/* Shirt collar */}
+        <div style={{ 
+          position: 'absolute',
+          bottom: '-5%',
+          left: '38%',
+          width: '24%',
+          height: '10%',
+          backgroundColor: 'white',
+          transform: 'rotate(5deg)',
+        }} />
+        <div style={{ 
+          position: 'absolute',
+          bottom: '-5%',
+          right: '38%',
+          width: '24%',
+          height: '10%',
+          backgroundColor: 'white',
+          transform: 'rotate(-5deg)',
+        }} />
       </div>
       
       {speaking && (
