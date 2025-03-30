@@ -17,12 +17,12 @@ const InterviewerModel = () => {
       
       // Subtle breathing effect
       const breathingIntensity = 0.015;
-      group.current.position.y = Math.sin(state.clock.getElapsedTime() * 0.4) * breathingIntensity - 0.9;
+      group.current.position.y = Math.sin(state.clock.getElapsedTime() * 0.4) * breathingIntensity - 0.5; // Raised position
     }
   });
 
   return (
-    <group ref={group} position={[0, -0.5, 0]} scale={1.5}>
+    <group ref={group} position={[0, 0, 0]} scale={1.3}> {/* Adjusted position and scale */}
       {/* Shoulders and upper torso */}
       <mesh position={[0, -1.7, 0]} scale={[1.6, 0.6, 0.8]}>
         <boxGeometry args={[1, 1, 1]} />
@@ -228,7 +228,7 @@ const InterviewerAvatar = ({ speaking = false, size = 300 }) => {
         boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
       }}
     >
-      <Canvas camera={{ position: [0, 0, 4.5], fov: 40 }}>
+      <Canvas camera={{ position: [0, 0, 5.8], fov: 40 }}> {/* Adjusted camera position to see more */}
         <ambientLight intensity={0.6} />
         <spotLight position={[5, 5, 5]} angle={0.15} penumbra={1} intensity={0.8} castShadow />
         <spotLight position={[-5, 5, 5]} angle={0.15} penumbra={1} intensity={0.4} castShadow />
@@ -238,8 +238,8 @@ const InterviewerAvatar = ({ speaking = false, size = 300 }) => {
         <OrbitControls
           enableZoom={false}
           enablePan={false}
-          minPolarAngle={Math.PI / 2.5}
-          maxPolarAngle={Math.PI / 1.8}
+          minPolarAngle={Math.PI / 3} // Less restricted to see more
+          maxPolarAngle={Math.PI / 1.6} // Adjusted for better view
           rotateSpeed={0.3}
         />
       </Canvas>
