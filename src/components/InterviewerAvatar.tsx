@@ -2,10 +2,11 @@
 import { useRef, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Environment } from '@react-three/drei';
+import { Group } from 'three';
 
 // 3D Model component
 const InterviewerModel = () => {
-  const group = useRef();
+  const group = useRef<Group>(null);
   
   // Using a default robot/character model from the public folder
   // You can replace this with any other GLTF model
