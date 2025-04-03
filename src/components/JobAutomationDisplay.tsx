@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -13,7 +13,9 @@ import {
   MonitorIcon,
   BriefcaseIcon,
   ArrowRightIcon,
-  Chrome as ChromeIcon
+  Chrome as ChromeIcon,
+  UploadIcon,
+  FileTextIcon
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -21,8 +23,12 @@ import {
   AutomationLog, 
   controlAutomation,
   getAutomationStatus,
-  getAutomationLogs
+  getAutomationLogs,
+  startAutomation,
+  uploadCV,
+  setupPolling
 } from '@/services/automationService';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface JobAutomationDisplayProps {
   jobTitle: string;
@@ -39,6 +45,19 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
   const [logs, setLogs] = useState<AutomationLog[]>([]);
   const [isPaused, setIsPaused] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [cvFile, setCvFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const logEndRef = useRef<HTMLDivElement>(null);
+  
+  // Scroll to bottom of logs when new logs come in
+  useEffect(() => {
+    if (logEndRef.current) {
+      logEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [logs]);
 
   // Fetch initial status and logs
   useEffect(() => {
@@ -52,8 +71,7 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
         setLogs(logsData);
       } catch (error) {
         console.error('Error fetching automation data:', error);
-        // In a real app, we'd handle this error properly
-        // For now, let's use mock data for demonstration
+        // For development/demo, use mock data if the server is not available
         mockInitialData();
       }
     };
@@ -61,134 +79,91 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
     const mockInitialData = () => {
       // Mocked data for development/demo purposes
       setStatus({
-        status: 'running',
-        jobsTotal: 25,
-        jobsCompleted: 8,
-        jobsFailed: 2,
-        currentJobId: 9,
-        currentJobTitle: 'Senior Software Engineer at Tech Innovations Inc.'
+        status: 'idle',
+        jobsTotal: 0,
+        jobsCompleted: 0,
+        jobsFailed: 0
       });
       
-      setLogs([
-        {
-          id: 1,
-          type: 'info',
-          message: `Started job search for "${jobTitle}" positions`,
-          timestamp: new Date().toISOString()
-        },
-        {
-          id: 2,
-          type: 'search',
-          message: 'Searching LinkedIn for relevant positions...',
-          timestamp: new Date().toISOString()
-        },
-        {
-          id: 3,
-          type: 'info',
-          message: 'Found 25 potential job matches',
-          timestamp: new Date().toISOString()
-        },
-        {
-          id: 4,
-          type: 'success',
-          message: 'Successfully applied to "Frontend Developer" at ABC Company',
-          timestamp: new Date().toISOString()
-        },
-        {
-          id: 5,
-          type: 'warning',
-          message: 'Complex application form detected at XYZ Corp, requiring manual intervention',
-          timestamp: new Date().toISOString()
-        },
-        {
-          id: 6,
-          type: 'error',
-          message: 'Failed to apply at 123 Tech - website error',
-          timestamp: new Date().toISOString()
-        },
-        {
-          id: 7,
-          type: 'info',
-          message: 'Opening Chrome browser for automation...',
-          timestamp: new Date().toISOString()
-        },
-        {
-          id: 8,
-          type: 'info',
-          message: 'Logging into LinkedIn...',
-          timestamp: new Date().toISOString()
-        }
-      ]);
+      setLogs([]);
     };
     
     fetchInitialData();
     
-    // Set up polling for updates (simulated websocket)
-    const intervalId = setInterval(() => {
-      if (status.status === 'running') {
-        updateMockData();
+    // Set up polling for updates
+    const cancelPolling = setupPolling(
+      (newStatus) => {
+        setStatus(newStatus);
+        setIsPaused(newStatus.status === 'paused');
+      },
+      (newLogs) => {
+        setLogs(prev => [...prev, ...newLogs]);
       }
-    }, 5000);
+    );
     
-    return () => clearInterval(intervalId);
-  }, [jobTitle]);
+    return () => cancelPolling();
+  }, []);
   
-  // Function to update mock data (simulates real-time updates)
-  const updateMockData = () => {
-    // Only update if we're in running state and not refreshing
-    if (status.status !== 'running' || isPaused || isRefreshing) return;
+  const handleStartAutomation = async () => {
+    if (!cvFile && status.status === 'idle') {
+      toast({
+        title: "CV Required",
+        description: "Please upload your CV before starting the automation.",
+        variant: "destructive"
+      });
+      return;
+    }
     
-    setStatus(prev => {
-      // Don't update if we've completed all jobs
-      if (prev.jobsCompleted + prev.jobsFailed >= prev.jobsTotal) {
-        return {
-          ...prev,
-          status: 'completed'
-        };
+    try {
+      setIsStarting(true);
+      
+      // If there's a CV file and we haven't started yet, upload it first
+      if (cvFile && status.status === 'idle') {
+        const uploadResult = await uploadCV(cvFile);
+        if (!uploadResult.success) {
+          throw new Error('Failed to upload CV');
+        }
+        
+        toast({
+          title: "CV Uploaded",
+          description: "Your CV has been uploaded successfully.",
+        });
       }
       
-      const newCompleted = Math.min(prev.jobsCompleted + 1, prev.jobsTotal - prev.jobsFailed);
-      return {
-        ...prev,
-        jobsCompleted: newCompleted,
-        currentJobId: (prev.currentJobId || 0) + 1,
-        currentJobTitle: getRandomJobTitle()
-      };
-    });
-    
-    // Add a new log entry
-    const logTypes: ('success' | 'warning' | 'error')[] = ['success', 'success', 'success', 'warning', 'error'];
-    const logType = logTypes[Math.floor(Math.random() * logTypes.length)];
-    
-    const newLog: AutomationLog = {
-      id: logs.length + 1,
-      type: logType,
-      message: getLogMessage(logType, status.currentJobTitle || ''),
-      timestamp: new Date().toISOString()
-    };
-    
-    setLogs(prev => [...prev, newLog]);
+      // Start the automation
+      const newStatus = await startAutomation(jobTitle);
+      setStatus(newStatus);
+      
+      toast({
+        title: "Automation Started",
+        description: `Starting automated job search for ${jobTitle} positions.`,
+      });
+    } catch (error) {
+      console.error('Error starting automation:', error);
+      toast({
+        variant: "destructive",
+        title: "Automation Failed",
+        description: "Failed to start the automation process.",
+      });
+    } finally {
+      setIsStarting(false);
+    }
   };
   
-  const getRandomJobTitle = () => {
-    const companies = ['Google', 'Microsoft', 'Amazon', 'Apple', 'Netflix', 'Spotify', 'Twitter', 'Meta', 'LinkedIn', 'Adobe'];
-    const positions = ['Software Engineer', 'Frontend Developer', 'Backend Developer', 'Full Stack Developer', 'UI/UX Designer', 'Product Manager', 'Data Scientist'];
-    const company = companies[Math.floor(Math.random() * companies.length)];
-    const position = positions[Math.floor(Math.random() * positions.length)];
-    
-    return `${position} at ${company}`;
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      setCvFile(files[0]);
+      toast({
+        title: "CV Selected",
+        description: `Selected file: ${files[0].name}`,
+      });
+    }
   };
   
-  const getLogMessage = (type: 'success' | 'warning' | 'error', jobTitle: string) => {
-    switch (type) {
-      case 'success':
-        return `Successfully applied to "${jobTitle}"`;
-      case 'warning':
-        return `Application to "${jobTitle}" requires additional information`;
-      case 'error':
-        return `Failed to apply to "${jobTitle}" - form submission error`;
-      default:
-        return '';
+  const handleUploadClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
   
@@ -196,15 +171,11 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
     try {
       setIsRefreshing(true);
       
-      // In a real app, this would call the backend API
-      // const newStatus = await controlAutomation({ action });
+      const newStatus = await controlAutomation({ action });
+      setStatus(newStatus);
       
-      // Mock the control actions
-      let newStatus: AutomationStatus;
-      
-      switch (action) {
+      switch(action) {
         case 'pause':
-          newStatus = { ...status, status: 'paused' };
           setIsPaused(true);
           toast({
             title: "Automation Paused",
@@ -212,7 +183,6 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
           });
           break;
         case 'resume':
-          newStatus = { ...status, status: 'running' };
           setIsPaused(false);
           toast({
             title: "Automation Resumed",
@@ -220,38 +190,18 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
           });
           break;
         case 'stop':
-          newStatus = { ...status, status: 'completed' };
           toast({
             title: "Automation Stopped",
             description: "The application process has been stopped.",
           });
           break;
         case 'skip':
-          newStatus = { 
-            ...status,
-            currentJobId: (status.currentJobId || 0) + 1,
-            currentJobTitle: getRandomJobTitle()
-          };
           toast({
             title: "Job Skipped",
             description: "Skipped to the next job in the queue.",
           });
           break;
-        default:
-          newStatus = status;
       }
-      
-      setStatus(newStatus);
-      
-      // Add a log entry for the action
-      const actionLog: AutomationLog = {
-        id: logs.length + 1,
-        type: 'info',
-        message: `User action: ${action} automation`,
-        timestamp: new Date().toISOString()
-      };
-      
-      setLogs(prev => [...prev, actionLog]);
     } catch (error) {
       console.error(`Error controlling automation (${action}):`, error);
       toast({
@@ -309,86 +259,144 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-medium">
-                  {isComplete 
-                    ? "Process Complete" 
-                    : status.status === 'idle'
-                      ? "Ready to Start"
-                      : status.status === 'paused'
-                        ? "Process Paused"
-                        : "Applying to Jobs"}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {status.jobsTotal > 0 
-                    ? `Progress: ${status.jobsCompleted} completed, ${status.jobsFailed} failed out of ${status.jobsTotal} jobs`
-                    : "No jobs in queue yet"}
-                </p>
-              </div>
-              
-              <div className="flex gap-2">
-                {status.status === 'running' && !isPaused && (
-                  <>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleControlAction('pause')}
-                    >
-                      <PauseIcon className="h-4 w-4 mr-1" />
-                      Pause
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleControlAction('skip')}
-                      disabled={isComplete}
-                    >
-                      <SkipForwardIcon className="h-4 w-4 mr-1" />
-                      Skip
-                    </Button>
-                  </>
-                )}
+            {status.status === 'idle' && (
+              <div className="space-y-4">
+                <Alert className="bg-blue-50 border-blue-200">
+                  <FileTextIcon className="h-4 w-4 text-blue-600" />
+                  <AlertTitle>Upload Your CV</AlertTitle>
+                  <AlertDescription>
+                    Upload your CV to enable automated job applications. This will be used to fill out application forms.
+                  </AlertDescription>
+                </Alert>
                 
-                {status.status === 'paused' && (
+                <div className="flex items-center space-x-2">
                   <Button 
                     variant="outline" 
-                    size="sm"
-                    onClick={() => handleControlAction('resume')}
+                    onClick={handleUploadClick}
+                    disabled={isUploading}
                   >
-                    <PlayIcon className="h-4 w-4 mr-1" />
-                    Resume
+                    <UploadIcon className="h-4 w-4 mr-1" />
+                    {cvFile ? 'Change CV' : 'Upload CV'}
                   </Button>
-                )}
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept=".pdf,.docx"
+                    className="hidden"
+                  />
+                  {cvFile && (
+                    <span className="text-sm text-muted-foreground">
+                      {cvFile.name}
+                    </span>
+                  )}
+                </div>
                 
-                {!isComplete && status.status !== 'idle' && (
-                  <Button 
-                    variant="destructive" 
-                    size="sm"
-                    onClick={() => handleControlAction('stop')}
-                  >
-                    <StopIcon className="h-4 w-4 mr-1" />
-                    Stop
-                  </Button>
+                <Button 
+                  variant="default" 
+                  className="w-full"
+                  onClick={handleStartAutomation}
+                  disabled={isStarting}
+                >
+                  {isStarting ? (
+                    <>
+                      <RefreshIcon className="h-4 w-4 mr-2 animate-spin" />
+                      Starting...
+                    </>
+                  ) : (
+                    <>
+                      <PlayIcon className="h-4 w-4 mr-2" />
+                      Start Automated Job Applications
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+            
+            {status.status !== 'idle' && (
+              <>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium">
+                      {isComplete 
+                        ? "Process Complete" 
+                        : status.status === 'idle'
+                          ? "Ready to Start"
+                          : status.status === 'paused'
+                            ? "Process Paused"
+                            : "Applying to Jobs"}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {status.jobsTotal > 0 
+                        ? `Progress: ${status.jobsCompleted} completed, ${status.jobsFailed} failed out of ${status.jobsTotal} jobs`
+                        : "No jobs in queue yet"}
+                    </p>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    {status.status === 'running' && !isPaused && (
+                      <>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleControlAction('pause')}
+                        >
+                          <PauseIcon className="h-4 w-4 mr-1" />
+                          Pause
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleControlAction('skip')}
+                          disabled={isComplete}
+                        >
+                          <SkipForwardIcon className="h-4 w-4 mr-1" />
+                          Skip
+                        </Button>
+                      </>
+                    )}
+                    
+                    {status.status === 'paused' && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleControlAction('resume')}
+                      >
+                        <PlayIcon className="h-4 w-4 mr-1" />
+                        Resume
+                      </Button>
+                    )}
+                    
+                    {!isComplete && status.status !== 'idle' && (
+                      <Button 
+                        variant="destructive" 
+                        size="sm"
+                        onClick={() => handleControlAction('stop')}
+                      >
+                        <StopIcon className="h-4 w-4 mr-1" />
+                        Stop
+                      </Button>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>{calculateProgress().toFixed(0)}% Complete</span>
+                    <span>
+                      {status.jobsCompleted} / {status.jobsTotal} Jobs
+                    </span>
+                  </div>
+                  <Progress value={calculateProgress()} className="h-2" />
+                </div>
+                
+                {status.currentJobTitle && !isComplete && (
+                  <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-md">
+                    <p className="text-sm text-muted-foreground mb-1">Currently processing:</p>
+                    <p className="font-medium">{status.currentJobTitle}</p>
+                  </div>
                 )}
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>{calculateProgress().toFixed(0)}% Complete</span>
-                <span>
-                  {status.jobsCompleted} / {status.jobsTotal} Jobs
-                </span>
-              </div>
-              <Progress value={calculateProgress()} className="h-2" />
-            </div>
-            
-            {status.currentJobTitle && !isComplete && (
-              <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-md">
-                <p className="text-sm text-muted-foreground mb-1">Currently processing:</p>
-                <p className="font-medium">{status.currentJobTitle}</p>
-              </div>
+              </>
             )}
           </div>
         </CardContent>
@@ -402,17 +410,20 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
           <div className="max-h-[300px] overflow-y-auto pr-2">
             <div className="space-y-2">
               {logs.length > 0 ? (
-                logs.map((log) => (
-                  <div key={log.id} className="flex items-start">
-                    {getLogIcon(log.type)}
-                    <div className="flex-1">
-                      <div className="flex justify-between items-start">
-                        <p className="text-sm font-medium">{log.message}</p>
-                        <span className="text-xs text-muted-foreground">{formatTimestamp(log.timestamp)}</span>
+                <>
+                  {logs.map((log) => (
+                    <div key={log.id} className="flex items-start">
+                      {getLogIcon(log.type)}
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start">
+                          <p className="text-sm font-medium">{log.message}</p>
+                          <span className="text-xs text-muted-foreground">{formatTimestamp(log.timestamp)}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  ))}
+                  <div ref={logEndRef} />
+                </>
               ) : (
                 <p className="text-sm text-muted-foreground">No logs available yet.</p>
               )}
