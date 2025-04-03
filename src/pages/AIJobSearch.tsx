@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
 import { 
   Upload, 
   FileText, 
@@ -22,27 +24,119 @@ import {
   Briefcase,
   CheckCircle,
   AlertCircle,
-  Loader2
+  Loader2,
+  FilterIcon,
+  RssIcon,
+  LightbulbIcon
 } from 'lucide-react';
 import NavBar from '@/components/NavBar';
 import AnimatedSection from '@/components/AnimatedSection';
 import JobMatchCard from '@/components/JobMatchCard';
-import { uploadAndAnalyzeCV, searchJobs, JobMatch, JobSearchResult } from '@/services/jobSearchAPI';
+import LinkedInJobCard from '@/components/LinkedInJobCard';
+import JobDetailsPanel from '@/components/JobDetailsPanel';
+import JobsFilterBar, { JobFilters } from '@/components/JobsFilterBar';
+import BatchApplicationPanel from '@/components/BatchApplicationPanel';
+import { 
+  uploadAndAnalyzeCV, 
+  searchJobs, 
+  JobMatch, 
+  JobSearchResult,
+  ApplicationStatus 
+} from '@/services/jobSearchAPI';
 
 const AIJobSearch = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   
+  // CV Upload state
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [jobMatches, setJobMatches] = useState<JobMatch[]>([]);
+  
+  // Job search state
   const [jobTitle, setJobTitle] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<JobSearchResult[]>([]);
   const [activeTab, setActiveTab] = useState('upload');
+  const [selectedJobIds, setSelectedJobIds] = useState<Set<number>>(new Set());
+  const [selectedJob, setSelectedJob] = useState<JobSearchResult | null>(null);
+  const [isJobDetailOpen, setIsJobDetailOpen] = useState(false);
+  const [isBatchApplyOpen, setIsBatchApplyOpen] = useState(false);
+  const [applicationStatuses, setApplicationStatuses] = useState<Record<number, ApplicationStatus>>({});
+  const [searchFilters, setSearchFilters] = useState<JobFilters>({
+    easyApplyOnly: false,
+    sortBy: 'relevance',
+    datePosted: 'any',
+    jobType: 'any',
+    salaryRange: [0, 200],
+    locationDistance: 25,
+  });
+  const [filteredResults, setFilteredResults] = useState<JobSearchResult[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  // Filter job results when filters change
+  useEffect(() => {
+    if (searchResults.length === 0) {
+      setFilteredResults([]);
+      return;
+    }
+    
+    let results = [...searchResults];
+    
+    // Apply Easy Apply filter
+    if (searchFilters.easyApplyOnly) {
+      results = results.filter(job => job.easyApply);
+    }
+    
+    // Apply search term
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      results = results.filter(job => 
+        job.title.toLowerCase().includes(term) || 
+        job.company.toLowerCase().includes(term) ||
+        job.description.toLowerCase().includes(term)
+      );
+    }
+    
+    // Apply sort
+    if (searchFilters.sortBy === 'date') {
+      results.sort((a, b) => {
+        // Convert posting date string to sortable value
+        // Simple conversion for demo - in reality would need more robust parsing
+        const getPostingValue = (posted: string) => {
+          if (posted.includes('hour')) return 0;
+          if (posted.includes('day')) return parseInt(posted) || 1;
+          if (posted.includes('week')) return (parseInt(posted) || 1) * 7;
+          if (posted.includes('month')) return (parseInt(posted) || 1) * 30;
+          return 100; // Default for unknown formats
+        };
+        
+        return getPostingValue(a.posted) - getPostingValue(b.posted);
+      });
+    } else if (searchFilters.sortBy === 'salary') {
+      results.sort((a, b) => {
+        // Extract numeric value from salary string
+        const getSalaryValue = (salary: string) => {
+          const match = salary.match(/\$(\d+)K/);
+          return match ? parseInt(match[1]) : 0;
+        };
+        
+        return getSalaryValue(b.salary) - getSalaryValue(a.salary);
+      });
+    } else if (searchFilters.sortBy === 'relevance') {
+      // Sort by match percentage if available
+      results.sort((a, b) => {
+        const aMatch = a.matchPercentage || 0;
+        const bMatch = b.matchPercentage || 0;
+        return bMatch - aMatch;
+      });
+    }
+    
+    setFilteredResults(results);
+  }, [searchResults, searchFilters, searchTerm]);
   
   // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,7 +274,24 @@ const AIJobSearch = () => {
     try {
       // Call our API to search for jobs
       const results = await searchJobs(jobTitle);
-      setSearchResults(results);
+      
+      // Enhance results with additional data for demo purposes
+      const enhancedResults = results.map(job => ({
+        ...job,
+        easyApply: Math.random() > 0.3, // 70% of jobs are Easy Apply
+        matchPercentage: Math.floor(Math.random() * 40) + 60, // 60-99% match
+        jobType: ['Full-time', 'Part-time', 'Contract', 'Internship'][Math.floor(Math.random() * 4)],
+        skills: [
+          'React', 'JavaScript', 'TypeScript', 'HTML', 'CSS', 'Node.js', 
+          'Python', 'SQL', 'AWS', 'Git', 'Agile', 'UI/UX', 'REST API'
+        ].sort(() => 0.5 - Math.random()).slice(0, 5 + Math.floor(Math.random() * 5)),
+        matchedSkills: [
+          'React', 'JavaScript', 'TypeScript', 'HTML', 'CSS'
+        ].sort(() => 0.5 - Math.random()).slice(0, 2 + Math.floor(Math.random() * 3))
+      }));
+      
+      setSearchResults(enhancedResults);
+      setActiveTab('search');
     } catch (error) {
       console.error('Error searching jobs:', error);
       toast({
@@ -197,12 +308,50 @@ const AIJobSearch = () => {
     navigate(`/apply/${jobId}`);
   };
   
+  const handleJobSelection = (jobId: number, selected: boolean) => {
+    setSelectedJobIds(prev => {
+      const newSelectedIds = new Set(prev);
+      if (selected) {
+        newSelectedIds.add(jobId);
+      } else {
+        newSelectedIds.delete(jobId);
+      }
+      return newSelectedIds;
+    });
+  };
+  
+  const handleViewJobDetails = (job: JobSearchResult) => {
+    setSelectedJob(job);
+    setIsJobDetailOpen(true);
+  };
+  
+  const handleBatchApplyComplete = (results: Record<number, ApplicationStatus>) => {
+    setApplicationStatuses(prev => ({...prev, ...results}));
+    
+    // Count successes and failures
+    const successes = Object.values(results).filter(r => r.status === 'completed').length;
+    const failures = Object.values(results).filter(r => r.status === 'failed').length;
+    
+    // Show toast with summary
+    toast({
+      title: "Batch Application Complete",
+      description: `Applied to ${successes} jobs successfully, ${failures} jobs failed.`,
+    });
+  };
+  
+  const handleApplicationSuccess = (jobId: number, status: ApplicationStatus) => {
+    setApplicationStatuses(prev => ({
+      ...prev,
+      [jobId]: status
+    }));
+  };
+  
   return (
     <div className="min-h-screen bg-background">
       <NavBar />
       
       <div className="pt-24 pb-16 px-4">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <AnimatedSection animation="slide-down" className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-bold">AI-Powered Job Matching</h1>
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
@@ -331,12 +480,30 @@ const AIJobSearch = () => {
                     </Card>
                   ) : jobMatches.length > 0 ? (
                     <div className="space-y-4">
-                      <h2 className="text-2xl font-bold mb-4">Your Top Job Matches</h2>
+                      <div className="flex items-center justify-between">
+                        <h2 className="text-2xl font-bold">Your Top Job Matches</h2>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => {
+                            setActiveTab('search');
+                            setJobTitle(jobMatches[0]?.title || '');
+                          }}
+                          className="flex items-center gap-2"
+                        >
+                          <Search className="h-4 w-4" />
+                          Find Similar Jobs
+                        </Button>
+                      </div>
                       {jobMatches.map((job) => (
                         <JobMatchCard
                           key={job.id}
                           job={job}
-                          onApply={() => applyToJob(job.id)}
+                          onApply={() => {
+                            // Set job title for search tab
+                            setJobTitle(job.title);
+                            // Trigger search and switch to search tab
+                            searchJobsHandler();
+                          }}
                         />
                       ))}
                     </div>
@@ -355,7 +522,7 @@ const AIJobSearch = () => {
             
             <TabsContent value="search" className="mt-6">
               <AnimatedSection animation="slide-up">
-                <Card>
+                <Card className="mb-6">
                   <CardHeader>
                     <CardTitle>Search for Jobs</CardTitle>
                     <CardDescription>
@@ -391,63 +558,146 @@ const AIJobSearch = () => {
                   </CardContent>
                 </Card>
                 
-                {searchResults.length > 0 && (
-                  <div className="mt-6 space-y-4">
-                    <h2 className="text-2xl font-bold mb-4">Search Results</h2>
-                    {searchResults.map((job) => (
-                      <Card key={job.id} className="transition-all hover:shadow-md">
-                        <CardContent className="p-6">
-                          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                            <div>
-                              <h3 className="text-xl font-semibold">{job.title}</h3>
-                              <div className="flex flex-wrap gap-y-2 gap-x-4 mt-2 text-sm text-muted-foreground">
-                                <div className="flex items-center">
-                                  <Briefcase className="h-4 w-4 mr-1" />
-                                  {job.company}
-                                </div>
-                                <div className="flex items-center">
-                                  {job.remote ? (
-                                    <span className="flex items-center">
-                                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h2a2 2 0 002-2v-1a2 2 0 012-2h1.945M5.055 7h5M5.055 7H15M15 7h4M15 7v4M9 11h1" />
-                                      </svg>
-                                      Remote
-                                    </span>
-                                  ) : (
-                                    <span className="flex items-center">
-                                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                      </svg>
-                                      {job.location}
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                  </svg>
-                                  {job.salary}
-                                </div>
-                                <div className="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                  </svg>
-                                  {job.posted}
-                                </div>
-                              </div>
-                              <p className="mt-4 text-sm">{job.description}</p>
-                            </div>
-                            <div className="mt-4 md:mt-0">
-                              <Button onClick={() => applyToJob(job.id)}>
-                                Apply Now
-                              </Button>
+                {/* Search results section */}
+                {isSearching ? (
+                  <Card className="p-12 flex flex-col items-center justify-center">
+                    <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+                    <h3 className="text-xl font-medium mb-2">Searching for jobs</h3>
+                    <p className="text-muted-foreground text-center">
+                      We're finding the best job matches for "{jobTitle}"
+                    </p>
+                  </Card>
+                ) : filteredResults.length > 0 ? (
+                  <div>
+                    {/* Filter bar */}
+                    <JobsFilterBar 
+                      totalJobs={filteredResults.length}
+                      searchTerm={jobTitle}
+                      onSearchChange={setSearchTerm}
+                      onFilterChange={setSearchFilters}
+                    />
+                    
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex items-center gap-2"
+                          onClick={() => setSelectedJobIds(new Set())}
+                          disabled={selectedJobIds.size === 0}
+                        >
+                          Clear Selection ({selectedJobIds.size})
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex items-center gap-2"
+                          onClick={() => setSelectedJobIds(new Set(filteredResults.map(job => job.id)))}
+                        >
+                          Select All
+                        </Button>
+                      </div>
+                      <Button
+                        onClick={() => setIsBatchApplyOpen(true)}
+                        disabled={selectedJobIds.size === 0}
+                        className="flex items-center gap-2"
+                      >
+                        <RssIcon className="h-4 w-4" />
+                        Apply to {selectedJobIds.size} Selected
+                      </Button>
+                    </div>
+                    
+                    {/* Job list */}
+                    <div className="space-y-4">
+                      {filteredResults.map((job) => (
+                        <LinkedInJobCard
+                          key={job.id}
+                          job={job}
+                          selected={selectedJobIds.has(job.id)}
+                          onSelect={handleJobSelection}
+                          onViewDetails={handleViewJobDetails}
+                          applicationStatus={applicationStatuses[job.id]}
+                        />
+                      ))}
+                    </div>
+                    
+                    {/* Job Details Panel */}
+                    <JobDetailsPanel
+                      job={selectedJob}
+                      open={isJobDetailOpen}
+                      onOpenChange={setIsJobDetailOpen}
+                      onApplySuccess={handleApplicationSuccess}
+                    />
+                    
+                    {/* Batch Application Panel */}
+                    <BatchApplicationPanel
+                      open={isBatchApplyOpen}
+                      onOpenChange={setIsBatchApplyOpen}
+                      selectedJobs={filteredResults.filter(job => selectedJobIds.has(job.id))}
+                      onComplete={handleBatchApplyComplete}
+                    />
+                  </div>
+                ) : searchResults.length === 0 ? (
+                  <Card className="p-12 flex flex-col items-center justify-center">
+                    <Search className="h-12 w-12 text-muted-foreground mb-4" />
+                    <h3 className="text-xl font-medium mb-2">No search results yet</h3>
+                    <p className="text-muted-foreground text-center mb-6">
+                      Enter a job title above and click "Search" to find job opportunities
+                    </p>
+                    {jobMatches.length > 0 && (
+                      <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-md max-w-md">
+                        <div className="flex gap-2 items-start">
+                          <LightbulbIcon className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <p className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                              Pro Tip: Try searching for one of your recommended jobs
+                            </p>
+                            <div className="mt-2 space-y-1">
+                              {jobMatches.slice(0, 3).map((match, index) => (
+                                <Button 
+                                  key={index} 
+                                  variant="outline" 
+                                  size="sm" 
+                                  className="mr-2 mt-1 bg-white/50 dark:bg-slate-800/50"
+                                  onClick={() => {
+                                    setJobTitle(match.title);
+                                    searchJobsHandler();
+                                  }}
+                                >
+                                  {match.title}
+                                </Button>
+                              ))}
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+                        </div>
+                      </div>
+                    )}
+                  </Card>
+                ) : (
+                  <Card className="p-12 flex flex-col items-center justify-center">
+                    <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
+                    <h3 className="text-xl font-medium mb-2">No matching jobs found</h3>
+                    <p className="text-muted-foreground text-center">
+                      No jobs match your current filters. Try adjusting your search criteria.
+                    </p>
+                    <Button 
+                      className="mt-4" 
+                      variant="outline"
+                      onClick={() => {
+                        setSearchFilters({
+                          easyApplyOnly: false,
+                          sortBy: 'relevance',
+                          datePosted: 'any',
+                          jobType: 'any',
+                          salaryRange: [0, 200],
+                          locationDistance: 25,
+                        });
+                        setSearchTerm('');
+                      }}
+                    >
+                      Clear Filters
+                    </Button>
+                  </Card>
                 )}
               </AnimatedSection>
             </TabsContent>

@@ -22,6 +22,20 @@ export interface JobSearchResult {
   posted: string;
   remote: boolean;
   link: string;
+  easyApply?: boolean;
+  matchPercentage?: number;
+  companyLogo?: string;
+  jobType?: string;
+  skills?: string[];
+  matchedSkills?: string[];
+}
+
+export interface ApplicationStatus {
+  id: number;
+  jobId: number;
+  status: 'pending' | 'in-progress' | 'completed' | 'failed';
+  logs: string[];
+  timestamp: string;
 }
 
 export const uploadAndAnalyzeCV = async (file: File): Promise<JobMatch[]> => {
@@ -48,6 +62,42 @@ export const searchJobs = async (jobTitle: string): Promise<JobSearchResult[]> =
     return response.data.search_results;
   } catch (error) {
     console.error('Error searching jobs:', error);
+    throw error;
+  }
+};
+
+export const applyToJob = async (jobId: number, candidateData?: any): Promise<ApplicationStatus> => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/apply-job`, { 
+      jobId,
+      candidateData 
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error applying to job:', error);
+    throw error;
+  }
+};
+
+export const applyToMultipleJobs = async (jobIds: number[], candidateData?: any): Promise<ApplicationStatus[]> => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/apply-multiple`, { 
+      jobIds,
+      candidateData 
+    });
+    return response.data.applications;
+  } catch (error) {
+    console.error('Error applying to multiple jobs:', error);
+    throw error;
+  }
+};
+
+export const getApplicationStatus = async (applicationId: number): Promise<ApplicationStatus> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/job-status/${applicationId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error getting application status:', error);
     throw error;
   }
 };
