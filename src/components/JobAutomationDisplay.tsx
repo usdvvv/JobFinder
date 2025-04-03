@@ -19,7 +19,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { 
   AutomationStatus,
-  AutomationStatusType,
+  AutomationStatusType, 
   AutomationLog, 
   controlAutomation,
   getAutomationStatus,
