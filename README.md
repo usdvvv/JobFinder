@@ -1,69 +1,77 @@
-# Welcome to your Lovable project
 
-## Project info
+# JobFinder Application
 
-**URL**: https://lovable.dev/projects/fd8f83e0-3f62-447e-a182-5e80fed32160
+A comprehensive job search platform with AI-powered features.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- AI-powered job matching
+- Resume builder
+- Interview preparation
+- Coding practice
+- AI therapist
+- AI live assistant
+- Peer chat
 
-**Use Lovable**
+## Running the Application
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/fd8f83e0-3f62-447e-a182-5e80fed32160) and start prompting.
+1. Clone the repository
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Start the React frontend:
+   ```
+   npm run dev
+   ```
 
-Changes made via Lovable will be committed automatically to this repo.
+## Running the Python Backend (for AI Job Search)
 
-**Use your preferred IDE**
+The AI Job Search feature requires a Python backend server to be running.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Python 3.8 or higher
+- Required Python packages:
+  ```
+  flask
+  flask-cors
+  pdfminer.six
+  python-docx
+  selenium
+  requests
+  ```
 
-Follow these steps:
+### Starting the Backend Server
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+1. Navigate to the server directory:
+   ```
+   cd src/server
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+2. Install the required Python packages:
+   ```
+   pip install flask flask-cors pdfminer.six python-docx selenium requests
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+3. Start the Flask server:
+   ```
+   python api.py
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+The server will run on http://localhost:5000 and will be used by the AI Job Search feature.
 
-**Edit a file directly in GitHub**
+## Notes on AI Job Search Feature
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The AI Job Search feature is designed to:
 
-**Use GitHub Codespaces**
+1. Accept PDF or DOCX format resumes
+2. Analyze resumes with AI to find matching jobs
+3. Allow searching for jobs by title
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+In a production environment, the backend would:
+- Use Llama3-8B via Ollama for CV analysis
+- Use Selenium for LinkedIn job scraping
+- Automate job applications
 
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/fd8f83e0-3f62-447e-a182-5e80fed32160) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+For demonstration purposes, the current implementation uses mock data.

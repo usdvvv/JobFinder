@@ -27,6 +27,7 @@ import {
 import NavBar from '@/components/NavBar';
 import AnimatedSection from '@/components/AnimatedSection';
 import JobMatchCard from '@/components/JobMatchCard';
+import { uploadAndAnalyzeCV, searchJobs, JobMatch, JobSearchResult } from '@/services/jobSearchAPI';
 
 const AIJobSearch = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -37,10 +38,10 @@ const AIJobSearch = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [jobMatches, setJobMatches] = useState<any[]>([]);
+  const [jobMatches, setJobMatches] = useState<JobMatch[]>([]);
   const [jobTitle, setJobTitle] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<JobSearchResult[]>([]);
   const [activeTab, setActiveTab] = useState('upload');
   
   // Handle file selection
@@ -114,8 +115,8 @@ const AIJobSearch = () => {
     }
   };
   
-  // Simulate CV analysis using AI
-  const analyzeCV = () => {
+  // Analyze CV using our API
+  const analyzeCV = async () => {
     if (!cvFile) {
       toast({
         variant: "destructive",
@@ -131,95 +132,39 @@ const AIJobSearch = () => {
     // Simulate upload progress
     const interval = setInterval(() => {
       setUploadProgress((prev) => {
-        if (prev >= 100) {
+        if (prev >= 95) {
           clearInterval(interval);
-          return 100;
+          return 95;
         }
         return prev + 5;
       });
     }, 100);
     
-    // Simulate API response
-    setTimeout(() => {
+    try {
+      // Call our API to analyze the CV
+      const matches = await uploadAndAnalyzeCV(cvFile);
       clearInterval(interval);
       setUploadProgress(100);
-      
-      // Mock job match data
-      const mockJobMatches = [
-        {
-          id: 1,
-          title: "Senior Frontend Developer",
-          matchScore: 92,
-          whyMatch: "Your extensive React experience and UI/UX skills align perfectly with this role.",
-          responsibilities: [
-            "Develop responsive web applications using React",
-            "Collaborate with UI/UX designers to implement designs",
-            "Optimize application performance and user experience"
-          ],
-          whyExcel: "Your portfolio demonstrates exceptional UI work and your experience with performance optimization will be valuable."
-        },
-        {
-          id: 2,
-          title: "Full Stack Engineer",
-          matchScore: 87,
-          whyMatch: "Your combined frontend and backend experience makes you an ideal candidate.",
-          responsibilities: [
-            "Build full-stack web applications",
-            "Work with Node.js backends and React frontends",
-            "Design and implement database schemas"
-          ],
-          whyExcel: "Your GitHub projects show proficiency in both frontend and backend technologies."
-        },
-        {
-          id: 3,
-          title: "UX/UI Developer",
-          matchScore: 85,
-          whyMatch: "Your design sensibility combined with development skills is perfect for this hybrid role.",
-          responsibilities: [
-            "Create wireframes and prototypes",
-            "Implement responsive designs in code",
-            "Conduct usability testing"
-          ],
-          whyExcel: "Your attention to detail and understanding of user experience principles are evident in your work."
-        },
-        {
-          id: 4,
-          title: "DevOps Engineer",
-          matchScore: 78,
-          whyMatch: "Your experience with CI/CD pipelines and cloud services is relevant for this position.",
-          responsibilities: [
-            "Set up and maintain CI/CD pipelines",
-            "Manage cloud infrastructure",
-            "Optimize deployment workflows"
-          ],
-          whyExcel: "Your background in automation and infrastructure as code will be particularly valuable."
-        },
-        {
-          id: 5,
-          title: "Technical Lead",
-          matchScore: 76,
-          whyMatch: "Your leadership experience and technical expertise qualify you for this role.",
-          responsibilities: [
-            "Lead a team of developers",
-            "Make architectural decisions",
-            "Mentor junior team members"
-          ],
-          whyExcel: "Your communication skills and experience mentoring junior developers make you a strong fit."
-        }
-      ];
-      
-      setJobMatches(mockJobMatches);
-      setIsAnalyzing(false);
+      setJobMatches(matches);
       
       toast({
         title: "CV analyzed successfully",
         description: "We've found job matches for your profile!",
       });
-    }, 3000);
+    } catch (error) {
+      console.error('Error analyzing CV:', error);
+      toast({
+        variant: "destructive",
+        title: "Analysis failed",
+        description: "Failed to analyze your CV. Please try again.",
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
   
   // Search for jobs
-  const searchJobs = () => {
+  const searchJobsHandler = async () => {
     if (!jobTitle.trim()) {
       toast({
         variant: "destructive",
@@ -232,70 +177,20 @@ const AIJobSearch = () => {
     setIsSearching(true);
     setSearchResults([]);
     
-    // Simulate API response
-    setTimeout(() => {
-      // Mock search results
-      const mockSearchResults = [
-        {
-          id: 101,
-          title: jobTitle,
-          company: "TechCorp Inc.",
-          location: "San Francisco, CA",
-          salary: "$120K - $150K",
-          description: "We are looking for an experienced professional to join our team...",
-          posted: "2 days ago",
-          remote: true,
-          link: "#"
-        },
-        {
-          id: 102,
-          title: jobTitle,
-          company: "Innovation Labs",
-          location: "New York, NY",
-          salary: "$110K - $140K",
-          description: "Join our dynamic team working on cutting-edge projects...",
-          posted: "1 week ago",
-          remote: false,
-          link: "#"
-        },
-        {
-          id: 103,
-          title: jobTitle,
-          company: "Future Technologies",
-          location: "Remote",
-          salary: "$100K - $130K",
-          description: "We're seeking a talented individual to help us build the next generation of products...",
-          posted: "3 days ago",
-          remote: true,
-          link: "#"
-        },
-        {
-          id: 104,
-          title: jobTitle,
-          company: "Digital Solutions",
-          location: "Austin, TX",
-          salary: "$115K - $145K",
-          description: "Be part of a team that's transforming how businesses operate...",
-          posted: "5 days ago",
-          remote: false,
-          link: "#"
-        },
-        {
-          id: 105,
-          title: jobTitle,
-          company: "Tech Innovators",
-          location: "Seattle, WA",
-          salary: "$125K - $155K",
-          description: "Work on challenging problems and innovative solutions...",
-          posted: "1 day ago",
-          remote: true,
-          link: "#"
-        }
-      ];
-      
-      setSearchResults(mockSearchResults);
+    try {
+      // Call our API to search for jobs
+      const results = await searchJobs(jobTitle);
+      setSearchResults(results);
+    } catch (error) {
+      console.error('Error searching jobs:', error);
+      toast({
+        variant: "destructive",
+        title: "Search failed",
+        description: "Failed to search for jobs. Please try again.",
+      });
+    } finally {
       setIsSearching(false);
-    }, 2000);
+    }
   };
   
   const applyToJob = (jobId: number) => {
@@ -313,6 +208,11 @@ const AIJobSearch = () => {
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
               Upload your CV and let our AI match you with the perfect job opportunities
             </p>
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950 rounded-md max-w-2xl mx-auto">
+              <p className="text-sm text-blue-700 dark:text-blue-300">
+                <strong>Note:</strong> This feature uses a Python backend to process your CV and search for jobs. Make sure the server is running locally at http://localhost:5000.
+              </p>
+            </div>
           </AnimatedSection>
           
           <Tabs defaultValue="upload" value={activeTab} onValueChange={setActiveTab} className="w-full mb-8">
@@ -471,10 +371,10 @@ const AIJobSearch = () => {
                           placeholder="Job title, e.g., 'Frontend Developer'"
                           value={jobTitle}
                           onChange={(e) => setJobTitle(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && searchJobs()}
+                          onKeyDown={(e) => e.key === 'Enter' && searchJobsHandler()}
                         />
                       </div>
-                      <Button onClick={searchJobs} disabled={isSearching}>
+                      <Button onClick={searchJobsHandler} disabled={isSearching}>
                         {isSearching ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
