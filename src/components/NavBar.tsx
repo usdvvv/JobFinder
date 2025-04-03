@@ -27,7 +27,7 @@ const NavBar = () => {
       title: "Logged out",
       description: "You have been successfully logged out.",
     });
-    navigate('/home');
+    navigate('/');
   };
 
   // For demo purposes, we should check for actual authentication
@@ -73,7 +73,7 @@ const NavBar = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link 
-              to="/home" 
+              to="/" 
               className="flex items-center space-x-2"
             >
               <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 flex items-center justify-center">
@@ -85,14 +85,14 @@ const NavBar = () => {
           
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-4">
-              <NavLink to="/home" icon={<Home className="h-4 w-4" />} text="Home" />
+              <NavLink to="/" icon={<Home className="h-4 w-4" />} text="Home" />
               <NavLink to="/jobs" icon={<Briefcase className="h-4 w-4" />} text="Browse Jobs" />
               <NavLink to="/resume" icon={<FileText className="h-4 w-4" />} text="Resume Maker" />
               <NavLink to="/interview" icon={<Video className="h-4 w-4" />} text="Interview Prep" />
               <NavLink to="/practice" icon={<Code className="h-4 w-4" />} text="Practice Coding" />
               <NavLink to="/therapist" icon={<Brain className="h-4 w-4" />} text="AI Therapist" />
               <NavLink to="/peer-chat" icon={<MessageSquare className="h-4 w-4" />} text="Peer Chat" />
-              <NavLink to="/assistant" icon={<Bot className="h-4 w-4" />} text="AI Assistant" />
+              <NavLink to="/ai-assistant" icon={<Bot className="h-4 w-4" />} text="AI Assistant" />
               <NavLink to="/entertainment" icon={<Puzzle className="h-4 w-4" />} text="Entertainment" />
               
               {isLoggedIn ? (
@@ -139,14 +139,14 @@ const NavBar = () => {
       {isOpen && (
         <div className="md:hidden glass-effect animate-fade-in">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <MobileNavLink to="/home" icon={<Home className="h-5 w-5" />} text="Home" />
+            <MobileNavLink to="/" icon={<Home className="h-5 w-5" />} text="Home" />
             <MobileNavLink to="/jobs" icon={<Briefcase className="h-5 w-5" />} text="Browse Jobs" />
             <MobileNavLink to="/resume" icon={<FileText className="h-5 w-5" />} text="Resume Maker" />
             <MobileNavLink to="/interview" icon={<Video className="h-5 w-5" />} text="Interview Prep" />
             <MobileNavLink to="/practice" icon={<Code className="h-5 w-5" />} text="Practice Coding" />
             <MobileNavLink to="/therapist" icon={<Brain className="h-5 w-5" />} text="AI Therapist" />
             <MobileNavLink to="/peer-chat" icon={<MessageSquare className="h-5 w-5" />} text="Peer Chat" />
-            <MobileNavLink to="/assistant" icon={<Bot className="h-5 w-5" />} text="AI Assistant" />
+            <MobileNavLink to="/ai-assistant" icon={<Bot className="h-5 w-5" />} text="AI Assistant" />
             <MobileNavLink to="/entertainment" icon={<Puzzle className="h-5 w-5" />} text="Entertainment" />
             
             <div className="pt-2 border-t border-gray-200/30 mt-2">

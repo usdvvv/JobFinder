@@ -21,7 +21,7 @@ const NotFound = () => {
       
       <div className="max-w-4xl mx-auto px-4 py-16">
         <Button variant="outline" className="mb-8" asChild>
-          <Link to="/home" className="flex items-center text-blue-300 hover:text-blue-100">
+          <Link to="/" className="flex items-center text-blue-300 hover:text-blue-100">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Home
           </Link>
@@ -35,7 +35,7 @@ const NotFound = () => {
             <h1 className="text-6xl font-bold mb-6 text-gradient">404</h1>
             <p className="text-xl text-blue-200 mb-8">Oops! The page you're looking for doesn't exist.</p>
             <Button size="lg" asChild>
-              <Link to="/home" className="flex items-center">
+              <Link to="/" className="flex items-center">
                 Return to Home
               </Link>
             </Button>
