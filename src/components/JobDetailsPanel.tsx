@@ -50,13 +50,13 @@ const JobDetailsPanel = ({ job, open, onOpenChange, onApplySuccess }: JobDetails
     try {
       // Simulate logs for demo purposes
       const logUpdateInterval = setInterval(() => {
-        setApplicationLogs(prevLogs => {
+        setApplicationLogs((currentLogs) => {
           const updatedLogs = [
-            ...prevLogs, 
-            prevLogs.length === 1 ? 'Opening job posting...' : 
-            prevLogs.length === 2 ? 'Locating apply button...' :
-            prevLogs.length === 3 ? 'Filling application form...' :
-            prevLogs.length === 4 ? 'Submitting application...' : 
+            ...currentLogs, 
+            currentLogs.length === 1 ? 'Opening job posting...' : 
+            currentLogs.length === 2 ? 'Locating apply button...' :
+            currentLogs.length === 3 ? 'Filling application form...' :
+            currentLogs.length === 4 ? 'Submitting application...' : 
             'Application completed successfully!'
           ];
           
@@ -75,9 +75,12 @@ const JobDetailsPanel = ({ job, open, onOpenChange, onApplySuccess }: JobDetails
       clearInterval(logUpdateInterval);
       
       // Ensure we have a complete set of logs
-      if (applicationLogs.length < 6) {
-        setApplicationLogs(logs => [...logs, 'Application completed successfully!']);
-      }
+      setApplicationLogs(currentLogs => {
+        if (currentLogs.length < 6) {
+          return [...currentLogs, 'Application completed successfully!'];
+        }
+        return currentLogs;
+      });
       
       toast({
         title: "Application Submitted!",
@@ -86,7 +89,7 @@ const JobDetailsPanel = ({ job, open, onOpenChange, onApplySuccess }: JobDetails
       
       onApplySuccess(job.id, result);
     } catch (error) {
-      setApplicationLogs(logs => [...logs, 'Error: Application failed. Please try again.']);
+      setApplicationLogs(currentLogs => [...currentLogs, 'Error: Application failed. Please try again.']);
       
       toast({
         variant: "destructive",

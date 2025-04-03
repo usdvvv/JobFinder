@@ -21,6 +21,7 @@ import AILiveAssistant from "@/pages/AILiveAssistant";
 import PeerChatAI from "@/pages/PeerChatAI";
 import RoleSelection from "@/pages/RoleSelection";
 import NotFound from "@/pages/NotFound";
+import JobAutomationMonitor from "@/pages/JobAutomationMonitor";
 
 // Company pages
 import CompanyLogin from "@/pages/company/CompanyLogin";
@@ -59,6 +60,7 @@ function App() {
           <Route path="/ai-assistant" element={<AILiveAssistant />} />
           <Route path="/peer-chat" element={<PeerChatAI />} />
           <Route path="/roles" element={<RoleSelection />} />
+          <Route path="/job-automation" element={<JobAutomationMonitor />} />
           <Route path="/company/login" element={<CompanyLogin />} />
           <Route path="/company/signup" element={<CompanySignup />} />
           <Route path="/company/dashboard" element={<CompanyDashboard />} />
