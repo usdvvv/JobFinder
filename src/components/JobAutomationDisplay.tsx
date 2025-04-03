@@ -75,7 +75,7 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
     
     const mockInitialData = () => {
       setStatus({
-        status: 'idle',
+        status: 'idle' as AutomationStatusType,
         jobsTotal: 0,
         jobsCompleted: 0,
         jobsFailed: 0
