@@ -19,7 +19,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { 
   AutomationStatus,
-  AutomationStatusType, 
+  AutomationStatusType,
   AutomationLog, 
   controlAutomation,
   getAutomationStatus,
@@ -75,7 +75,7 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
     
     const mockInitialData = () => {
       setStatus({
-        status: 'idle' as AutomationStatusType,
+        status: 'idle',
         jobsTotal: 0,
         jobsCompleted: 0,
         jobsFailed: 0
