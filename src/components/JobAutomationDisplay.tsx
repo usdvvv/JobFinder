@@ -7,13 +7,13 @@ import { Separator } from "@/components/ui/separator";
 import { 
   PauseIcon, 
   PlayIcon, 
-  StopIcon, 
+  Square as StopIcon,
   SkipForwardIcon,
-  RefreshIcon,
+  RefreshCw as RefreshIcon,
   MonitorIcon,
   BriefcaseIcon,
   ArrowRightIcon,
-  ChromeIcon
+  Chrome as ChromeIcon
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { 
