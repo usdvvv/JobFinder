@@ -18,7 +18,8 @@ import {
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { 
-  AutomationStatus, 
+  AutomationStatus,
+  AutomationStatusType,
   AutomationLog, 
   controlAutomation,
   getAutomationStatus,
@@ -36,7 +37,7 @@ interface JobAutomationDisplayProps {
 const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
   const { toast } = useToast();
   const [status, setStatus] = useState<AutomationStatus>({
-    status: 'idle',
+    status: 'idle' as AutomationStatusType,
     jobsTotal: 0,
     jobsCompleted: 0,
     jobsFailed: 0
