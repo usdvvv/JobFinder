@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -311,11 +312,9 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
                     <h3 className="text-lg font-medium">
                       {isComplete 
                         ? "Process Complete" 
-                        : status.status === 'idle'
-                          ? "Ready to Start"
-                          : status.status === 'paused'
-                            ? "Process Paused"
-                            : "Applying to Jobs"}
+                        : status.status === 'paused'
+                          ? "Process Paused"
+                          : "Applying to Jobs"}
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {status.jobsTotal > 0 
