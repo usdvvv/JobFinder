@@ -50,18 +50,22 @@ const JobDetailsPanel = ({ job, open, onOpenChange, onApplySuccess }: JobDetails
     try {
       // Simulate logs for demo purposes
       const logUpdateInterval = setInterval(() => {
-        setApplicationLogs(prevLogs => [
-          ...prevLogs, 
-          prevLogs.length === 1 ? 'Opening job posting...' : 
-          prevLogs.length === 2 ? 'Locating apply button...' :
-          prevLogs.length === 3 ? 'Filling application form...' :
-          prevLogs.length === 4 ? 'Submitting application...' : 
-          'Application completed successfully!'
-        ]);
-        
-        if (prevLogs.length >= 5) {
-          clearInterval(logUpdateInterval);
-        }
+        setApplicationLogs(prevLogs => {
+          const updatedLogs = [
+            ...prevLogs, 
+            prevLogs.length === 1 ? 'Opening job posting...' : 
+            prevLogs.length === 2 ? 'Locating apply button...' :
+            prevLogs.length === 3 ? 'Filling application form...' :
+            prevLogs.length === 4 ? 'Submitting application...' : 
+            'Application completed successfully!'
+          ];
+          
+          if (updatedLogs.length >= 6) {
+            clearInterval(logUpdateInterval);
+          }
+          
+          return updatedLogs;
+        });
       }, 1500);
       
       // Call the API
