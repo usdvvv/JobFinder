@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import NavBar from '@/components/NavBar';
-import AutomationMonitor from '@/components/AutomationMonitor';
 import { Loader2Icon } from 'lucide-react';
+import JobAutomationDisplay from '@/components/JobAutomationDisplay';
 
 const JobAutomationMonitor = () => {
   const { search } = useLocation();
@@ -41,7 +41,16 @@ const JobAutomationMonitor = () => {
             <h3 className="text-lg font-medium">Connecting to automation service...</h3>
           </div>
         ) : (
-          <AutomationMonitor />
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-6">
+              <h1 className="text-3xl font-bold">Job Application Automation</h1>
+              <p className="text-muted-foreground mt-2">
+                Automatically applying for <span className="font-medium">{jobTitle}</span> positions using LinkedIn
+              </p>
+            </div>
+            
+            <JobAutomationDisplay jobTitle={jobTitle} />
+          </div>
         )}
       </main>
     </div>
