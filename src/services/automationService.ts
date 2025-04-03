@@ -1,14 +1,9 @@
-
 import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
-// Define a specific type for the status
-export type AutomationStatusType = 'idle' | 'running' | 'paused' | 'completed' | 'failed';
-
-// Update the interface to use the new type
 export interface AutomationStatus {
-  status: AutomationStatusType;
+  status: 'idle' | 'running' | 'paused' | 'completed' | 'failed';
   jobsTotal: number;
   jobsCompleted: number;
   jobsFailed: number;

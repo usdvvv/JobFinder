@@ -19,8 +19,7 @@ import {
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { 
-  AutomationStatus,
-  AutomationStatusType,
+  AutomationStatus, 
   AutomationLog, 
   controlAutomation,
   getAutomationStatus,
@@ -38,7 +37,7 @@ interface JobAutomationDisplayProps {
 const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
   const { toast } = useToast();
   const [status, setStatus] = useState<AutomationStatus>({
-    status: 'idle' as AutomationStatusType,
+    status: 'idle',
     jobsTotal: 0,
     jobsCompleted: 0,
     jobsFailed: 0
@@ -53,12 +52,14 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
   
   const logEndRef = useRef<HTMLDivElement>(null);
   
+  // Scroll to bottom of logs when new logs come in
   useEffect(() => {
     if (logEndRef.current) {
       logEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [logs]);
 
+  // Fetch initial status and logs
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
@@ -70,11 +71,13 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
         setLogs(logsData);
       } catch (error) {
         console.error('Error fetching automation data:', error);
+        // For development/demo, use mock data if the server is not available
         mockInitialData();
       }
     };
     
     const mockInitialData = () => {
+      // Mocked data for development/demo purposes
       setStatus({
         status: 'idle',
         jobsTotal: 0,
@@ -87,6 +90,7 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
     
     fetchInitialData();
     
+    // Set up polling for updates
     const cancelPolling = setupPolling(
       (newStatus) => {
         setStatus(newStatus);
@@ -113,6 +117,7 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
     try {
       setIsStarting(true);
       
+      // If there's a CV file and we haven't started yet, upload it first
       if (cvFile && status.status === 'idle') {
         const uploadResult = await uploadCV(cvFile);
         if (!uploadResult.success) {
@@ -125,6 +130,7 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
         });
       }
       
+      // Start the automation
       const newStatus = await startAutomation(jobTitle);
       setStatus(newStatus);
       
@@ -235,6 +241,7 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
     }
   };
   
+  // Determine if process is complete
   const isComplete = status.status === 'completed' || 
                      (status.jobsCompleted + status.jobsFailed >= status.jobsTotal && status.jobsTotal > 0);
   
@@ -313,9 +320,11 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
                     <h3 className="text-lg font-medium">
                       {isComplete 
                         ? "Process Complete" 
-                        : status.status === 'paused'
-                          ? "Process Paused"
-                          : "Applying to Jobs"}
+                        : status.status === 'idle'
+                          ? "Ready to Start"
+                          : status.status === 'paused'
+                            ? "Process Paused"
+                            : "Applying to Jobs"}
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {status.jobsTotal > 0 
@@ -358,7 +367,7 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
                       </Button>
                     )}
                     
-                    {!isComplete && (
+                    {!isComplete && status.status !== 'idle' && (
                       <Button 
                         variant="destructive" 
                         size="sm"

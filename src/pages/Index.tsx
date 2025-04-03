@@ -6,8 +6,8 @@ const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Redirect to the roles selection page
-    navigate('/roles');
+    // Redirect to the landing page
+    navigate('/');
   }, [navigate]);
 
   return (

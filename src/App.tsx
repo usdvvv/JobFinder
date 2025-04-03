@@ -1,5 +1,5 @@
 
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import LandingPage from "@/pages/LandingPage";
 import ChooseSearchType from "@/pages/ChooseSearchType";
@@ -40,10 +40,8 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/roles" replace />} />
-          <Route path="/home" element={<Navigate to="/roles" replace />} />
-          <Route path="/roles" element={<RoleSelection />} />
-          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/home" element={<LandingPage />} />
           <Route path="/choose" element={<ChooseSearchType />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
@@ -61,6 +59,7 @@ function App() {
           <Route path="/ai-job-search" element={<AIJobSearch />} />
           <Route path="/ai-assistant" element={<AILiveAssistant />} />
           <Route path="/peer-chat" element={<PeerChatAI />} />
+          <Route path="/roles" element={<RoleSelection />} />
           <Route path="/job-automation" element={<JobAutomationMonitor />} />
           <Route path="/company/login" element={<CompanyLogin />} />
           <Route path="/company/signup" element={<CompanySignup />} />
