@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,14 +51,12 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
   
   const logEndRef = useRef<HTMLDivElement>(null);
   
-  // Scroll to bottom of logs when new logs come in
   useEffect(() => {
     if (logEndRef.current) {
       logEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [logs]);
 
-  // Fetch initial status and logs
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
@@ -71,13 +68,11 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
         setLogs(logsData);
       } catch (error) {
         console.error('Error fetching automation data:', error);
-        // For development/demo, use mock data if the server is not available
         mockInitialData();
       }
     };
     
     const mockInitialData = () => {
-      // Mocked data for development/demo purposes
       setStatus({
         status: 'idle',
         jobsTotal: 0,
@@ -90,7 +85,6 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
     
     fetchInitialData();
     
-    // Set up polling for updates
     const cancelPolling = setupPolling(
       (newStatus) => {
         setStatus(newStatus);
@@ -117,7 +111,6 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
     try {
       setIsStarting(true);
       
-      // If there's a CV file and we haven't started yet, upload it first
       if (cvFile && status.status === 'idle') {
         const uploadResult = await uploadCV(cvFile);
         if (!uploadResult.success) {
@@ -130,7 +123,6 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
         });
       }
       
-      // Start the automation
       const newStatus = await startAutomation(jobTitle);
       setStatus(newStatus);
       
@@ -241,7 +233,6 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
     }
   };
   
-  // Determine if process is complete
   const isComplete = status.status === 'completed' || 
                      (status.jobsCompleted + status.jobsFailed >= status.jobsTotal && status.jobsTotal > 0);
   

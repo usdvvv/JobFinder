@@ -1,7 +1,9 @@
+
 import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
+// Ensure this type definition includes 'idle'
 export interface AutomationStatus {
   status: 'idle' | 'running' | 'paused' | 'completed' | 'failed';
   jobsTotal: number;
