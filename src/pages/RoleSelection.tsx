@@ -68,20 +68,39 @@ const RoleSelection = () => {
         duration: 1,
         ease: "power2.inOut",
         onComplete: () => {
-          // Show "Choose Your Role" text
-          gsap.to(roleTextRef.current, {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            duration: 1.5,
-            ease: "elastic.out(1, 0.7)",
+          // Fade out "Welcome" text
+          gsap.to(introTextRef.current, {
+            opacity: 0,
+            duration: 0.5,
+            ease: "power2.out",
             onComplete: () => {
-              // Show buttons
-              gsap.to(choiceContainerRef.current, {
+              // Show "Choose Your Role" text
+              gsap.to(roleTextRef.current, {
                 opacity: 1,
+                scale: 1,
                 y: 0,
-                duration: 1,
-                ease: "power2.out"
+                duration: 1.5,
+                ease: "elastic.out(1, 0.7)",
+                onComplete: () => {
+                  // Move "Choose Your Role" text to the top-left corner
+                  gsap.to(roleTextRef.current, {
+                    top: '2rem',
+                    left: '2rem',
+                    scale: 0.5,
+                    fontSize: '2rem',
+                    duration: 1,
+                    ease: "power2.inOut",
+                    onComplete: () => {
+                      // Show buttons
+                      gsap.to(choiceContainerRef.current, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1,
+                        ease: "power2.out"
+                      });
+                    }
+                  });
+                }
               });
             }
           });
@@ -114,7 +133,7 @@ const RoleSelection = () => {
   }, []);
 
   const handleUserClick = () => {
-    navigate('/welcome');
+    navigate('/choose');
   };
 
   const handleCompanyClick = () => {
@@ -122,109 +141,7 @@ const RoleSelection = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-gray-900 to-black overflow-hidden relative">
-      <style jsx>{`
-        .background {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: radial-gradient(circle at center, rgba(25, 25, 35, 0.8) 0%, rgba(10, 10, 15, 1) 70%);
-          z-index: -2;
-        }
-        .particles {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: -1;
-          pointer-events: none;
-        }
-        .particle {
-          position: absolute;
-          background: white;
-          border-radius: 50%;
-          opacity: 0.5;
-          pointer-events: none;
-        }
-        .glow {
-          position: absolute;
-          width: 100px;
-          height: 100px;
-          border-radius: 50%;
-          background: radial-gradient(circle at center, rgba(100, 150, 255, 0.3) 0%, rgba(100, 150, 255, 0) 70%);
-          pointer-events: none;
-          z-index: -1;
-        }
-        .intro-text, .role-text {
-          position: absolute;
-          font-size: 4rem;
-          font-weight: bold;
-          background: linear-gradient(to right, #64a0ff, #8c5cff);
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-          text-align: center;
-          opacity: 0;
-          transform: translateY(30px) scale(0.9);
-        }
-        .choice-container {
-          display: flex;
-          flex-direction: column;
-          gap: 2rem;
-          margin-top: 3rem;
-          opacity: 0;
-          transform: translateY(30px);
-          z-index: 10;
-        }
-        @media (min-width: 768px) {
-          .choice-container {
-            flex-direction: row;
-          }
-        }
-        .choice-button {
-          width: 280px;
-          height: 200px;
-          background: rgba(30, 30, 40, 0.7);
-          border: 2px solid rgba(100, 150, 255, 0.3);
-          border-radius: 1rem;
-          padding: 2rem;
-          transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-        }
-        .choice-button:hover {
-          background: rgba(40, 40, 60, 0.8);
-          border-color: rgba(100, 150, 255, 0.8);
-          transform: translateY(-5px) scale(1.02);
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(100, 150, 255, 0.4);
-        }
-        .button-content {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-        }
-        .button-icon {
-          font-size: 3rem;
-          margin-bottom: 1rem;
-        }
-        .button-title {
-          font-size: 1.5rem;
-          font-weight: bold;
-          color: white;
-          margin-bottom: 0.5rem;
-        }
-        .button-subtitle {
-          font-size: 0.9rem;
-          color: #aab7c4;
-        }
-      `}</style>
-
+    <div className="min-h-screen w-full flex items-center justify-center">
       <div className="background"></div>
       <div ref={particlesRef} className="particles"></div>
       <div ref={glowRef} className="glow"></div>
