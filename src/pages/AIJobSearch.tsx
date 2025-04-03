@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -357,11 +356,6 @@ const AIJobSearch = () => {
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
               Upload your CV and let our AI match you with the perfect job opportunities
             </p>
-            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950 rounded-md max-w-2xl mx-auto">
-              <p className="text-sm text-blue-700 dark:text-blue-300">
-                <strong>Note:</strong> This feature uses a Python backend to process your CV and search for jobs. Make sure the server is running locally at http://localhost:5000.
-              </p>
-            </div>
           </AnimatedSection>
           
           <Tabs defaultValue="upload" value={activeTab} onValueChange={setActiveTab} className="w-full mb-8">
