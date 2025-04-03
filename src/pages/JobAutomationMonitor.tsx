@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { NavBar } from '@/components/NavBar';
+import NavBar from '@/components/NavBar';
 import AutomationMonitor from '@/components/AutomationMonitor';
 import { Loader2Icon } from 'lucide-react';
 
