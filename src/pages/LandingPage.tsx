@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -77,7 +76,7 @@ const LandingPage = () => {
                   size="lg"
                   asChild
                 >
-                  <Link to="/choose">
+                  <Link to="/roles">
                     Search <ArrowRight className="ml-1 h-5 w-5" />
                   </Link>
                 </Button>
@@ -102,7 +101,7 @@ const LandingPage = () => {
               className="bg-blue-800/30 backdrop-blur-sm border-blue-400/20 text-blue-100 shadow-md hover:shadow-lg transition-all duration-300 hover:bg-blue-700/40"
               asChild
             >
-              <Link to="/choose">
+              <Link to="/roles">
                 Get Started <ArrowUpRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>
@@ -231,7 +230,7 @@ const LandingPage = () => {
                 className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600"
                 asChild
               >
-                <Link to="/choose">
+                <Link to="/roles">
                   Get Started <ArrowRight className="ml-1 h-5 w-5" />
                 </Link>
               </Button>

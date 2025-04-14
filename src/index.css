@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -162,16 +163,18 @@
 /* Ensure navbar remains visible during tour */
 .tour-active nav {
   z-index: 60 !important;
+  pointer-events: auto !important;
 }
 
 .tour-active .navbar-item {
-  pointer-events: none;
+  pointer-events: auto !important;
 }
 
 /* Tour target highlight */
 .tour-highlight {
   z-index: 45;
   position: relative;
+  pointer-events: auto !important;
 }
 
 /* Added high-contrast stlye for navbar during tour */
@@ -191,5 +194,24 @@
 
 /* Fix for pointer events after tour completes */
 body:not(.tour-active) * {
+  pointer-events: auto !important;
+}
+
+/* Fix for RoleSelection page */
+.choice-container {
+  z-index: 45;
+  position: relative;
+}
+
+.choice-button {
+  z-index: 45;
+  position: relative;
+  pointer-events: auto !important;
+}
+
+/* Fix buttons and links to be clickable during tour */
+.tour-active button,
+.tour-active a,
+.tour-active .choice-button {
   pointer-events: auto !important;
 }

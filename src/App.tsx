@@ -55,6 +55,8 @@ const RouteTourGuide = () => {
   const handleTourReset = () => {
     localStorage.removeItem('jobfinder_has_seen_tour');
     setResetKey(prev => prev + 1);
+    // Force the guide to start on the landing page
+    window.location.href = '/';
   };
 
   return (

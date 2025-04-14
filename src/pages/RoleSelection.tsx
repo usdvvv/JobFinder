@@ -168,6 +168,138 @@ const RoleSelection = () => {
           </div>
         </button>
       </div>
+
+      <style jsx>{`
+        .background {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+          z-index: -2;
+        }
+        
+        .particles {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          overflow: hidden;
+          z-index: -1;
+        }
+        
+        .particle {
+          position: absolute;
+          background-color: rgba(255, 255, 255, 0.3);
+          border-radius: 50%;
+        }
+        
+        .glow {
+          position: fixed;
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0) 70%);
+          pointer-events: none;
+          z-index: -1;
+        }
+        
+        .intro-text, .role-text {
+          position: absolute;
+          color: white;
+          font-size: 3rem;
+          font-weight: 700;
+          text-align: center;
+          opacity: 0;
+          transform: translateY(20px) scale(0.95);
+        }
+        
+        .choice-container {
+          display: flex;
+          flex-direction: row;
+          gap: 2rem;
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        
+        @media (max-width: 640px) {
+          .choice-container {
+            flex-direction: column;
+          }
+        }
+        
+        .choice-button {
+          width: 280px;
+          height: 280px;
+          background: rgba(30, 41, 59, 0.7);
+          border: 1px solid rgba(59, 130, 246, 0.3);
+          border-radius: 1rem;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
+          position: relative;
+          overflow: hidden;
+          z-index: 1;
+        }
+        
+        .choice-button:hover {
+          transform: translateY(-5px);
+          border-color: rgba(59, 130, 246, 0.8);
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .choice-button::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(59, 130, 246, 0.2),
+            transparent
+          );
+          transition: 0.5s;
+          z-index: -1;
+        }
+        
+        .choice-button:hover::before {
+          left: 100%;
+        }
+        
+        .button-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 2rem;
+        }
+        
+        .button-icon {
+          font-size: 3rem;
+          margin-bottom: 1rem;
+        }
+        
+        .button-title {
+          color: white;
+          font-size: 1.5rem;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+        }
+        
+        .button-subtitle {
+          color: #94a3b8;
+          font-size: 0.875rem;
+          text-align: center;
+        }
+      `}</style>
     </div>
   );
 };

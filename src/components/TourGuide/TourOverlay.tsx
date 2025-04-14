@@ -11,7 +11,7 @@ const TourOverlay = ({ visible }: TourOverlayProps) => {
   return (
     <div className="fixed inset-0 z-40 pointer-events-none animate-fade-in transition-all duration-300">
       {/* Semi-transparent overlay that doesn't blur content */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/40 to-blue-900/40 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-blue-900/30 pointer-events-none"></div>
       
       {/* Subtle particle effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

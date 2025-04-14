@@ -40,8 +40,7 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
     toast({
       title: "Tour Completed! 🎉",
       description: "You're all set to explore JobFinder. Need help anytime? Just click the tour guide button.",
-      variant: "default",
-      icon: <PartyPopper className="h-5 w-5 text-green-500" />,
+      variant: "default"
     });
   };
 
@@ -76,7 +75,7 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
               scrollToElement(element);
             }
             setIsNavigating(false);
-          }, 500);
+          }, 800);
         }, 300);
       } else {
         // We're already on the correct page, just scroll to element
