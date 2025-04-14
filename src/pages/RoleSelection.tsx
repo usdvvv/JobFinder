@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
@@ -12,7 +11,6 @@ const RoleSelection = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Create floating particles
     const createParticles = () => {
       if (!particlesRef.current) return;
       
@@ -20,18 +18,15 @@ const RoleSelection = () => {
         const particle = document.createElement('div');
         particle.className = 'particle';
         
-        // Random size between 2 and 6 pixels
         const size = Math.random() * 4 + 2;
         particle.style.width = `${size}px`;
         particle.style.height = `${size}px`;
         
-        // Random position
         particle.style.left = `${Math.random() * 100}vw`;
         particle.style.top = `${Math.random() * 100}vh`;
         
         particlesRef.current.appendChild(particle);
 
-        // Animate each particle
         gsap.to(particle, {
           y: -Math.random() * 400 - 200,
           x: (Math.random() - 0.5) * 200,
@@ -45,11 +40,9 @@ const RoleSelection = () => {
       }
     };
 
-    // Animation sequence
     const startAnimations = () => {
       if (!introTextRef.current || !roleTextRef.current || !choiceContainerRef.current) return;
 
-      // Initial "Welcome" text animation
       gsap.to(introTextRef.current, {
         opacity: 1,
         scale: 1,
@@ -58,7 +51,6 @@ const RoleSelection = () => {
         ease: "elastic.out(1, 0.7)"
       });
 
-      // Move "Welcome" text to the top-left corner
       gsap.to(introTextRef.current, {
         top: '2rem',
         left: '2rem',
@@ -68,13 +60,11 @@ const RoleSelection = () => {
         duration: 1,
         ease: "power2.inOut",
         onComplete: () => {
-          // Fade out "Welcome" text
           gsap.to(introTextRef.current, {
             opacity: 0,
             duration: 0.5,
             ease: "power2.out",
             onComplete: () => {
-              // Show "Choose Your Role" text
               gsap.to(roleTextRef.current, {
                 opacity: 1,
                 scale: 1,
@@ -82,7 +72,6 @@ const RoleSelection = () => {
                 duration: 1.5,
                 ease: "elastic.out(1, 0.7)",
                 onComplete: () => {
-                  // Move "Choose Your Role" text to the top-left corner
                   gsap.to(roleTextRef.current, {
                     top: '2rem',
                     left: '2rem',
@@ -91,7 +80,6 @@ const RoleSelection = () => {
                     duration: 1,
                     ease: "power2.inOut",
                     onComplete: () => {
-                      // Show buttons
                       gsap.to(choiceContainerRef.current, {
                         opacity: 1,
                         y: 0,
@@ -108,7 +96,6 @@ const RoleSelection = () => {
       });
     };
 
-    // Glow effect following cursor
     const handleMouseMove = (e: MouseEvent) => {
       if (!glowRef.current) return;
       
@@ -121,12 +108,10 @@ const RoleSelection = () => {
       });
     };
 
-    // Initialize
     createParticles();
     startAnimations();
     document.addEventListener('mousemove', handleMouseMove);
 
-    // Cleanup
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
     };
@@ -150,7 +135,6 @@ const RoleSelection = () => {
       <h1 ref={roleTextRef} className="role-text">Choose Your Role</h1>
 
       <div ref={choiceContainerRef} className="choice-container">
-        {/* User Button */}
         <button className="choice-button" onClick={handleUserClick}>
           <div className="button-content">
             <span className="button-icon">👤</span>
@@ -159,7 +143,6 @@ const RoleSelection = () => {
           </div>
         </button>
 
-        {/* Company Button */}
         <button className="choice-button" onClick={handleCompanyClick}>
           <div className="button-content">
             <span className="button-icon">🏢</span>
@@ -169,7 +152,8 @@ const RoleSelection = () => {
         </button>
       </div>
 
-      <style jsx>{`
+      <style>
+        {`
         .background {
           position: fixed;
           top: 0;
@@ -299,7 +283,8 @@ const RoleSelection = () => {
           font-size: 0.875rem;
           text-align: center;
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };
