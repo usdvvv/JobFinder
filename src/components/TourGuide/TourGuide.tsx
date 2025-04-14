@@ -1,6 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import TourModal from './TourModal';
 import TourTooltip from './TourTooltip';
 import TourOverlay from './TourOverlay';
@@ -14,11 +13,6 @@ interface TourGuideProps {
 }
 
 const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const cleanupRef = useRef<(() => void) | null>(null);
-  const [isNavigating, setIsNavigating] = useState(false);
-  
   const {
     showWelcomeModal,
     tourActive,
@@ -40,88 +34,9 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
     toast({
       title: "Tour Completed! 🎉",
       description: "You're all set to explore JobFinder. Need help anytime? Just click the tour guide button.",
-      variant: "default"
+      variant: "default",
+      children: <PartyPopper className="h-5 w-5 text-green-500" />,
     });
-  };
-
-  // Scroll to element and handle navigation between pages
-  useEffect(() => {
-    if (!tourActive || !currentStepData || isNavigating) return;
-    
-    // Clean up any previous tour step actions
-    if (cleanupRef.current) {
-      cleanupRef.current();
-      cleanupRef.current = null;
-    }
-    
-    const targetSelector = currentStepData.targetSelector;
-    
-    // Check if the target has a page route prefix (e.g., "/jobs:...")
-    if (targetSelector.includes(':')) {
-      const [pageRoute, elementSelector] = targetSelector.split(':');
-      
-      // Only navigate if we're not already on this route
-      if (location.pathname !== pageRoute) {
-        setIsNavigating(true);
-        
-        // Add a small delay before navigation to ensure clean transition
-        setTimeout(() => {
-          navigate(pageRoute);
-          
-          // Wait for navigation to complete and then find the element
-          setTimeout(() => {
-            const element = document.querySelector(elementSelector);
-            if (element) {
-              scrollToElement(element);
-            }
-            setIsNavigating(false);
-          }, 800);
-        }, 300);
-      } else {
-        // We're already on the correct page, just scroll to element
-        const element = document.querySelector(elementSelector);
-        if (element) {
-          scrollToElement(element);
-        }
-      }
-      return;
-    }
-    
-    // If no page navigation, just scroll to the element
-    const element = document.querySelector(targetSelector);
-    if (element) {
-      scrollToElement(element);
-    }
-    
-  }, [tourActive, currentStepData, currentStep, navigate, location.pathname, isNavigating]);
-  
-  // Function to scroll to an element with smooth animation
-  const scrollToElement = (element: Element) => {
-    const rect = element.getBoundingClientRect();
-    const isInViewport = 
-      rect.top >= 0 &&
-      rect.left >= 0 &&
-      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-      rect.right <= (window.innerWidth || document.documentElement.clientWidth);
-    
-    if (!isInViewport) {
-      // Calculate the ideal scroll position (slightly above the center)
-      const scrollToY = 
-        window.scrollY + 
-        rect.top - 
-        window.innerHeight / 3;
-      
-      window.scrollTo({
-        top: Math.max(0, scrollToY),
-        behavior: 'smooth'
-      });
-    }
-    
-    // Highlight the element with a brief pulse animation
-    element.classList.add('tour-highlight-pulse');
-    setTimeout(() => {
-      element.classList.remove('tour-highlight-pulse');
-    }, 1500);
   };
 
   // Add keyboard navigation
@@ -142,55 +57,6 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [tourActive, completeTour, nextStep, prevStep]);
 
-  // Cleanup function for when tour ends
-  useEffect(() => {
-    if (!tourActive && cleanupRef.current) {
-      cleanupRef.current();
-      cleanupRef.current = null;
-      
-      // Add a slight delay before re-enabling pointer events
-      // to ensure the transition completes
-      setTimeout(() => {
-        document.body.classList.remove('tour-active');
-        // Re-enable pointer events on all elements
-        document.querySelectorAll('*').forEach((el) => {
-          (el as HTMLElement).style.pointerEvents = '';
-        });
-      }, 500);
-    }
-    
-    if (tourActive) {
-      document.body.classList.add('tour-active');
-      
-      // Add global styles for highlighting tour targets
-      const styleEl = document.createElement('style');
-      styleEl.innerHTML = `
-        .tour-highlight-pulse {
-          animation: tour-pulse 1.5s ease-in-out;
-          z-index: 45;
-          position: relative;
-        }
-        @keyframes tour-pulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-          50% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0.4); }
-        }
-      `;
-      document.head.appendChild(styleEl);
-      
-      cleanupRef.current = () => {
-        document.head.removeChild(styleEl);
-      };
-    }
-    
-    return () => {
-      // Ensure we clean up when component unmounts
-      document.body.classList.remove('tour-active');
-      document.querySelectorAll('*').forEach((el) => {
-        (el as HTMLElement).style.pointerEvents = '';
-      });
-    };
-  }, [tourActive]);
-
   return (
     <>
       <TourModal 
@@ -201,11 +67,9 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
       
       <TourOverlay visible={tourActive} />
       
-      {tourActive && currentStepData && !isNavigating && (
+      {tourActive && currentStepData && (
         <TourTooltip
-          targetSelector={currentStepData.targetSelector.includes(':') 
-            ? currentStepData.targetSelector.split(':')[1] 
-            : currentStepData.targetSelector}
+          targetSelector={currentStepData.targetSelector}
           title={currentStepData.title}
           description={currentStepData.description}
           position={currentStepData.position}

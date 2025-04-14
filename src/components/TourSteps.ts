@@ -1,3 +1,4 @@
+
 import { TourStep } from '@/hooks/useTourGuide';
 
 // Define the tour steps for different pages
@@ -21,21 +22,32 @@ const landingPageSteps: TourStep[] = [
     position: "top"
   },
   {
-    targetSelector: "a[href='/roles']",
+    targetSelector: "a[href='/choose']",
     title: "Get Started",
-    description: "Click here to begin your job search journey by selecting your role.",
+    description: "Click here to begin your job search or create your professional profile.",
+    position: "bottom"
+  },
+  {
+    targetSelector: "nav a[href='/jobs']",
+    title: "Browse Jobs",
+    description: "View thousands of job listings from top companies worldwide.",
+    position: "bottom"
+  },
+  {
+    targetSelector: "nav a[href='/resume']",
+    title: "Resume Maker",
+    description: "Create and optimize your professional resume with our AI-powered tools.",
+    position: "bottom"
+  },
+  {
+    targetSelector: "nav a[href='/interview']",
+    title: "Interview Preparation",
+    description: "Practice for interviews with our AI interviewer and get real-time feedback.",
     position: "bottom"
   }
 ];
 
-// Let's keep the role selection steps
 const roleSelectionSteps: TourStep[] = [
-  {
-    targetSelector: ".choice-container",
-    title: "Role Selection",
-    description: "Choose whether you're a job seeker or a company representative.",
-    position: "top"
-  },
   {
     targetSelector: ".choice-button:first-child",
     title: "Job Seeker Role",
@@ -73,33 +85,6 @@ export const getTourStepsForRoute = (pathname: string): TourStep[] => {
       return roleSelectionSteps;
     case '/choose':
       return chooseSearchTypeSteps;
-    case '/jobs':
-      return [
-        {
-          targetSelector: ".job-listings",
-          title: "Job Listings",
-          description: "Browse through available job opportunities and filter them based on your preferences.",
-          position: "top"
-        }
-      ];
-    case '/resume':
-      return [
-        {
-          targetSelector: ".resume-builder",
-          title: "Resume Builder",
-          description: "Create and customize your professional resume with our AI-powered tools.",
-          position: "top"
-        }
-      ];
-    case '/interview':
-      return [
-        {
-          targetSelector: ".interview-prep",
-          title: "Interview Preparation",
-          description: "Practice for interviews with our AI interviewer and get real-time feedback.",
-          position: "top"
-        }
-      ];
     default:
       return landingPageSteps; // Default to landing page steps
   }

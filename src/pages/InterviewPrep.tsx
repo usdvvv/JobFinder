@@ -29,57 +29,57 @@ const InterviewPrep = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-background">
       <NavBar />
       
-      <div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto interview-prep">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Interview Preparation</h1>
-        
-        <AnimatedSection animation="slide-down" className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold">Interview Preparation</h1>
-          <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-            Practice for your interviews with our AI-powered tools and boost your confidence
-          </p>
-        </AnimatedSection>
+      <div className="pt-24 pb-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <AnimatedSection animation="slide-down" className="text-center mb-12">
+            <h1 className="text-3xl md:text-4xl font-bold">Interview Preparation</h1>
+            <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+              Practice for your interviews with our AI-powered tools and boost your confidence
+            </p>
+          </AnimatedSection>
 
-        <AnimatedSection animation="fade-in" className="mb-8">
-          <Tabs defaultValue="mock" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="mock" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Video className="h-4 w-4 mr-2" />
-                Mock Interviews
-              </TabsTrigger>
-              <TabsTrigger value="questions" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Practice Questions
-              </TabsTrigger>
-              <TabsTrigger value="technical" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Code className="h-4 w-4 mr-2" />
-                Technical Interviews
-              </TabsTrigger>
-              <TabsTrigger value="leaderboard" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Trophy className="h-4 w-4 mr-2" />
-                Leaderboard
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="mock" className="mt-6">
-              <MockInterviews />
-            </TabsContent>
-            
-            <TabsContent value="questions" className="mt-6">
-              <PracticeQuestions />
-            </TabsContent>
-            
-            <TabsContent value="technical" className="mt-6">
-              <TechnicalInterviews onOpenChallenge={handleOpenChallenge} />
-            </TabsContent>
-            
-            <TabsContent value="leaderboard" className="mt-6">
-              <CodingLeaderboard />
-            </TabsContent>
-          </Tabs>
-        </AnimatedSection>
+          <AnimatedSection animation="fade-in" className="mb-8">
+            <Tabs defaultValue="mock" className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="mock" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Video className="h-4 w-4 mr-2" />
+                  Mock Interviews
+                </TabsTrigger>
+                <TabsTrigger value="questions" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Practice Questions
+                </TabsTrigger>
+                <TabsTrigger value="technical" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Code className="h-4 w-4 mr-2" />
+                  Technical Interviews
+                </TabsTrigger>
+                <TabsTrigger value="leaderboard" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Trophy className="h-4 w-4 mr-2" />
+                  Leaderboard
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="mock" className="mt-6">
+                <MockInterviews />
+              </TabsContent>
+              
+              <TabsContent value="questions" className="mt-6">
+                <PracticeQuestions />
+              </TabsContent>
+              
+              <TabsContent value="technical" className="mt-6">
+                <TechnicalInterviews onOpenChallenge={handleOpenChallenge} />
+              </TabsContent>
+              
+              <TabsContent value="leaderboard" className="mt-6">
+                <CodingLeaderboard />
+              </TabsContent>
+            </Tabs>
+          </AnimatedSection>
+        </div>
       </div>
 
       {showCodingChallenge && (
