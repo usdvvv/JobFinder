@@ -84,7 +84,7 @@ const NavBar = () => {
           </div>
           
           <div className="hidden md:block">
-            <div className="ml-10 flex items-center space-x-4">
+            <div className="ml-10 flex items-center space-x-4 navbar-menu">
               <NavLink to="/" icon={<Home className="h-4 w-4" />} text="Home" />
               <NavLink to="/jobs" icon={<Briefcase className="h-4 w-4" />} text="Browse Jobs" />
               <NavLink to="/resume" icon={<FileText className="h-4 w-4" />} text="Resume Maker" />

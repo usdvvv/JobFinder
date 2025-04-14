@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,49 +14,48 @@ const ResumeMaker = () => {
   const [activeTab, setActiveTab] = useState("generator");
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <NavBar />
       
-      <div className="pt-24 pb-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <AnimatedSection animation="slide-down" className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl font-bold">Resume Builder</h1>
-            <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-              Create a professional resume, get feedback on your existing resume, or generate a tailored cover letter
-            </p>
-          </AnimatedSection>
+      <div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto resume-builder">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Resume Builder</h1>
+        
+        <AnimatedSection animation="slide-down" className="text-center mb-12">
+          <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+            Create a professional resume, get feedback on your existing resume, or generate a tailored cover letter
+          </p>
+        </AnimatedSection>
 
-          <AnimatedSection animation="fade-in" className="mb-8">
-            <Tabs defaultValue="generator" className="w-full" onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="generator" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Resume Generator
-                </TabsTrigger>
-                <TabsTrigger value="evaluator" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <FileCheck className="h-4 w-4 mr-2" />
-                  Resume Evaluator
-                </TabsTrigger>
-                <TabsTrigger value="coverletter" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  Cover Letter Maker
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="generator" className="mt-6">
-                <ResumeGenerator />
-              </TabsContent>
-              
-              <TabsContent value="evaluator" className="mt-6">
-                <ResumeEvaluator />
-              </TabsContent>
-              
-              <TabsContent value="coverletter" className="mt-6">
-                <CoverLetterMaker />
-              </TabsContent>
-            </Tabs>
-          </AnimatedSection>
-        </div>
+        <AnimatedSection animation="fade-in" className="mb-8">
+          <Tabs defaultValue="generator" className="w-full" onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="generator" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <FileText className="h-4 w-4 mr-2" />
+                Resume Generator
+              </TabsTrigger>
+              <TabsTrigger value="evaluator" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <FileCheck className="h-4 w-4 mr-2" />
+                Resume Evaluator
+              </TabsTrigger>
+              <TabsTrigger value="coverletter" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Sparkles className="h-4 w-4 mr-2" />
+                Cover Letter Maker
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="generator" className="mt-6">
+              <ResumeGenerator />
+            </TabsContent>
+            
+            <TabsContent value="evaluator" className="mt-6">
+              <ResumeEvaluator />
+            </TabsContent>
+            
+            <TabsContent value="coverletter" className="mt-6">
+              <CoverLetterMaker />
+            </TabsContent>
+          </Tabs>
+        </AnimatedSection>
       </div>
     </div>
   );
@@ -69,7 +67,6 @@ const ResumeGenerator = () => {
   const [activeStep, setActiveStep] = useState(0);
   const steps = ["Personal Information", "Work Experience", "Education", "Skills & Certifications", "Preview"];
   
-  // State for multiple job experiences
   const [workExperiences, setWorkExperiences] = useState([{ 
     id: 1, 
     jobTitle: '', 
@@ -79,7 +76,6 @@ const ResumeGenerator = () => {
     description: '' 
   }]);
   
-  // State for multiple education entries
   const [educations, setEducations] = useState([{ 
     id: 1, 
     degree: '', 
@@ -89,7 +85,6 @@ const ResumeGenerator = () => {
     additionalInfo: '' 
   }]);
   
-  // State for multiple certifications
   const [certifications, setCertifications] = useState([{ 
     id: 1, 
     name: '', 
@@ -126,7 +121,6 @@ const ResumeGenerator = () => {
     }
   };
 
-  // Add new work experience
   const addWorkExperience = () => {
     setWorkExperiences([...workExperiences, { 
       id: workExperiences.length + 1, 
@@ -142,7 +136,6 @@ const ResumeGenerator = () => {
     });
   };
 
-  // Remove work experience
   const removeWorkExperience = (id: number) => {
     if (workExperiences.length > 1) {
       setWorkExperiences(workExperiences.filter(experience => experience.id !== id));
@@ -153,7 +146,6 @@ const ResumeGenerator = () => {
     }
   };
 
-  // Add new education
   const addEducation = () => {
     setEducations([...educations, { 
       id: educations.length + 1, 
@@ -169,7 +161,6 @@ const ResumeGenerator = () => {
     });
   };
 
-  // Remove education
   const removeEducation = (id: number) => {
     if (educations.length > 1) {
       setEducations(educations.filter(education => education.id !== id));
@@ -180,7 +171,6 @@ const ResumeGenerator = () => {
     }
   };
 
-  // Add new certification
   const addCertification = () => {
     setCertifications([...certifications, { 
       id: certifications.length + 1, 
@@ -193,7 +183,6 @@ const ResumeGenerator = () => {
     });
   };
 
-  // Remove certification
   const removeCertification = (id: number) => {
     if (certifications.length > 1) {
       setCertifications(certifications.filter(certification => certification.id !== id));
@@ -234,7 +223,6 @@ const ResumeGenerator = () => {
               </div>
             ) : (
               <div className="space-y-6">
-                {/* Personal Information Section */}
                 {activeStep === 0 && (
                   <div className="p-6 border border-primary/20 rounded-md bg-primary/5">
                     <h3 className="font-medium mb-3">Personal Information</h3>
@@ -250,7 +238,6 @@ const ResumeGenerator = () => {
                   </div>
                 )}
 
-                {/* Work Experience Section */}
                 {activeStep === 1 && (
                   <div className="p-6 border border-primary/20 rounded-md bg-primary/5 max-h-[500px] overflow-y-auto">
                     <h3 className="font-medium mb-3">Work Experience</h3>
@@ -334,7 +321,6 @@ const ResumeGenerator = () => {
                   </div>
                 )}
 
-                {/* Education Section */}
                 {activeStep === 2 && (
                   <div className="p-6 border border-primary/20 rounded-md bg-primary/5 max-h-[500px] overflow-y-auto">
                     <h3 className="font-medium mb-3">Education</h3>
@@ -418,7 +404,6 @@ const ResumeGenerator = () => {
                   </div>
                 )}
 
-                {/* Skills Section */}
                 {activeStep === 3 && (
                   <div className="p-6 border border-primary/20 rounded-md bg-primary/5 max-h-[500px] overflow-y-auto">
                     <h3 className="font-medium mb-3">Skills & Certifications</h3>
@@ -479,7 +464,6 @@ const ResumeGenerator = () => {
                   </div>
                 )}
 
-                {/* Preview Section */}
                 {activeStep === 4 && (
                   <div className="p-6 border border-primary/20 rounded-md bg-primary/5">
                     <h3 className="font-medium mb-3">Resume Preview</h3>

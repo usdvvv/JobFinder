@@ -1,4 +1,3 @@
-
 import { TourStep } from '@/hooks/useTourGuide';
 
 // Define the tour steps for different pages
@@ -28,25 +27,56 @@ const landingPageSteps: TourStep[] = [
     position: "bottom"
   },
   {
-    targetSelector: "nav a[href='/jobs']",
-    title: "Browse Jobs",
-    description: "View thousands of job listings from top companies worldwide.",
+    targetSelector: "/roles:.choice-button:first-child",
+    title: "Job Seeker Role",
+    description: "Select this if you're looking for job opportunities, want to create a resume, or prepare for interviews.",
+    position: "right"
+  },
+  {
+    targetSelector: "/roles:.choice-button:last-child",
+    title: "Company Role",
+    description: "Select this if you're an employer looking to post jobs and manage applications.",
+    position: "left"
+  },
+  {
+    targetSelector: "/choose:.search-method-card:first-child",
+    title: "Traditional Job Search",
+    description: "Browse through job listings with powerful filtering options.",
+    position: "right"
+  },
+  {
+    targetSelector: "/choose:.search-method-card:last-child",
+    title: "AI-Powered Job Search",
+    description: "Let our AI find the perfect job matches based on your profile and preferences.",
+    position: "left"
+  },
+  {
+    targetSelector: "/:.navbar-menu",
+    title: "Navigation Bar",
+    description: "Use this menu to navigate to different sections like Jobs, Resume Builder, Interview Prep and more.",
     position: "bottom"
   },
   {
-    targetSelector: "nav a[href='/resume']",
-    title: "Resume Maker",
-    description: "Create and optimize your professional resume with our AI-powered tools.",
-    position: "bottom"
+    targetSelector: "/jobs:.job-listings",
+    title: "Job Listings",
+    description: "Browse through available job opportunities and filter them based on your preferences.",
+    position: "top"
   },
   {
-    targetSelector: "nav a[href='/interview']",
+    targetSelector: "/resume:.resume-builder",
+    title: "Resume Builder",
+    description: "Create and customize your professional resume with our AI-powered tools.",
+    position: "top"
+  },
+  {
+    targetSelector: "/interview:.interview-prep",
     title: "Interview Preparation",
     description: "Practice for interviews with our AI interviewer and get real-time feedback.",
-    position: "bottom"
+    position: "top"
   }
 ];
 
+// Let's keep the role selection and search type steps for specific page tours
 const roleSelectionSteps: TourStep[] = [
   {
     targetSelector: ".choice-button:first-child",
