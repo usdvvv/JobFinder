@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -105,7 +104,7 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
   }, []);
   
   const handleStartAutomation = async () => {
-    if (!cvFile && status.status === 'idle') {
+    if (!cvFile) {
       toast({
         title: "CV Required",
         description: "Please upload your CV before starting the automation.",
@@ -117,18 +116,16 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
     try {
       setIsStarting(true);
       
-      // If there's a CV file and we haven't started yet, upload it first
-      if (cvFile && status.status === 'idle') {
-        const uploadResult = await uploadCV(cvFile);
-        if (!uploadResult.success) {
-          throw new Error('Failed to upload CV');
-        }
-        
-        toast({
-          title: "CV Uploaded",
-          description: "Your CV has been uploaded successfully.",
-        });
+      // Upload CV first
+      const uploadResult = await uploadCV(cvFile);
+      if (!uploadResult.success) {
+        throw new Error('Failed to upload CV');
       }
+      
+      toast({
+        title: "CV Uploaded",
+        description: "Your CV has been uploaded successfully.",
+      });
       
       // Start the automation
       const newStatus = await startAutomation(jobTitle);
@@ -318,13 +315,7 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-medium">
-                      {isComplete 
-                        ? "Process Complete" 
-                        : status.status === 'idle'
-                          ? "Ready to Start"
-                          : status.status === 'paused'
-                            ? "Process Paused"
-                            : "Applying to Jobs"}
+                      {isComplete ? "Process Complete" : "Applying to Jobs"}
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {status.jobsTotal > 0 
