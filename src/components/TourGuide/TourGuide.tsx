@@ -4,7 +4,7 @@ import TourModal from './TourModal';
 import TourTooltip from './TourTooltip';
 import TourOverlay from './TourOverlay';
 import { useTourGuide, TourStep } from '@/hooks/useTourGuide';
-import { Confetti } from 'lucide-react';
+import { PartyPopper } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface TourGuideProps {
@@ -30,11 +30,12 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
   const handleCompleteTour = () => {
     completeTour();
     
-    // Show success toast with confetti icon
+    // Show success toast with party popper icon
     toast({
       title: "Tour Completed! 🎉",
       description: "You're all set to explore JobFinder. Need help anytime? Just click the tour guide button.",
-      icon: <Confetti className="h-5 w-5 text-green-500" />,
+      variant: "default",
+      children: <PartyPopper className="h-5 w-5 text-green-500" />,
     });
   };
 
