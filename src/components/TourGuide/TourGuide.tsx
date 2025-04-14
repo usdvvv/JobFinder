@@ -5,7 +5,7 @@ import TourTooltip from './TourTooltip';
 import TourOverlay from './TourOverlay';
 import { useTourGuide, TourStep } from '@/hooks/useTourGuide';
 import { PartyPopper } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { toast } from "@/hooks/use-toast";
 
 interface TourGuideProps {
   steps: TourStep[];
@@ -56,6 +56,38 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [tourActive, completeTour, nextStep, prevStep]);
+
+  // Add automatic scrolling to ensure the target element is visible
+  useEffect(() => {
+    if (tourActive && currentStepData) {
+      const targetElement = document.querySelector(currentStepData.targetSelector) as HTMLElement;
+      
+      if (targetElement) {
+        // Calculate element position
+        const rect = targetElement.getBoundingClientRect();
+        const isInViewport = (
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+          rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+        
+        // If element is not fully in viewport, scroll to it
+        if (!isInViewport) {
+          const scrollOptions = {
+            behavior: 'smooth' as ScrollBehavior,
+            block: 'center' as ScrollLogicalPosition,
+            inline: 'center' as ScrollLogicalPosition
+          };
+          
+          // Add a small delay to ensure smooth transition
+          setTimeout(() => {
+            targetElement.scrollIntoView(scrollOptions);
+          }, 300);
+        }
+      }
+    }
+  }, [tourActive, currentStep, currentStepData]);
 
   return (
     <>

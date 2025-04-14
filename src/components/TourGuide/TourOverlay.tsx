@@ -9,9 +9,12 @@ const TourOverlay = ({ visible }: TourOverlayProps) => {
   if (!visible) return null;
   
   return (
-    <div className="fixed inset-0 z-50 pointer-events-none backdrop-blur-sm animate-fade-in transition-all duration-300">
+    <div className="fixed inset-0 z-40 pointer-events-none backdrop-blur-sm animate-fade-in transition-all duration-300">
       {/* Gradient background with subtle pattern */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-blue-900/60"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-blue-900/60">
+        {/* Exclude the navbar from the overlay */}
+        <div className="absolute top-0 left-0 right-0 h-16 bg-transparent"></div>
+      </div>
       
       {/* Subtle particle effects */}
       <div className="absolute inset-0 overflow-hidden">
