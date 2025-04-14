@@ -1,9 +1,11 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import TourModal from './TourModal';
 import TourTooltip from './TourTooltip';
 import TourOverlay from './TourOverlay';
 import { useTourGuide, TourStep } from '@/hooks/useTourGuide';
+import { Confetti } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 interface TourGuideProps {
   steps: TourStep[];
@@ -24,6 +26,36 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
     completeTour
   } = useTourGuide({ steps, onComplete });
 
+  // Show congratulations on completing the tour
+  const handleCompleteTour = () => {
+    completeTour();
+    
+    // Show success toast with confetti icon
+    toast({
+      title: "Tour Completed! 🎉",
+      description: "You're all set to explore JobFinder. Need help anytime? Just click the tour guide button.",
+      icon: <Confetti className="h-5 w-5 text-green-500" />,
+    });
+  };
+
+  // Add keyboard navigation
+  useEffect(() => {
+    if (!tourActive) return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        completeTour();
+      } else if (e.key === 'ArrowRight' || e.key === 'Enter') {
+        nextStep();
+      } else if (e.key === 'ArrowLeft') {
+        prevStep();
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [tourActive, completeTour, nextStep, prevStep]);
+
   return (
     <>
       <TourModal 
@@ -42,7 +74,7 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
           position={currentStepData.position}
           step={currentStep}
           totalSteps={totalSteps}
-          onNext={nextStep}
+          onNext={currentStep === totalSteps ? handleCompleteTour : nextStep}
           onPrev={prevStep}
           onClose={completeTour}
         />
