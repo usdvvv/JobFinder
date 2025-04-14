@@ -39,24 +39,6 @@ const landingPageSteps: TourStep[] = [
     position: "left"
   },
   {
-    targetSelector: "/choose:.search-method-card:first-child",
-    title: "Traditional Job Search",
-    description: "Browse through job listings with powerful filtering options.",
-    position: "right"
-  },
-  {
-    targetSelector: "/choose:.search-method-card:last-child",
-    title: "AI-Powered Job Search",
-    description: "Let our AI find the perfect job matches based on your profile and preferences.",
-    position: "left"
-  },
-  {
-    targetSelector: "/:.navbar-menu",
-    title: "Navigation Bar",
-    description: "Use this menu to navigate to different sections like Jobs, Resume Builder, Interview Prep and more.",
-    position: "bottom"
-  },
-  {
     targetSelector: "/jobs:.job-listings",
     title: "Job Listings",
     description: "Browse through available job opportunities and filter them based on your preferences.",
@@ -115,6 +97,33 @@ export const getTourStepsForRoute = (pathname: string): TourStep[] => {
       return roleSelectionSteps;
     case '/choose':
       return chooseSearchTypeSteps;
+    case '/jobs':
+      return [
+        {
+          targetSelector: ".job-listings",
+          title: "Job Listings",
+          description: "Browse through available job opportunities and filter them based on your preferences.",
+          position: "top"
+        }
+      ];
+    case '/resume':
+      return [
+        {
+          targetSelector: ".resume-builder",
+          title: "Resume Builder",
+          description: "Create and customize your professional resume with our AI-powered tools.",
+          position: "top"
+        }
+      ];
+    case '/interview':
+      return [
+        {
+          targetSelector: ".interview-prep",
+          title: "Interview Preparation",
+          description: "Practice for interviews with our AI interviewer and get real-time feedback.",
+          position: "top"
+        }
+      ];
     default:
       return landingPageSteps; // Default to landing page steps
   }

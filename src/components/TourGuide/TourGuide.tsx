@@ -1,6 +1,6 @@
 
-import React, { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import TourModal from './TourModal';
 import TourTooltip from './TourTooltip';
 import TourOverlay from './TourOverlay';
@@ -15,7 +15,9 @@ interface TourGuideProps {
 
 const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const cleanupRef = useRef<(() => void) | null>(null);
+  const [isNavigating, setIsNavigating] = useState(false);
   
   const {
     showWelcomeModal,
@@ -39,13 +41,13 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
       title: "Tour Completed! 🎉",
       description: "You're all set to explore JobFinder. Need help anytime? Just click the tour guide button.",
       variant: "default",
-      children: <PartyPopper className="h-5 w-5 text-green-500" />,
+      icon: <PartyPopper className="h-5 w-5 text-green-500" />,
     });
   };
 
   // Scroll to element and handle navigation between pages
   useEffect(() => {
-    if (!tourActive || !currentStepData) return;
+    if (!tourActive || !currentStepData || isNavigating) return;
     
     // Clean up any previous tour step actions
     if (cleanupRef.current) {
@@ -59,18 +61,30 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
     if (targetSelector.includes(':')) {
       const [pageRoute, elementSelector] = targetSelector.split(':');
       
-      // Navigate to the page if needed
-      navigate(pageRoute);
-      
-      // Wait for navigation and then find the element
-      const timeoutId = setTimeout(() => {
+      // Only navigate if we're not already on this route
+      if (location.pathname !== pageRoute) {
+        setIsNavigating(true);
+        
+        // Add a small delay before navigation to ensure clean transition
+        setTimeout(() => {
+          navigate(pageRoute);
+          
+          // Wait for navigation to complete and then find the element
+          setTimeout(() => {
+            const element = document.querySelector(elementSelector);
+            if (element) {
+              scrollToElement(element);
+            }
+            setIsNavigating(false);
+          }, 500);
+        }, 300);
+      } else {
+        // We're already on the correct page, just scroll to element
         const element = document.querySelector(elementSelector);
         if (element) {
           scrollToElement(element);
         }
-      }, 500);
-      
-      cleanupRef.current = () => clearTimeout(timeoutId);
+      }
       return;
     }
     
@@ -80,7 +94,7 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
       scrollToElement(element);
     }
     
-  }, [tourActive, currentStepData, currentStep, navigate]);
+  }, [tourActive, currentStepData, currentStep, navigate, location.pathname, isNavigating]);
   
   // Function to scroll to an element with smooth animation
   const scrollToElement = (element: Element) => {
@@ -137,7 +151,13 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
       
       // Add a slight delay before re-enabling pointer events
       // to ensure the transition completes
-      document.body.classList.remove('tour-active'); 
+      setTimeout(() => {
+        document.body.classList.remove('tour-active');
+        // Re-enable pointer events on all elements
+        document.querySelectorAll('*').forEach((el) => {
+          (el as HTMLElement).style.pointerEvents = '';
+        });
+      }, 500);
     }
     
     if (tourActive) {
@@ -166,6 +186,9 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
     return () => {
       // Ensure we clean up when component unmounts
       document.body.classList.remove('tour-active');
+      document.querySelectorAll('*').forEach((el) => {
+        (el as HTMLElement).style.pointerEvents = '';
+      });
     };
   }, [tourActive]);
 
@@ -179,7 +202,7 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
       
       <TourOverlay visible={tourActive} />
       
-      {tourActive && currentStepData && (
+      {tourActive && currentStepData && !isNavigating && (
         <TourTooltip
           targetSelector={currentStepData.targetSelector.includes(':') 
             ? currentStepData.targetSelector.split(':')[1] 

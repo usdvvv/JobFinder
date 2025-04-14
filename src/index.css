@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -163,20 +162,34 @@
 /* Ensure navbar remains visible during tour */
 .tour-active nav {
   z-index: 60 !important;
-  pointer-events: none;
 }
 
 .tour-active .navbar-item {
   pointer-events: none;
 }
 
-/* Fix for pointer events after tour completes */
-body:not(.tour-active) * {
-  pointer-events: auto !important;
-}
-
 /* Tour target highlight */
 .tour-highlight {
   z-index: 45;
   position: relative;
+}
+
+/* Added high-contrast stlye for navbar during tour */
+.tour-active .navbar-menu {
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tour-active .navbar-menu a {
+  color: #1e40af;
+  font-weight: 500;
+}
+
+/* Fix for pointer events after tour completes */
+body:not(.tour-active) * {
+  pointer-events: auto !important;
 }

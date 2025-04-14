@@ -36,6 +36,7 @@ export function useTourGuide({ steps, onComplete }: UseTourGuideProps) {
     setShowWelcomeModal(false);
     setCurrentStep(1);
     setTourActive(true);
+    document.body.classList.add('tour-active');
   };
 
   const skipTour = () => {
@@ -60,7 +61,15 @@ export function useTourGuide({ steps, onComplete }: UseTourGuideProps) {
   const completeTour = () => {
     setTourActive(false);
     localStorage.setItem('jobfinder_has_seen_tour', 'true');
+    document.body.classList.remove('tour-active');
     if (onComplete) onComplete();
+
+    // Ensure all elements are clickable again
+    setTimeout(() => {
+      document.querySelectorAll('*').forEach((el) => {
+        (el as HTMLElement).style.pointerEvents = '';
+      });
+    }, 500);
   };
 
   const resetTour = () => {
