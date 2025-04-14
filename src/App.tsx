@@ -1,6 +1,10 @@
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
+import { useEffect, useState } from "react";
+import TourGuide from "@/components/TourGuide/TourGuide";
+import TourGuideButton from "@/components/TourGuideButton";
+import { getTourStepsForRoute } from "@/components/TourSteps";
 import LandingPage from "@/pages/LandingPage";
 import ChooseSearchType from "@/pages/ChooseSearchType";
 import Login from "@/pages/Login";
@@ -34,6 +38,32 @@ import CreateJobPosting from "@/pages/company/CreateJobPosting";
 import CompanyAITherapist from "@/pages/company/CompanyAITherapist";
 import CompanyEntertainment from "@/pages/company/CompanyEntertainment";
 import CompanyPeerChat from "@/pages/company/CompanyPeerChat";
+
+// Tour guide component that handles route-specific steps
+const RouteTourGuide = () => {
+  const location = useLocation();
+  const [tourSteps, setTourSteps] = useState(getTourStepsForRoute(location.pathname));
+  const [resetKey, setResetKey] = useState(0);
+
+  useEffect(() => {
+    // Update tour steps when route changes
+    setTourSteps(getTourStepsForRoute(location.pathname));
+    // Force re-render of TourGuide by changing key
+    setResetKey(prev => prev + 1);
+  }, [location.pathname]);
+
+  const handleTourReset = () => {
+    localStorage.removeItem('jobfinder_has_seen_tour');
+    setResetKey(prev => prev + 1);
+  };
+
+  return (
+    <>
+      <TourGuide key={resetKey} steps={tourSteps} />
+      <TourGuideButton onStartTour={handleTourReset} />
+    </>
+  );
+};
 
 function App() {
   return (
@@ -73,6 +103,7 @@ function App() {
           <Route path="/company/peer-chat" element={<CompanyPeerChat />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <RouteTourGuide />
       </BrowserRouter>
       <Toaster />
     </>

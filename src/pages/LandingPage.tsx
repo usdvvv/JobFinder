@@ -35,7 +35,7 @@ const LandingPage = () => {
       {/* Hero Section */}
       <div 
         ref={heroRef} 
-        className="relative min-h-screen w-full flex flex-col items-center justify-center px-4 overflow-hidden"
+        className="home-hero relative min-h-screen w-full flex flex-col items-center justify-center px-4 overflow-hidden"
         style={{ 
           perspective: '1000px',
         }}
