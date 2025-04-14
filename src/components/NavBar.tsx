@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -66,7 +65,7 @@ const NavBar = () => {
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${
-        scrolled ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-md' : 'bg-transparent'
+        scrolled ? 'bg-background/90 dark:bg-background/90 backdrop-blur-md shadow-md' : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -160,7 +159,7 @@ const NavBar = () => {
                 </button>
               ) : (
                 <button 
-                  className="w-full px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted hover:text-blue-500 flex items-center"
+                  className="w-full px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted hover:text-blue-600 flex items-center"
                   onClick={handleLogin}
                 >
                   <UserRound className="h-5 w-5 mr-3" />

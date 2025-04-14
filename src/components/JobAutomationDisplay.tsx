@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -242,6 +243,9 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
   const isComplete = status.status === 'completed' || 
                      (status.jobsCompleted + status.jobsFailed >= status.jobsTotal && status.jobsTotal > 0);
   
+  // Fix the types issue by using a type guard to check status values
+  const isStatusIdle = status.status === 'idle';
+  
   return (
     <div className="space-y-6">
       <Card>
@@ -256,7 +260,7 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {status.status === 'idle' && (
+            {isStatusIdle && (
               <div className="space-y-4">
                 <Alert className="bg-blue-50 border-blue-200">
                   <FileTextIcon className="h-4 w-4 text-blue-600" />
@@ -310,7 +314,7 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
               </div>
             )}
             
-            {status.status !== 'idle' && (
+            {!isStatusIdle && (
               <>
                 <div className="flex items-center justify-between">
                   <div>
@@ -358,7 +362,7 @@ const JobAutomationDisplay = ({ jobTitle }: JobAutomationDisplayProps) => {
                       </Button>
                     )}
                     
-                    {!isComplete && status.status !== 'idle' && (
+                    {!isComplete && !isStatusIdle && (
                       <Button 
                         variant="destructive" 
                         size="sm"
