@@ -37,11 +37,23 @@ export function useTourGuide({ steps, onComplete, storageKey = 'jobfinder_has_se
     setShowWelcomeModal(false);
     setCurrentStep(1);
     setTourActive(true);
+    // Ensure normal scrolling is maintained
+    document.body.style.overflow = 'auto';
   };
 
   const skipTour = () => {
     setShowWelcomeModal(false);
+    setTourActive(false);
     localStorage.setItem(storageKey, 'true');
+    // Reset any highlighted elements
+    document.querySelectorAll('[style*="z-index: 60"]').forEach((el) => {
+      (el as HTMLElement).style.boxShadow = '';
+      (el as HTMLElement).style.zIndex = '';
+      (el as HTMLElement).style.position = '';
+      (el as HTMLElement).style.borderRadius = '';
+    });
+    // Ensure normal scrolling is maintained
+    document.body.style.overflow = 'auto';
   };
 
   const nextStep = () => {
@@ -61,7 +73,16 @@ export function useTourGuide({ steps, onComplete, storageKey = 'jobfinder_has_se
   const completeTour = () => {
     setTourActive(false);
     localStorage.setItem(storageKey, 'true');
+    // Reset any highlighted elements
+    document.querySelectorAll('[style*="z-index: 60"]').forEach((el) => {
+      (el as HTMLElement).style.boxShadow = '';
+      (el as HTMLElement).style.zIndex = '';
+      (el as HTMLElement).style.position = '';
+      (el as HTMLElement).style.borderRadius = '';
+    });
     if (onComplete) onComplete();
+    // Ensure normal scrolling is maintained
+    document.body.style.overflow = 'auto';
   };
 
   const resetTour = () => {
@@ -69,6 +90,8 @@ export function useTourGuide({ steps, onComplete, storageKey = 'jobfinder_has_se
     setShowWelcomeModal(true);
     setCurrentStep(0);
     setTourActive(false);
+    // Ensure normal scrolling is maintained
+    document.body.style.overflow = 'auto';
   };
 
   return {

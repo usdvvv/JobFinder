@@ -76,15 +76,13 @@ const TourGuide = ({ steps, onComplete, storageKey = 'jobfinder_has_seen_tour' }
         
         // If element is not fully in viewport, scroll to it
         if (!isInViewport) {
-          const scrollOptions = {
-            behavior: 'smooth' as ScrollBehavior,
-            block: 'center' as ScrollLogicalPosition,
-            inline: 'center' as ScrollLogicalPosition
-          };
-          
           // Add a small delay to ensure smooth transition
           setTimeout(() => {
-            targetElement.scrollIntoView(scrollOptions);
+            targetElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center',
+              inline: 'center'
+            });
           }, 300);
         }
       }
@@ -98,6 +96,19 @@ const TourGuide = ({ steps, onComplete, storageKey = 'jobfinder_has_seen_tour' }
     }
     return '';
   };
+
+  // Clean up highlight and z-index when tour is completed or deactivated
+  useEffect(() => {
+    return () => {
+      // Remove highlight from all elements
+      document.querySelectorAll('[style*="z-index: 60"]').forEach((el) => {
+        (el as HTMLElement).style.boxShadow = '';
+        (el as HTMLElement).style.zIndex = '';
+        (el as HTMLElement).style.position = '';
+        (el as HTMLElement).style.borderRadius = '';
+      });
+    };
+  }, []);
 
   return (
     <>

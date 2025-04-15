@@ -11,7 +11,7 @@ const TourOverlay = ({ visible }: TourOverlayProps) => {
   return (
     <div className="fixed inset-0 z-40 pointer-events-none backdrop-blur-sm animate-fade-in transition-all duration-300">
       {/* Gradient background with subtle pattern */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-blue-900/60">
+      <div className="absolute inset-0 bg-gradient-to-br from-black/40 to-blue-900/40">
         {/* Exclude the navbar from the overlay */}
         <div className="absolute top-0 left-0 right-0 h-16 bg-transparent"></div>
       </div>
