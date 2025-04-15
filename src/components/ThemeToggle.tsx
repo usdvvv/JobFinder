@@ -1,9 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
-import { useTheme } from 'next-themes';
 import { motion } from 'framer-motion';
 import { Sun, Moon } from 'lucide-react';
 import { Toggle } from "@/components/ui/toggle";
+import { useTheme } from "@/components/ThemeProvider";
 
 const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();

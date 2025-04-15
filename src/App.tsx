@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { useEffect, useState } from "react";
@@ -47,9 +46,7 @@ const RouteTourGuide = () => {
   const [resetKey, setResetKey] = useState(0);
 
   useEffect(() => {
-    // Update tour steps when route changes
     setTourSteps(getTourStepsForRoute(location.pathname));
-    // Force re-render of TourGuide by changing key
     setResetKey(prev => prev + 1);
   }, [location.pathname]);
 
@@ -68,7 +65,7 @@ const RouteTourGuide = () => {
 
 function App() {
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+    <ThemeProvider defaultTheme="dark" storageKey="jobfinder-theme">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
