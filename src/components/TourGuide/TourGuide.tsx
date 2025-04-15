@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import TourModal from './TourModal';
 import TourTooltip from './TourTooltip';
 import TourOverlay from './TourOverlay';
@@ -15,6 +15,9 @@ interface TourGuideProps {
 }
 
 const TourGuide = ({ steps, onComplete, storageKey = 'jobfinder_has_seen_tour' }: TourGuideProps) => {
+  const currentStepRef = useRef<number>(0);
+  const hasScrolledRef = useRef<boolean>(false);
+  
   const {
     showWelcomeModal,
     tourActive,
@@ -27,6 +30,12 @@ const TourGuide = ({ steps, onComplete, storageKey = 'jobfinder_has_seen_tour' }
     prevStep,
     completeTour
   } = useTourGuide({ steps, onComplete, storageKey });
+
+  // Update ref when step changes
+  useEffect(() => {
+    currentStepRef.current = currentStep;
+    hasScrolledRef.current = false;
+  }, [currentStep]);
 
   // Show congratulations on completing the tour
   const handleCompleteTour = () => {
@@ -59,33 +68,68 @@ const TourGuide = ({ steps, onComplete, storageKey = 'jobfinder_has_seen_tour' }
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [tourActive, completeTour, nextStep, prevStep]);
 
-  // Add automatic scrolling to ensure the target element is visible
+  // Enhanced scroll handling with improved element highlighting
   useEffect(() => {
     if (tourActive && currentStepData) {
-      const targetElement = document.querySelector(currentStepData.targetSelector) as HTMLElement;
-      
-      if (targetElement) {
-        // Calculate element position
-        const rect = targetElement.getBoundingClientRect();
-        const isInViewport = (
-          rect.top >= 0 &&
-          rect.left >= 0 &&
-          rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-          rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-        );
+      const scrollToElement = () => {
+        const targetElement = document.querySelector(currentStepData.targetSelector) as HTMLElement;
         
-        // If element is not fully in viewport, scroll to it
-        if (!isInViewport) {
-          // Add a small delay to ensure smooth transition
-          setTimeout(() => {
-            targetElement.scrollIntoView({
-              behavior: 'smooth',
-              block: 'center',
-              inline: 'center'
-            });
-          }, 300);
+        if (targetElement) {
+          // Reset any previous highlighting
+          document.querySelectorAll('[data-tour-highlighted="true"]').forEach((el) => {
+            (el as HTMLElement).style.boxShadow = '';
+            (el as HTMLElement).style.zIndex = '';
+            (el as HTMLElement).style.position = '';
+            (el as HTMLElement).style.borderRadius = '';
+            (el as HTMLElement).removeAttribute('data-tour-highlighted');
+          });
+          
+          // Calculate element position
+          const rect = targetElement.getBoundingClientRect();
+          const isInViewport = (
+            rect.top >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+          );
+          
+          // Apply highlighting with a data attribute for tracking
+          targetElement.style.position = 'relative';
+          targetElement.style.zIndex = '60';
+          targetElement.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.8), 0 0 20px rgba(59, 130, 246, 0.5)';
+          targetElement.style.transition = 'all 0.3s ease';
+          targetElement.setAttribute('data-tour-highlighted', 'true');
+          
+          // If element is not fully in viewport, scroll to it
+          if (!isInViewport && !hasScrolledRef.current) {
+            hasScrolledRef.current = true;
+            
+            setTimeout(() => {
+              window.scrollTo({
+                top: rect.top + window.scrollY - (window.innerHeight / 4),
+                behavior: 'smooth'
+              });
+            }, 400);
+          }
+          
+          // Add pulse effect to the target element
+          const pulseInterval = setInterval(() => {
+            if (targetElement && document.body.contains(targetElement)) {
+              targetElement.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.8), 0 0 20px rgba(59, 130, 246, 0.5)';
+              setTimeout(() => {
+                if (targetElement && document.body.contains(targetElement)) {
+                  targetElement.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.3)';
+                }
+              }, 700);
+            } else {
+              clearInterval(pulseInterval);
+            }
+          }, 1500);
+          
+          return () => clearInterval(pulseInterval);
         }
-      }
+      };
+      
+      const timeoutId = setTimeout(scrollToElement, 300);
+      return () => clearTimeout(timeoutId);
     }
   }, [tourActive, currentStep, currentStepData]);
 
@@ -101,11 +145,12 @@ const TourGuide = ({ steps, onComplete, storageKey = 'jobfinder_has_seen_tour' }
   useEffect(() => {
     return () => {
       // Remove highlight from all elements
-      document.querySelectorAll('[style*="z-index: 60"]').forEach((el) => {
+      document.querySelectorAll('[data-tour-highlighted="true"]').forEach((el) => {
         (el as HTMLElement).style.boxShadow = '';
         (el as HTMLElement).style.zIndex = '';
         (el as HTMLElement).style.position = '';
         (el as HTMLElement).style.borderRadius = '';
+        (el as HTMLElement).removeAttribute('data-tour-highlighted');
       });
     };
   }, []);

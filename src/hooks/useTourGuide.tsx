@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export interface TourStep {
   targetSelector: string;
@@ -19,6 +19,18 @@ export function useTourGuide({ steps, onComplete, storageKey = 'jobfinder_has_se
   const [currentStep, setCurrentStep] = useState(0);
   const [tourActive, setTourActive] = useState(false);
 
+  // Clean up function to reset highlighted elements and restore scroll
+  const cleanupHighlightedElements = useCallback(() => {
+    document.querySelectorAll('[data-tour-highlighted="true"]').forEach((el) => {
+      (el as HTMLElement).style.boxShadow = '';
+      (el as HTMLElement).style.zIndex = '';
+      (el as HTMLElement).style.position = '';
+      (el as HTMLElement).style.borderRadius = '';
+      (el as HTMLElement).removeAttribute('data-tour-highlighted');
+    });
+    document.body.style.overflow = 'auto';
+  }, []);
+
   useEffect(() => {
     // Check if this is the user's first visit
     const hasSeenTour = localStorage.getItem(storageKey);
@@ -33,66 +45,51 @@ export function useTourGuide({ steps, onComplete, storageKey = 'jobfinder_has_se
     }
   }, [storageKey]);
 
-  const startTour = () => {
+  const startTour = useCallback(() => {
     setShowWelcomeModal(false);
     setCurrentStep(1);
     setTourActive(true);
     // Ensure normal scrolling is maintained
     document.body.style.overflow = 'auto';
-  };
+  }, []);
 
-  const skipTour = () => {
+  const skipTour = useCallback(() => {
     setShowWelcomeModal(false);
     setTourActive(false);
     localStorage.setItem(storageKey, 'true');
-    // Reset any highlighted elements
-    document.querySelectorAll('[style*="z-index: 60"]').forEach((el) => {
-      (el as HTMLElement).style.boxShadow = '';
-      (el as HTMLElement).style.zIndex = '';
-      (el as HTMLElement).style.position = '';
-      (el as HTMLElement).style.borderRadius = '';
-    });
+    cleanupHighlightedElements();
     // Ensure normal scrolling is maintained
     document.body.style.overflow = 'auto';
-  };
+  }, [storageKey, cleanupHighlightedElements]);
 
-  const nextStep = () => {
+  const nextStep = useCallback(() => {
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
     } else {
       completeTour();
     }
-  };
+  }, [currentStep, steps.length]);
 
-  const prevStep = () => {
+  const prevStep = useCallback(() => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
-  };
+  }, [currentStep]);
 
-  const completeTour = () => {
+  const completeTour = useCallback(() => {
     setTourActive(false);
     localStorage.setItem(storageKey, 'true');
-    // Reset any highlighted elements
-    document.querySelectorAll('[style*="z-index: 60"]').forEach((el) => {
-      (el as HTMLElement).style.boxShadow = '';
-      (el as HTMLElement).style.zIndex = '';
-      (el as HTMLElement).style.position = '';
-      (el as HTMLElement).style.borderRadius = '';
-    });
+    cleanupHighlightedElements();
     if (onComplete) onComplete();
-    // Ensure normal scrolling is maintained
-    document.body.style.overflow = 'auto';
-  };
+  }, [storageKey, onComplete, cleanupHighlightedElements]);
 
-  const resetTour = () => {
+  const resetTour = useCallback(() => {
     localStorage.removeItem(storageKey);
     setShowWelcomeModal(true);
     setCurrentStep(0);
     setTourActive(false);
-    // Ensure normal scrolling is maintained
-    document.body.style.overflow = 'auto';
-  };
+    cleanupHighlightedElements();
+  }, [storageKey, cleanupHighlightedElements]);
 
   return {
     showWelcomeModal,
