@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
+import ThemeToggle from '@/components/ThemeToggle';
 
 const CompanyNavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -91,6 +93,7 @@ const CompanyNavBar = () => {
                   Post Job
                 </Button>
               </Link>
+              <ThemeToggle />
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -104,17 +107,20 @@ const CompanyNavBar = () => {
           </div>
           
           <div className="md:hidden">
-            <button
-              onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-foreground hover:text-blue-500 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-            >
-              <span className="sr-only">Open main menu</span>
-              {isOpen ? (
-                <X className="block h-6 w-6" aria-hidden="true" />
-              ) : (
-                <Menu className="block h-6 w-6" aria-hidden="true" />
-              )}
-            </button>
+            <div className="flex items-center space-x-2">
+              <ThemeToggle />
+              <button
+                onClick={toggleMenu}
+                className="inline-flex items-center justify-center p-2 rounded-md text-foreground hover:text-blue-500 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              >
+                <span className="sr-only">Open main menu</span>
+                {isOpen ? (
+                  <X className="block h-6 w-6" aria-hidden="true" />
+                ) : (
+                  <Menu className="block h-6 w-6" aria-hidden="true" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
