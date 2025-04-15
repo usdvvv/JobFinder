@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -22,7 +21,6 @@ const NavBar = () => {
   };
 
   const handleLogout = () => {
-    // In a real app, this would clear authentication state
     setIsLoggedIn(false);
     toast({
       title: "Logged out",
@@ -31,14 +29,9 @@ const NavBar = () => {
     navigate('/');
   };
 
-  // For demo purposes, we should check for actual authentication
-  // instead of just inferring from URL visits
   useEffect(() => {
-    // Check localStorage or a more reliable auth state
-    // Instead of assuming logged in based on page visits
     const hasAuthToken = localStorage.getItem('authToken');
     
-    // Only set logged in if we have actual auth evidence
     if (hasAuthToken) {
       setIsLoggedIn(true);
     }
@@ -60,7 +53,6 @@ const NavBar = () => {
   }, []);
 
   useEffect(() => {
-    // Close mobile menu when route changes
     setIsOpen(false);
   }, [location]);
 
@@ -98,7 +90,6 @@ const NavBar = () => {
               <NavLink to="/ai-assistant" icon={<Bot className="h-4 w-4" />} text="AI Assistant" />
               <NavLink to="/entertainment" icon={<Puzzle className="h-4 w-4" />} text="Entertainment" />
               
-              {/* Add Theme Toggle */}
               <div className="ml-2">
                 <ThemeToggle />
               </div>
@@ -144,7 +135,6 @@ const NavBar = () => {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {isOpen && (
         <div className="md:hidden bg-background/80 dark:bg-background/80 backdrop-blur-md animate-fade-in">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
