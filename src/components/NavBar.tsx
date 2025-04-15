@@ -1,8 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Menu, X, Briefcase, Home, FileText, Video, UserRound, Code, Brain, Bot, MessageSquare, LogOut, Puzzle } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
+import ThemeToggle from './ThemeToggle';
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -82,7 +84,7 @@ const NavBar = () => {
             </Link>
           </div>
           
-          <div className="hidden md:block">
+          <div className="hidden md:flex md:items-center">
             <div className="ml-10 flex items-center space-x-4">
               <NavLink to="/" icon={<Home className="h-4 w-4" />} text="Home" />
               <NavLink to="/jobs" icon={<Briefcase className="h-4 w-4" />} text="Browse Jobs" />
@@ -93,6 +95,11 @@ const NavBar = () => {
               <NavLink to="/peer-chat" icon={<MessageSquare className="h-4 w-4" />} text="Peer Chat" />
               <NavLink to="/ai-assistant" icon={<Bot className="h-4 w-4" />} text="AI Assistant" />
               <NavLink to="/entertainment" icon={<Puzzle className="h-4 w-4" />} text="Entertainment" />
+              
+              {/* Add Theme Toggle */}
+              <div className="ml-2">
+                <ThemeToggle />
+              </div>
               
               {isLoggedIn ? (
                 <Button 
@@ -118,7 +125,8 @@ const NavBar = () => {
             </div>
           </div>
           
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center space-x-4">
+            <ThemeToggle />
             <button
               onClick={toggleMenu}
               className="inline-flex items-center justify-center p-2 rounded-md text-foreground hover:text-blue-500 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"

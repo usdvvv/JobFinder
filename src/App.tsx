@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { useEffect, useState } from "react";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import TourGuide from "@/components/TourGuide/TourGuide";
 import TourGuideButton from "@/components/TourGuideButton";
 import { getTourStepsForRoute } from "@/components/TourSteps";
@@ -67,7 +68,7 @@ const RouteTourGuide = () => {
 
 function App() {
   return (
-    <>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -106,7 +107,7 @@ function App() {
         <RouteTourGuide />
       </BrowserRouter>
       <Toaster />
-    </>
+    </ThemeProvider>
   );
 }
 

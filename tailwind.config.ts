@@ -133,6 +133,34 @@ export default {
 					'50%': { 
 						transform: 'translateY(-10px)' 
 					},
+				},
+				'morph-to-moon': {
+					'0%': { 
+						transform: 'scale(1) rotate(0deg)',
+						borderRadius: '0%'
+					},
+					'50%': { 
+						transform: 'scale(0.8) rotate(45deg)',
+						borderRadius: '50%'
+					},
+					'100%': { 
+						transform: 'scale(1) rotate(90deg)',
+						borderRadius: '50%'
+					},
+				},
+				'morph-to-sun': {
+					'0%': { 
+						transform: 'scale(1) rotate(90deg)',
+						borderRadius: '50%'
+					},
+					'50%': { 
+						transform: 'scale(0.8) rotate(45deg)',
+						borderRadius: '25%'
+					},
+					'100%': { 
+						transform: 'scale(1) rotate(0deg)',
+						borderRadius: '0%'
+					},
 				}
 			},
 			animation: {
@@ -142,6 +170,8 @@ export default {
 				'spin-slow': 'spin-slow 15s linear infinite',
 				'gradient-background': 'gradient-background 10s ease infinite',
 				'float': 'float 6s ease-in-out infinite',
+				'morph-to-moon': 'morph-to-moon 0.5s ease forwards',
+				'morph-to-sun': 'morph-to-sun 0.5s ease forwards',
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
