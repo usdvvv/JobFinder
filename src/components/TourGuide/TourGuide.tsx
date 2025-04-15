@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import TourModal from './TourModal';
 import TourTooltip from './TourTooltip';
 import TourOverlay from './TourOverlay';
+import TourGuidePath from './TourGuidePath';
 import { useTourGuide, TourStep } from '@/hooks/useTourGuide';
 import { PartyPopper } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
@@ -89,6 +90,14 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
     }
   }, [tourActive, currentStep, currentStepData]);
 
+  // Get previous step data for drawing the path
+  const getPrevStepSelector = () => {
+    if (currentStep > 1 && steps[currentStep - 2]) {
+      return steps[currentStep - 2].targetSelector;
+    }
+    return '';
+  };
+
   return (
     <>
       <TourModal 
@@ -98,6 +107,15 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
       />
       
       <TourOverlay visible={tourActive} />
+      
+      {/* Animated path between steps */}
+      {tourActive && currentStep > 1 && (
+        <TourGuidePath 
+          sourceSelector={getPrevStepSelector()}
+          targetSelector={currentStepData?.targetSelector || ''}
+          active={tourActive && currentStep > 1}
+        />
+      )}
       
       {tourActive && currentStepData && (
         <TourTooltip

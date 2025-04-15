@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -6,11 +5,22 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight, Search, Briefcase, FileText, UserRound, Star, Sparkles, ArrowUpRight } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import NavBar from '@/components/NavBar';
+import { toast } from "@/hooks/use-toast";
 
 const LandingPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const heroRef = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  const handleDemoTourGuide = () => {
+    localStorage.removeItem('jobfinder_has_seen_tour');
+    toast({
+      title: "Tour Guide Reset",
+      description: "The interactive tour guide will start now. Look for the highlighted elements!",
+      variant: "default",
+    });
+    window.location.reload();
+  };
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -214,6 +224,31 @@ const LandingPage = () => {
               </div>
             </AnimatedSection>
           </div>
+        </div>
+      </section>
+
+      {/* Tour Guide Demo Section */}
+      <section className="py-16 px-4 bg-gradient-to-br from-blue-900/30 to-purple-900/30">
+        <div className="max-w-4xl mx-auto text-center">
+          <AnimatedSection animation="fade-in">
+            <h2 className="text-2xl md:text-3xl font-bold text-white">Experience Our Interactive Tour</h2>
+            <p className="mt-4 text-blue-200 max-w-xl mx-auto">
+              New to JobFinder? Try our interactive guided tour to discover all the powerful features we offer. 
+              Follow the animated guide path to explore the platform step by step.
+            </p>
+            <div className="mt-8 flex justify-center">
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 group relative overflow-hidden"
+                onClick={handleDemoTourGuide}
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 group-hover:scale-110 transition-transform duration-500"></span>
+                <span className="relative">
+                  Try The Tour Guide
+                  <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-blue-400 animate-ping"></span>
+                </span>
+              </Button>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
