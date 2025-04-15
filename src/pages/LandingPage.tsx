@@ -52,7 +52,7 @@ const LandingPage = () => {
         }}
       >
         <div 
-          className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-blue-600/5"
+          className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-blue-600/5 dark:from-blue-500/10 dark:to-blue-600/10"
           style={{
             transform: `rotateX(${(mousePosition.y - 300) / 100}deg) rotateY(${(mousePosition.x - 600) / 100}deg)`,
             transition: 'transform 0.1s ease',
@@ -75,7 +75,7 @@ const LandingPage = () => {
           <div className="mt-10 animate-slide-up animate-delay-300">
             <div className="relative max-w-xl mx-auto">
               <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-500/20 to-blue-600/20 blur-xl transform -rotate-1"></div>
-              <div className="relative flex items-center rounded-full border border-blue-300/20 bg-blue-900/30 backdrop-blur-lg shadow-lg">
+              <div className="relative flex items-center rounded-full border border-blue-300/20 bg-blue-900/30 backdrop-blur-lg shadow-lg dark:bg-blue-900/50 dark:border-blue-400/20">
                 <Search className="absolute left-4 h-5 w-5 text-blue-300" />
                 <Input
                   value={searchTerm}
@@ -110,7 +110,7 @@ const LandingPage = () => {
             <Button 
               variant="outline" 
               size="lg" 
-              className="bg-blue-800/30 backdrop-blur-sm border-blue-400/20 text-foreground shadow-md hover:shadow-lg transition-all duration-300 hover:bg-blue-700/40"
+              className="bg-blue-800/30 backdrop-blur-sm border-blue-400/20 text-foreground shadow-md hover:shadow-lg transition-all duration-300 hover:bg-blue-700/40 dark:bg-blue-900/40 dark:border-blue-500/30"
               asChild
             >
               <Link to="/choose">
@@ -141,8 +141,8 @@ const LandingPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <AnimatedSection animation="slide-up" delay={100} className="relative">
-              <div className="bg-card rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-blue-500/20 h-full">
-                <div className="absolute -top-4 -right-4 w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center">
+              <div className="bg-card rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-blue-500/20 h-full dark:border-blue-500/30">
+                <div className="absolute -top-4 -right-4 w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center dark:bg-blue-500/20">
                   <Briefcase className="w-8 h-8 text-blue-500" />
                 </div>
                 <h3 className="text-xl font-semibold mt-2 text-foreground">Find Jobs</h3>
@@ -156,8 +156,8 @@ const LandingPage = () => {
             </AnimatedSection>
 
             <AnimatedSection animation="slide-up" delay={200} className="relative">
-              <div className="bg-card rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-blue-500/20 h-full">
-                <div className="absolute -top-4 -right-4 w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center">
+              <div className="bg-card rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-blue-500/20 h-full dark:border-blue-500/30">
+                <div className="absolute -top-4 -right-4 w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center dark:bg-blue-500/20">
                   <FileText className="w-8 h-8 text-blue-500" />
                 </div>
                 <h3 className="text-xl font-semibold mt-2 text-foreground">Create Resume</h3>
@@ -171,8 +171,8 @@ const LandingPage = () => {
             </AnimatedSection>
 
             <AnimatedSection animation="slide-up" delay={300} className="relative">
-              <div className="bg-card rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-blue-500/20 h-full">
-                <div className="absolute -top-4 -right-4 w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center">
+              <div className="bg-card rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-blue-500/20 h-full dark:border-blue-500/30">
+                <div className="absolute -top-4 -right-4 w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center dark:bg-blue-500/20">
                   <UserRound className="w-8 h-8 text-blue-500" />
                 </div>
                 <h3 className="text-xl font-semibold mt-2 text-foreground">Apply with Ease</h3>
@@ -200,7 +200,7 @@ const LandingPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <AnimatedSection animation="slide-in-right" delay={100}>
-              <div className="bg-gradient-to-br from-blue-900/50 to-blue-800/50 rounded-xl p-8 shadow-md hover:shadow-lg transition-all duration-300 border border-blue-500/20">
+              <div className="bg-gradient-to-br from-blue-900/50 to-blue-800/50 rounded-xl p-8 shadow-md hover:shadow-lg transition-all duration-300 border border-blue-500/20 dark:from-blue-800/60 dark:to-blue-900/60 dark:border-blue-500/30">
                 <Sparkles className="w-10 h-10 text-blue-400 mb-4" />
                 <h3 className="text-xl font-semibold text-foreground">AI Resume Evaluation</h3>
                 <p className="mt-2 text-foreground/80">
@@ -213,7 +213,7 @@ const LandingPage = () => {
             </AnimatedSection>
 
             <AnimatedSection animation="slide-in-right" delay={200}>
-              <div className="bg-gradient-to-br from-blue-900/50 to-blue-800/50 rounded-xl p-8 shadow-md hover:shadow-lg transition-all duration-300 border border-blue-500/20">
+              <div className="bg-gradient-to-br from-blue-900/50 to-blue-800/50 rounded-xl p-8 shadow-md hover:shadow-lg transition-all duration-300 border border-blue-500/20 dark:from-blue-800/60 dark:to-blue-900/60 dark:border-blue-500/30">
                 <Star className="w-10 h-10 text-blue-400 mb-4" />
                 <h3 className="text-xl font-semibold text-foreground">Interview Preparation</h3>
                 <p className="mt-2 text-foreground/80">
@@ -229,7 +229,7 @@ const LandingPage = () => {
       </section>
 
       {/* Tour Guide Demo Section */}
-      <section className="py-16 px-4 bg-gradient-to-br from-blue-900/30 to-purple-900/30">
+      <section className="py-16 px-4 bg-gradient-to-br from-blue-900/30 to-purple-900/30 dark:from-blue-800/40 dark:to-purple-800/40">
         <div className="max-w-4xl mx-auto text-center">
           <AnimatedSection animation="fade-in">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">Experience Our Interactive Tour</h2>
@@ -254,7 +254,7 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-blue-900/50 via-background to-blue-800/50 animate-gradient-background">
+      <section className="py-20 px-4 bg-gradient-to-r from-blue-900/50 via-background to-blue-800/50 animate-gradient-background dark:from-blue-800/60 dark:via-background dark:to-blue-900/60">
         <div className="max-w-4xl mx-auto text-center">
           <AnimatedSection animation="fade-in">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">Ready to Find Your Dream Job?</h2>
@@ -274,7 +274,7 @@ const LandingPage = () => {
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="w-full sm:w-auto border-blue-400/30 text-foreground hover:bg-blue-800/40"
+                className="w-full sm:w-auto border-blue-400/30 text-foreground hover:bg-blue-800/40 dark:border-blue-500/30"
                 asChild
               >
                 <Link to="/login">
@@ -287,7 +287,7 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-muted/50 border-t border-blue-500/20">
+      <footer className="py-12 px-4 bg-muted/50 border-t border-blue-500/20 dark:border-blue-600/20">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center mb-6 md:mb-0">
