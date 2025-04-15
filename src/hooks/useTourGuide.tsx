@@ -29,6 +29,7 @@ export function useTourGuide({ steps, onComplete, storageKey = 'jobfinder_has_se
       (el as HTMLElement).removeAttribute('data-tour-highlighted');
     });
     document.body.style.overflow = 'auto';
+    document.body.style.overflowX = 'hidden';
   }, []);
 
   useEffect(() => {
@@ -49,8 +50,9 @@ export function useTourGuide({ steps, onComplete, storageKey = 'jobfinder_has_se
     setShowWelcomeModal(false);
     setCurrentStep(1);
     setTourActive(true);
-    // Ensure normal scrolling is maintained
+    // Ensure scrolling is enabled
     document.body.style.overflow = 'auto';
+    document.body.style.overflowX = 'hidden';
   }, []);
 
   const skipTour = useCallback(() => {
@@ -60,6 +62,7 @@ export function useTourGuide({ steps, onComplete, storageKey = 'jobfinder_has_se
     cleanupHighlightedElements();
     // Ensure normal scrolling is maintained
     document.body.style.overflow = 'auto';
+    document.body.style.overflowX = 'hidden';
   }, [storageKey, cleanupHighlightedElements]);
 
   const nextStep = useCallback(() => {
