@@ -11,9 +11,10 @@ import { toast } from "@/hooks/use-toast";
 interface TourGuideProps {
   steps: TourStep[];
   onComplete?: () => void;
+  storageKey?: string;
 }
 
-const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
+const TourGuide = ({ steps, onComplete, storageKey = 'jobfinder_has_seen_tour' }: TourGuideProps) => {
   const {
     showWelcomeModal,
     tourActive,
@@ -25,7 +26,7 @@ const TourGuide = ({ steps, onComplete }: TourGuideProps) => {
     nextStep,
     prevStep,
     completeTour
-  } = useTourGuide({ steps, onComplete });
+  } = useTourGuide({ steps, onComplete, storageKey });
 
   // Show congratulations on completing the tour
   const handleCompleteTour = () => {

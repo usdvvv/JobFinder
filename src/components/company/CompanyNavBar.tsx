@@ -87,7 +87,7 @@ const CompanyNavBar = () => {
               <NavLink to="/company/entertainment" icon={<Puzzle className="h-4 w-4" />} text="Entertainment" />
               <NavLink to="/company/therapist" icon={<HeartPulse className="h-4 w-4" />} text="AI Therapist" />
               <NavLink to="/company/peer-chat" icon={<MessageSquare className="h-4 w-4" />} text="Peer Chat" />
-              <Link to="/company/jobs/create">
+              <Link to="/company/jobs/create" className="post-job-button">
                 <Button size="sm" className="bg-blue-600 hover:bg-blue-700 ml-2">
                   <PlusCircle className="h-4 w-4 mr-2" />
                   Post Job

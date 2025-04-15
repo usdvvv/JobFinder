@@ -11,16 +11,17 @@ export interface TourStep {
 interface UseTourGuideProps {
   steps: TourStep[];
   onComplete?: () => void;
+  storageKey?: string;
 }
 
-export function useTourGuide({ steps, onComplete }: UseTourGuideProps) {
+export function useTourGuide({ steps, onComplete, storageKey = 'jobfinder_has_seen_tour' }: UseTourGuideProps) {
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [tourActive, setTourActive] = useState(false);
 
   useEffect(() => {
     // Check if this is the user's first visit
-    const hasSeenTour = localStorage.getItem('jobfinder_has_seen_tour');
+    const hasSeenTour = localStorage.getItem(storageKey);
     
     if (!hasSeenTour) {
       // Delay showing the welcome modal to let the page load first
@@ -30,7 +31,7 @@ export function useTourGuide({ steps, onComplete }: UseTourGuideProps) {
       
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [storageKey]);
 
   const startTour = () => {
     setShowWelcomeModal(false);
@@ -40,7 +41,7 @@ export function useTourGuide({ steps, onComplete }: UseTourGuideProps) {
 
   const skipTour = () => {
     setShowWelcomeModal(false);
-    localStorage.setItem('jobfinder_has_seen_tour', 'true');
+    localStorage.setItem(storageKey, 'true');
   };
 
   const nextStep = () => {
@@ -59,12 +60,12 @@ export function useTourGuide({ steps, onComplete }: UseTourGuideProps) {
 
   const completeTour = () => {
     setTourActive(false);
-    localStorage.setItem('jobfinder_has_seen_tour', 'true');
+    localStorage.setItem(storageKey, 'true');
     if (onComplete) onComplete();
   };
 
   const resetTour = () => {
-    localStorage.removeItem('jobfinder_has_seen_tour');
+    localStorage.removeItem(storageKey);
     setShowWelcomeModal(true);
     setCurrentStep(0);
     setTourActive(false);

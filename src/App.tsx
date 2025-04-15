@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import TourGuide from "@/components/TourGuide/TourGuide";
 import TourGuideButton from "@/components/TourGuideButton";
 import { getTourStepsForRoute } from "@/components/TourSteps";
+import { getCompanyTourStepsForRoute } from "@/components/CompanyTourSteps";
 import LandingPage from "@/pages/LandingPage";
 import ChooseSearchType from "@/pages/ChooseSearchType";
 import Login from "@/pages/Login";
@@ -42,22 +43,31 @@ import CompanyPeerChat from "@/pages/company/CompanyPeerChat";
 // Tour guide component that handles route-specific steps
 const RouteTourGuide = () => {
   const location = useLocation();
-  const [tourSteps, setTourSteps] = useState(getTourStepsForRoute(location.pathname));
+  const [tourSteps, setTourSteps] = useState([]);
   const [resetKey, setResetKey] = useState(0);
+  const isCompanyRoute = location.pathname.startsWith('/company');
 
   useEffect(() => {
-    setTourSteps(getTourStepsForRoute(location.pathname));
+    if (isCompanyRoute) {
+      setTourSteps(getCompanyTourStepsForRoute(location.pathname));
+    } else {
+      setTourSteps(getTourStepsForRoute(location.pathname));
+    }
     setResetKey(prev => prev + 1);
-  }, [location.pathname]);
+  }, [location.pathname, isCompanyRoute]);
 
   const handleTourReset = () => {
-    localStorage.removeItem('jobfinder_has_seen_tour');
+    if (isCompanyRoute) {
+      localStorage.removeItem('jobfinder_company_has_seen_tour');
+    } else {
+      localStorage.removeItem('jobfinder_has_seen_tour');
+    }
     setResetKey(prev => prev + 1);
   };
 
   return (
     <>
-      <TourGuide key={resetKey} steps={tourSteps} />
+      <TourGuide key={resetKey} steps={tourSteps} storageKey={isCompanyRoute ? 'jobfinder_company_has_seen_tour' : 'jobfinder_has_seen_tour'} />
       <TourGuideButton onStartTour={handleTourReset} />
     </>
   );
