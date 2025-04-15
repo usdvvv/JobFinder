@@ -13,7 +13,7 @@ const ThemeToggle = () => {
   if (!mounted) return null;
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center scale-90">
       <ThemeSwitch />
     </div>
   );
