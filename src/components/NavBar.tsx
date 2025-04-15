@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Menu, X, Briefcase, Home, FileText, Video, UserRound, Code, Brain, Bot, MessageSquare, LogOut, Puzzle } from 'lucide-react';
+import { Menu, X, Briefcase, Home, FileText, Video, UserRound, Code, Brain, Bot, LogOut, Puzzle, MessageSquare } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 import ThemeToggle from './ThemeToggle';
 
@@ -67,7 +67,9 @@ const NavBar = () => {
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${
-        scrolled ? 'bg-background/90 dark:bg-background/90 backdrop-blur-md shadow-md' : 'bg-transparent'
+        scrolled 
+          ? 'bg-background/90 backdrop-blur-md shadow-md' 
+          : 'bg-background/50 backdrop-blur-sm dark:bg-background/30'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -144,7 +146,7 @@ const NavBar = () => {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden glass-effect animate-fade-in">
+        <div className="md:hidden bg-background/80 dark:bg-background/80 backdrop-blur-md animate-fade-in">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <MobileNavLink to="/" icon={<Home className="h-5 w-5" />} text="Home" />
             <MobileNavLink to="/jobs" icon={<Briefcase className="h-5 w-5" />} text="Browse Jobs" />
@@ -191,14 +193,14 @@ const NavLink = ({ to, icon, text }: { to: string; icon: React.ReactNode; text: 
       to={to}
       className={`px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-1 transition-all duration-300 ${
         isActive 
-          ? 'text-blue-600' 
-          : 'text-foreground hover:text-blue-600 hover:bg-muted'
+          ? 'text-blue-600 dark:text-blue-400' 
+          : 'text-foreground hover:text-blue-600 hover:bg-muted dark:hover:text-blue-400'
       }`}
     >
       {icon}
       <span>{text}</span>
       {isActive && (
-        <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 rounded"></span>
+        <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded"></span>
       )}
     </Link>
   );
@@ -213,8 +215,8 @@ const MobileNavLink = ({ to, icon, text }: { to: string; icon: React.ReactNode; 
       to={to}
       className={`block px-3 py-2 rounded-md text-base font-medium flex items-center space-x-3 ${
         isActive 
-          ? 'bg-blue-100 text-blue-700' 
-          : 'text-foreground hover:bg-muted hover:text-blue-600'
+          ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' 
+          : 'text-foreground hover:bg-muted hover:text-blue-600 dark:hover:text-blue-400'
       }`}
     >
       {icon}
