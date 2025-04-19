@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import CompanyNavBar from "@/components/company/CompanyNavBar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +10,7 @@ import { Building2, Send, HeartPulse, Clock, Calendar, BarChart } from "lucide-r
 import { useNavigate } from 'react-router-dom';
 import AnimatedSection from '@/components/AnimatedSection';
 import WellnessCompanyOverview from "@/components/WellnessCompanyOverview";
+import WellnessUserOverview from "@/components/WellnessUserOverview"; // <-- Added import
 
 const CompanyAITherapist = () => {
   const [message, setMessage] = useState("");
@@ -23,13 +25,10 @@ const CompanyAITherapist = () => {
   const handleSendMessage = () => {
     if (message.trim() === "") return;
     
-    // Add user message
     setChatMessages(prev => [...prev, { role: "user", content: message }]);
     
-    // Simulate AI response after a short delay
     setTimeout(() => {
       let response = "";
-      
       if (message.toLowerCase().includes("stress") || message.toLowerCase().includes("overwhelmed")) {
         response = "It sounds like you're dealing with significant workplace stress. This is common, especially in high-pressure environments. Have you tried implementing any stress management techniques with your team? Even small breaks, mindfulness sessions, or walking meetings can help reduce overall stress levels.";
       } else if (message.toLowerCase().includes("team") || message.toLowerCase().includes("employees")) {
@@ -39,7 +38,6 @@ const CompanyAITherapist = () => {
       } else {
         response = "Thank you for sharing that. As a company leader, balancing business needs with employee wellbeing can be challenging. How specifically can I help support you and your team's mental health needs today?";
       }
-      
       setChatMessages(prev => [...prev, { role: "assistant", content: response }]);
     }, 1000);
     
@@ -58,7 +56,12 @@ const CompanyAITherapist = () => {
       <CompanyNavBar />
       
       <div className="container mx-auto px-4 py-24 max-w-7xl">
-        <WellnessCompanyOverview />
+        {/* Add both COMPANY and EMPLOYEE wellness overviews side by side */}
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <WellnessCompanyOverview />
+          <WellnessUserOverview />
+        </div>
+
         <AnimatedSection animation="fade-in">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-red-500 to-red-600 bg-clip-text text-transparent">
