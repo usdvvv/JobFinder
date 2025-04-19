@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +8,8 @@ import { FileText, PlusCircle, Search, X, Check, Eye, Edit, Trash, Filter } from
 import { Badge } from "@/components/ui/badge";
 import CompanyNavBar from '@/components/company/CompanyNavBar';
 import { toast } from "@/hooks/use-toast";
+
+const LOCAL_STORAGE_KEY = "company_job_postings";
 
 const initialJobPostings = [
   { id: 1, title: 'Senior Frontend Developer', location: 'San Francisco, CA', type: 'Full-time', level: 'Senior', applications: 12, status: 'active', createdAt: '2023-06-15' },
@@ -20,11 +22,26 @@ const initialJobPostings = [
   { id: 8, title: 'Customer Success Manager', location: 'Denver, CO', type: 'Full-time', level: 'Mid-level', applications: 5, status: 'closed', createdAt: '2023-05-15' },
 ];
 
+function loadJobPostings() {
+  const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+  if (stored) return JSON.parse(stored);
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(initialJobPostings));
+  return initialJobPostings;
+}
+
+function saveJobPostings(jobs: typeof initialJobPostings) {
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(jobs));
+}
+
 const CompanyJobs = () => {
-  const [jobPostings, setJobPostings] = useState(initialJobPostings);
+  const [jobPostings, setJobPostings] = useState(loadJobPostings());
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   
+  useEffect(() => {
+    saveJobPostings(jobPostings);
+  }, [jobPostings]);
+
   const filteredJobs = jobPostings.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || job.status === statusFilter;
