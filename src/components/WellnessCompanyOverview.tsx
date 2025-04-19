@@ -4,23 +4,18 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Watch, BluetoothSearching, Activity } from "lucide-react";
 
-// Helper to mock company "real-time" metrics
 function getMockCompanyWellness() {
-  // 50-90 employees
   const employees = 66 + Math.floor(Math.random() * 25);
-  // Mood distribution
   const good = Math.floor(employees * 0.36 + Math.random()*employees*0.16);
   const bad = Math.floor(employees * 0.15 + Math.random()*employees*0.09);
   const neutral = employees - good - bad;
-  // Avg stress, high stress depts
-  const avgStress = Math.floor(41 + Math.random() * 38); // 41-79%
+  const avgStress = Math.floor(41 + Math.random() * 38);
   const departments = [
     { name: "Product", stress: Math.floor(58 + Math.random() * 28) },
     { name: "Engineering", stress: Math.floor(46 + Math.random() * 34) },
     { name: "Sales", stress: Math.floor(60 + Math.random() * 28) },
     { name: "Support", stress: Math.floor(41 + Math.random() * 37) },
   ];
-  // Sort and pick high stress
   const highStress = departments.filter(d => d.stress > 69);
   let recs = [
     "Schedule a group wellness activity this week.",
@@ -35,19 +30,24 @@ function getMockCompanyWellness() {
 type Props = {
   hideTitle?: boolean;
   hideCard?: boolean;
+  forceConnected?: boolean;
 };
 
-export default function WellnessCompanyOverview({ hideTitle, hideCard }: Props) {
+export default function WellnessCompanyOverview({ hideTitle, hideCard, forceConnected }: Props) {
   const [stats, setStats] = useState(getMockCompanyWellness());
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
 
   useEffect(() => {
+    if (forceConnected) {
+      setConnected(true);
+      return;
+    }
     if (connected) {
       const interval = setInterval(() => setStats(getMockCompanyWellness()), 8000);
       return () => clearInterval(interval);
     }
-  }, [connected]);
+  }, [connected, forceConnected]);
 
   const handleConnect = () => {
     setConnecting(true);
@@ -57,10 +57,9 @@ export default function WellnessCompanyOverview({ hideTitle, hideCard }: Props) 
     }, 1800);
   };
 
-  // Only render card/title if not in "combined" view
   const content = (
     <CardContent>
-      {connected ? (
+      {(connected || forceConnected) ? (
         <div className="flex flex-wrap gap-8 items-center justify-between pt-3">
           <div>
             <div className="text-xs text-gray-300">Company Stress (avg)</div>

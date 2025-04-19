@@ -4,7 +4,6 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Watch, BluetoothSearching, Activity } from "lucide-react";
 
-// Helper to mock "real-time" health data
 function getMockWellnessData() {
   const stress = Math.floor(Math.random() * 42) + 35; // 35-77%
   const hrv = Math.floor(Math.random() * 45) + 50; // 50-95 ms
@@ -28,20 +27,25 @@ const moodMap = {
 type Props = {
   hideTitle?: boolean;
   hideCard?: boolean;
+  forceConnected?: boolean;
 };
 
-export default function WellnessUserOverview({ hideTitle, hideCard }: Props) {
+export default function WellnessUserOverview({ hideTitle, hideCard, forceConnected }: Props) {
   const [stats, setStats] = useState(getMockWellnessData());
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
 
   useEffect(() => {
+    if (forceConnected) {
+      setConnected(true);
+      return;
+    }
     if (connected) {
       // Fake a new "live" update every 8 seconds
       const i = setInterval(() => setStats(getMockWellnessData()), 8000);
       return () => clearInterval(i);
     }
-  }, [connected]);
+  }, [connected, forceConnected]);
 
   const handleConnect = () => {
     setConnecting(true);
@@ -51,10 +55,9 @@ export default function WellnessUserOverview({ hideTitle, hideCard }: Props) {
     }, 1800);
   };
 
-  // Only render card/title if not in "combined" view
   const content = (
     <CardContent>
-      {connected ? (
+      {(connected || forceConnected) ? (
         <div className="flex flex-wrap gap-8 items-center justify-between pt-3">
           <div>
             <div className="text-xs text-gray-300">Stress Percentage</div>
