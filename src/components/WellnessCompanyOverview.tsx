@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { HeartPulse, Users, ListCheck, TrendingDown, TrendingUp, Smile, SmilePlus } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
@@ -33,7 +32,12 @@ function getMockCompanyWellness() {
   return { employees, good, neutral, bad, avgStress, highStress, recs };
 }
 
-export default function WellnessCompanyOverview() {
+type Props = {
+  hideTitle?: boolean;
+  hideCard?: boolean;
+};
+
+export default function WellnessCompanyOverview({ hideTitle, hideCard }: Props) {
   const [stats, setStats] = useState(getMockCompanyWellness());
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
@@ -53,18 +57,58 @@ export default function WellnessCompanyOverview() {
     }, 1800);
   };
 
-  return (
-    <Card className="mb-8 bg-gradient-to-br from-purple-800/70 to-blue-950/80 backdrop-blur-lg border border-white/10 shadow-lg">
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <Users className="h-5 w-5 text-blue-400" />
-          <span className="font-semibold text-lg text-white">Employee Wellness Insight</span>
+  // Only render card/title if not in "combined" view
+  const content = (
+    <CardContent>
+      {connected ? (
+        <div className="flex flex-wrap gap-8 items-center justify-between pt-3">
+          <div>
+            <div className="text-xs text-gray-300">Company Stress (avg)</div>
+            <div className="font-bold text-2xl text-white flex items-center gap-2">
+              {stats.avgStress}% <HeartPulse className="h-4 w-4 text-red-300" />
+            </div>
+          </div>
+          <div>
+            <div className="text-xs text-gray-300">Mood Summary</div>
+            <div className="flex flex-col gap-1 text-white font-medium">
+              <span className="flex items-center gap-1"><SmilePlus className="text-green-400 h-4 w-4" /> Good: {stats.good}</span>
+              <span className="flex items-center gap-1"><Smile className="text-yellow-400 h-4 w-4" /> Neutral: {stats.neutral}</span>
+              <span className="flex items-center gap-1"><HeartPulse className="text-red-400 h-4 w-4" /> Bad: {stats.bad}</span>
+            </div>
+          </div>
+          <div>
+            <div className="text-xs text-gray-300">Departments with High Stress</div>
+            <ul className="text-white/90 text-sm min-w-[120px]">
+              {stats.highStress.length === 0 ? (
+                <li className="text-green-300">None 💚</li>
+              ) : stats.highStress.map((dept, idx) => (
+                <li key={idx} className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-red-400" />
+                  <span>{dept.name}</span> <span>({dept.stress}%)</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="min-w-[180px]">
+            <div className="text-xs text-gray-300 mb-1">Recommendations</div>
+            <ul className="list-disc pl-5 text-white/90 text-sm space-y-1">
+              {stats.recs.map((rec, idx) => (
+                <li key={idx}>{rec}</li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <div className="mt-2 flex items-center gap-2">
-          {!connected && !connecting && (
+      ) : (
+        <div className="flex flex-col items-center justify-center pt-8 pb-6 text-center text-gray-300 min-h-[160px]">
+          <Watch className="h-10 w-10 mx-auto mb-3 animate-bounce text-blue-300" />
+          <div className="text-lg font-medium mb-1">Connect a smart health device</div>
+          <div className="text-sm mb-2 max-w-xs">
+            Connect a supported smartwatch to display live, anonymous company wellness insights.
+          </div>
+          {!hideCard && !connecting && (
             <Button
               variant="default"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 px-4 py-1"
+              className="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 px-4 py-1"
               onClick={handleConnect}
               size="sm"
             >
@@ -72,70 +116,36 @@ export default function WellnessCompanyOverview() {
               Connect Smartwatch
             </Button>
           )}
-          {connecting && (
-            <span className="flex items-center gap-2 text-blue-300 animate-pulse font-medium">
-              <BluetoothSearching className="animate-spin h-5 w-5" />
-              Looking for smartwatch...
-            </span>
-          )}
-          {connected && (
-            <span className="flex items-center gap-2 text-green-300 font-semibold">
-              <Activity className="h-5 w-5 animate-pulse" />
-              Smartwatch Connected
-            </span>
-          )}
         </div>
-      </CardHeader>
-      <CardContent>
-        {connected ? (
-          <div className="flex flex-wrap gap-8 items-center justify-between pt-3">
-            <div>
-              <div className="text-xs text-gray-300">Company Stress (avg)</div>
-              <div className="font-bold text-2xl text-white flex items-center gap-2">
-                {stats.avgStress}% <HeartPulse className="h-4 w-4 text-red-300" />
-              </div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-300">Mood Summary</div>
-              <div className="flex flex-col gap-1 text-white font-medium">
-                <span className="flex items-center gap-1"><SmilePlus className="text-green-400 h-4 w-4" /> Good: {stats.good}</span>
-                <span className="flex items-center gap-1"><Smile className="text-yellow-400 h-4 w-4" /> Neutral: {stats.neutral}</span>
-                <span className="flex items-center gap-1"><HeartPulse className="text-red-400 h-4 w-4" /> Bad: {stats.bad}</span>
-              </div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-300">Departments with High Stress</div>
-              <ul className="text-white/90 text-sm min-w-[120px]">
-                {stats.highStress.length === 0 ? (
-                  <li className="text-green-300">None 💚</li>
-                ) : stats.highStress.map((dept, idx) => (
-                  <li key={idx} className="flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-red-400" />
-                    <span>{dept.name}</span> <span>({dept.stress}%)</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="min-w-[180px]">
-              <div className="text-xs text-gray-300 mb-1">Recommendations</div>
-              <ul className="list-disc pl-5 text-white/90 text-sm space-y-1">
-                {stats.recs.map((rec, idx) => (
-                  <li key={idx}>{rec}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center pt-8 pb-6 text-center text-gray-300 min-h-[160px]">
-            <Watch className="h-10 w-10 mx-auto mb-3 animate-bounce text-blue-300" />
-            <div className="text-lg font-medium mb-1">Connect a smart health device</div>
-            <div className="text-sm mb-2 max-w-xs">
-              Connect a supported smartwatch to display live, anonymous company wellness insights.
-            </div>
+      )}
+    </CardContent>
+  );
+
+  if (hideCard) {
+    return (
+      <div>
+        {!hideTitle && (
+          <div className="flex items-center gap-3 mb-3">
+            <Users className="h-5 w-5 text-blue-400" />
+            <span className="font-semibold text-lg text-white">Employee Wellness Insight</span>
           </div>
         )}
-      </CardContent>
+        <div className="pt-0">{content.props.children}</div>
+      </div>
+    );
+  }
+
+  return (
+    <Card className="mb-8 bg-gradient-to-br from-purple-800/70 to-blue-950/80 backdrop-blur-lg border border-white/10 shadow-lg">
+      {!hideTitle && (
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <Users className="h-5 w-5 text-blue-400" />
+            <span className="font-semibold text-lg text-white">Employee Wellness Insight</span>
+          </div>
+        </CardHeader>
+      )}
+      {content}
     </Card>
   );
 }
-

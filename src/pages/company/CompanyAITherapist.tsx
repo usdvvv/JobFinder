@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import CompanyNavBar from "@/components/company/CompanyNavBar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,8 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { Building2, Send, HeartPulse, Clock, Calendar, BarChart } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import AnimatedSection from '@/components/AnimatedSection';
-import WellnessCompanyOverview from "@/components/WellnessCompanyOverview";
-import WellnessUserOverview from "@/components/WellnessUserOverview";
+// Remove separate imports
+// import WellnessCompanyOverview from "@/components/WellnessCompanyOverview";
+// import WellnessUserOverview from "@/components/WellnessUserOverview";
+import WellnessCombinedOverview from "@/components/WellnessCombinedOverview";
 
 const CompanyAITherapist = () => {
   const [message, setMessage] = useState("");
@@ -52,36 +55,8 @@ const CompanyAITherapist = () => {
       <CompanyNavBar />
       <div className="container mx-auto px-4 py-24 max-w-7xl">
         <AnimatedSection animation="fade-in">
-          <Card className="mb-8 bg-gradient-to-br from-purple-800/70 to-blue-950/80 backdrop-blur-lg border border-white/10 shadow-lg">
-            <CardHeader>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                <HeartPulse className="h-5 w-5 text-red-400" />
-                <span className="font-semibold text-lg text-white">Company &amp; Your Wellness Overview</span>
-              </div>
-              <CardDescription className="mt-1 text-gray-300">
-                Live well-being metrics for your organization, and for you personally!
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-8">
-                <div className="mb-3 text-base font-semibold text-blue-300 flex items-center gap-2">
-                  <Building2 className="h-4 w-4" /> Company Wellness Snapshot
-                </div>
-                <WellnessCompanyOverview />
-              </div>
-              <div className="relative flex items-center my-6">
-                <div className="flex-grow border-t border-blue-700" />
-                <span className="mx-4 text-gray-400 text-xs font-medium uppercase tracking-widest">You</span>
-                <div className="flex-grow border-t border-blue-700" />
-              </div>
-              <div>
-                <div className="mb-3 text-base font-semibold text-purple-300 flex items-center gap-2">
-                  <HeartPulse className="h-4 w-4" /> Your Wellness Stats
-                </div>
-                <WellnessUserOverview />
-              </div>
-            </CardContent>
-          </Card>
+          {/* Use combined overview to unify company/employee wellness */}
+          <WellnessCombinedOverview />
         </AnimatedSection>
 
         <AnimatedSection animation="fade-in">
