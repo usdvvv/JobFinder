@@ -21,6 +21,8 @@ import {
 import CompanyNavBar from '@/components/company/CompanyNavBar';
 import AnimatedSection from '@/components/AnimatedSection';
 import CodingLeaderboard from '@/components/CodingLeaderboard';
+import WellnessUserOverview from '@/components/WellnessUserOverview';
+import WellnessCompanyOverview from '@/components/WellnessCompanyOverview';
 
 const jobPostings = [
   { id: 1, title: 'Senior Frontend Developer', applications: 12, status: 'active', createdAt: '2023-06-15' },
@@ -350,6 +352,11 @@ const CompanyDashboard = () => {
           
           <TabsContent value="wellness">
             <AnimatedSection animation="fade-in">
+              {/* New Addition: Show Company and Employee Wellness next to each other */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <WellnessCompanyOverview />
+                <WellnessUserOverview />
+              </div>
               <div className="mb-6">
                 <h2 className="text-2xl font-bold mb-2 text-white">Employee Wellness Services</h2>
                 <p className="text-gray-300">
