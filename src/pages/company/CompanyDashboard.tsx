@@ -199,7 +199,12 @@ const CompanyDashboard = () => {
                             <td className="py-3 text-gray-300">{job.createdAt}</td>
                             <td className="py-3 text-right">
                               <div className="flex justify-end gap-2">
-                                <Button variant="ghost" size="sm" asChild className="text-blue-400 hover:text-blue-300 hover:bg-blue-950/30">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  asChild 
+                                  className="text-white bg-blue-600 hover:bg-blue-700 hover:text-white focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 font-semibold transition-colors px-4 py-2 rounded"
+                                >
                                   <Link to={`/company/jobs/${job.id}`}>
                                     View
                                   </Link>
