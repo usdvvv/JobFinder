@@ -39,8 +39,9 @@ import CreateJobPosting from "@/pages/company/CreateJobPosting";
 import CompanyAITherapist from "@/pages/company/CompanyAITherapist";
 import CompanyEntertainment from "@/pages/company/CompanyEntertainment";
 import CompanyPeerChat from "@/pages/company/CompanyPeerChat";
+import ViewJobPosting from "@/pages/company/ViewJobPosting";
+import EditJobPosting from "@/pages/company/EditJobPosting";
 
-// Tour guide component that handles route-specific steps
 const RouteTourGuide = () => {
   const location = useLocation();
   const [tourSteps, setTourSteps] = useState([]);
@@ -109,6 +110,8 @@ function App() {
           <Route path="/company/therapist" element={<CompanyAITherapist />} />
           <Route path="/company/entertainment" element={<CompanyEntertainment />} />
           <Route path="/company/peer-chat" element={<CompanyPeerChat />} />
+          <Route path="/company/jobs/:id" element={<ViewJobPosting />} />
+          <Route path="/company/jobs/:id/edit" element={<EditJobPosting />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <RouteTourGuide />
