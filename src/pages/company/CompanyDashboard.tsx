@@ -84,7 +84,11 @@ const CompanyDashboard = () => {
           </div>
           
           <div className="mt-4 md:mt-0 flex flex-col sm:flex-row gap-2">
-            <Button asChild variant="outline" className="bg-white">
+            <Button
+              asChild
+              variant="default"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+            >
               <Link to="/company/applications">
                 <FileSearch className="mr-2 h-4 w-4" />
                 View Applications
