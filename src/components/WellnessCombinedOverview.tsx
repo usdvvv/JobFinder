@@ -40,17 +40,16 @@ export default function WellnessCombinedOverview() {
             <div className="text-sm mb-2 max-w-xs">
               Pair your smartwatch to view live company and personal wellness data here!
             </div>
-            {!connecting && (
-              <Button
-                variant="default"
-                className="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 px-4 py-1"
-                onClick={handleConnect}
-                size="sm"
-              >
-                <Watch className="mr-2 h-4 w-4" />
-                Connect Smartwatch
-              </Button>
-            )}
+            <Button
+              variant="default"
+              className="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 px-4 py-1"
+              onClick={handleConnect}
+              size="sm"
+              disabled={connecting}
+            >
+              <Watch className="mr-2 h-4 w-4" />
+              {connecting ? "Connecting..." : "Connect Smartwatch"}
+            </Button>
           </div>
         ) : (
           <div className="flex flex-col md:flex-row gap-8 justify-between">
