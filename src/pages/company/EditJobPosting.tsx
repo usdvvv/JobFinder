@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -53,7 +52,8 @@ const EditJobPosting = () => {
     description: safe(job.description, ""),
     requirements: safe(job.requirements, ""),
     benefits: safe(job.benefits, ""),
-    remote: job.remote === true || job.remote === "true"
+    remote: job.remote === true || job.remote === "true",
+    status: safe(job.status, "active"),
   } : null);
 
   if (!job) {
@@ -133,7 +133,6 @@ const EditJobPosting = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    // Clean up form data for storage (convert skills to array/string)
     let formattedSkills = Array.isArray(form.skills)
       ? form.skills
       : form.skills
@@ -145,6 +144,7 @@ const EditJobPosting = () => {
       ...job,
       ...form,
       skills: formattedSkills,
+      status: form.status || "active",
     };
     const success = updateJob(updated);
     if (success) {
