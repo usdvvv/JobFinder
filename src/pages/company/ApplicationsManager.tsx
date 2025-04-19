@@ -223,7 +223,9 @@ const ApplicationsManager = () => {
                           </Avatar>
                           <div className="flex-1 min-w-0">
                             <div className="flex justify-between items-start">
-                              <div className="truncate font-bold text-white text-base leading-5">{application.name}</div>
+                              <div className="truncate font-bold text-base leading-5 text-blue-900 dark:text-blue-200">
+                                {application.name}
+                              </div>
                               <span className={`text-xs px-2 py-1 rounded-full border border-white/20 drop-shadow font-semibold ${getStatusColor(application.status)}`}>
                                 {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
                               </span>
@@ -376,7 +378,7 @@ const ApplicationsManager = () => {
                           variant="outline" 
                           size="sm" 
                           onClick={runPlagiarismCheck}
-                          className="bg-white"
+                          className="bg-blue-700 text-white hover:bg-blue-800 focus:bg-blue-700"
                         >
                           <FileCheck className="h-4 w-4 mr-2" />
                           Run New Check
@@ -387,7 +389,7 @@ const ApplicationsManager = () => {
                             variant="outline" 
                             size="sm"
                             onClick={() => setIsPlagiarismModalOpen(true)}
-                            className="bg-white"
+                            className="bg-yellow-600 text-white hover:bg-yellow-700 focus:bg-yellow-700"
                           >
                             <FileWarning className="h-4 w-4 mr-2" />
                             View Details
@@ -460,7 +462,7 @@ const ApplicationsManager = () => {
                       }
                     }}
                     disabled={filteredApplications.findIndex(app => app.id === selectedApplication) === 0}
-                    className="bg-white"
+                    className="bg-blue-700 text-white hover:bg-blue-800 focus:bg-blue-700 disabled:bg-gray-200 disabled:text-gray-400"
                   >
                     <ChevronLeft className="h-4 w-4 mr-2" />
                     Previous
@@ -480,7 +482,7 @@ const ApplicationsManager = () => {
                       }
                     }}
                     disabled={filteredApplications.findIndex(app => app.id === selectedApplication) === filteredApplications.length - 1}
-                    className="bg-white"
+                    className="bg-blue-700 text-white hover:bg-blue-800 focus:bg-blue-700 disabled:bg-gray-200 disabled:text-gray-400"
                   >
                     Next
                     <ChevronRight className="h-4 w-4 ml-2" />
