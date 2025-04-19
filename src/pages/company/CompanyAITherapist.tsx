@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import CompanyNavBar from "@/components/company/CompanyNavBar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,7 +9,7 @@ import { Building2, Send, HeartPulse, Clock, Calendar, BarChart } from "lucide-r
 import { useNavigate } from 'react-router-dom';
 import AnimatedSection from '@/components/AnimatedSection';
 import WellnessCompanyOverview from "@/components/WellnessCompanyOverview";
-import WellnessUserOverview from "@/components/WellnessUserOverview"; // <-- Added import
+import WellnessUserOverview from "@/components/WellnessUserOverview";
 
 const CompanyAITherapist = () => {
   const [message, setMessage] = useState("");
@@ -24,9 +23,7 @@ const CompanyAITherapist = () => {
 
   const handleSendMessage = () => {
     if (message.trim() === "") return;
-    
     setChatMessages(prev => [...prev, { role: "user", content: message }]);
-    
     setTimeout(() => {
       let response = "";
       if (message.toLowerCase().includes("stress") || message.toLowerCase().includes("overwhelmed")) {
@@ -40,7 +37,6 @@ const CompanyAITherapist = () => {
       }
       setChatMessages(prev => [...prev, { role: "assistant", content: response }]);
     }, 1000);
-    
     setMessage("");
   };
 
@@ -54,13 +50,39 @@ const CompanyAITherapist = () => {
   return (
     <div className="min-h-screen bg-background">
       <CompanyNavBar />
-      
       <div className="container mx-auto px-4 py-24 max-w-7xl">
-        {/* Add both COMPANY and EMPLOYEE wellness overviews side by side */}
-        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-          <WellnessCompanyOverview />
-          <WellnessUserOverview />
-        </div>
+        <AnimatedSection animation="fade-in">
+          <Card className="mb-8 bg-gradient-to-br from-purple-800/70 to-blue-950/80 backdrop-blur-lg border border-white/10 shadow-lg">
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <HeartPulse className="h-5 w-5 text-red-400" />
+                <span className="font-semibold text-lg text-white">Company &amp; Your Wellness Overview</span>
+              </div>
+              <CardDescription className="mt-1 text-gray-300">
+                Live well-being metrics for your organization, and for you personally!
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-8">
+                <div className="mb-3 text-base font-semibold text-blue-300 flex items-center gap-2">
+                  <Building2 className="h-4 w-4" /> Company Wellness Snapshot
+                </div>
+                <WellnessCompanyOverview />
+              </div>
+              <div className="relative flex items-center my-6">
+                <div className="flex-grow border-t border-blue-700" />
+                <span className="mx-4 text-gray-400 text-xs font-medium uppercase tracking-widest">You</span>
+                <div className="flex-grow border-t border-blue-700" />
+              </div>
+              <div>
+                <div className="mb-3 text-base font-semibold text-purple-300 flex items-center gap-2">
+                  <HeartPulse className="h-4 w-4" /> Your Wellness Stats
+                </div>
+                <WellnessUserOverview />
+              </div>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
 
         <AnimatedSection animation="fade-in">
           <div className="text-center mb-8">
@@ -72,7 +94,7 @@ const CompanyAITherapist = () => {
             </p>
           </div>
         </AnimatedSection>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-1">
             <AnimatedSection animation="slide-in-right">
