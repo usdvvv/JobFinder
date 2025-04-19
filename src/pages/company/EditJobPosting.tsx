@@ -5,6 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Edit } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const LOCAL_STORAGE_KEY = "company_job_postings";
 
@@ -24,17 +28,32 @@ function updateJob(updatedJob) {
   return false;
 }
 
+// Helper to safely get a field
+const safe = (val, fallback) => val !== undefined && val !== null ? val : fallback;
+
+const emptySalary = { min: "", max: "", period: "yearly", showSalary: true };
+
 const EditJobPosting = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const job = getJobById(id);
 
   const [form, setForm] = useState(job ? {
-    title: job.title,
-    location: job.location,
-    type: job.type,
-    level: job.level,
-    status: job.status,
+    title: safe(job.title, ""),
+    location: safe(job.location, ""),
+    type: safe(job.type, "full-time"),
+    experience: safe(job.experience, safe(job.level, "mid-level")),
+    salary: {
+      min: safe(job.salary?.min, ""),
+      max: safe(job.salary?.max, ""),
+      period: safe(job.salary?.period, "yearly"),
+      showSalary: job.salary?.showSalary !== undefined ? job.salary.showSalary : true,
+    },
+    skills: safe(Array.isArray(job.skills) ? job.skills.join(", ") : job.skills, ""),
+    description: safe(job.description, ""),
+    requirements: safe(job.requirements, ""),
+    benefits: safe(job.benefits, ""),
+    remote: job.remote === true || job.remote === "true"
   } : null);
 
   if (!job) {
@@ -55,8 +74,54 @@ const EditJobPosting = () => {
   }
 
   const handleChange = e => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    const { name, value, type, checked } = e.target;
+    if (name.startsWith("salary.")) {
+      setForm(prev => ({
+        ...prev,
+        salary: {
+          ...prev.salary,
+          [name.slice(7)]: value
+        }
+      }));
+    } else if (type === "checkbox") {
+      setForm(prev => ({
+        ...prev,
+        [name]: checked
+      }));
+    } else {
+      setForm(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+  };
+
+  const handleSelectChange = (value: string, fieldName: string) => {
+    if (fieldName === "salary.period") {
+      setForm(prev => ({
+        ...prev,
+        salary: { ...prev.salary, period: value }
+      }));
+    } else if (fieldName === "type" || fieldName === "experience") {
+      setForm(prev => ({
+        ...prev,
+        [fieldName]: value
+      }));
+    }
+  };
+
+  const handleSalaryVisibilityChange = (checked: boolean) => {
+    setForm(prev => ({
+      ...prev,
+      salary: { ...prev.salary, showSalary: checked }
+    }));
+  };
+
+  const handleToggleChange = (checked: boolean) => {
+    setForm(prev => ({
+      ...prev,
+      remote: checked
+    }));
   };
 
   const handleStatusToggle = () => {
@@ -68,7 +133,19 @@ const EditJobPosting = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    const updated = { ...job, ...form };
+    // Clean up form data for storage (convert skills to array/string)
+    let formattedSkills = Array.isArray(form.skills)
+      ? form.skills
+      : form.skills
+          .split(",")
+          .map((s: string) => s.trim())
+          .filter(Boolean);
+
+    const updated = {
+      ...job,
+      ...form,
+      skills: formattedSkills,
+    };
     const success = updateJob(updated);
     if (success) {
       toast({
@@ -86,34 +163,162 @@ const EditJobPosting = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-background">
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg px-8 py-10 max-w-xl w-full text-left">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-background pb-16">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg px-8 py-10 max-w-2xl w-full mt-16 text-left">
         <div className="flex items-center gap-2 mb-4">
           <Edit className="h-8 w-8 text-blue-600" />
           <h1 className="text-2xl font-bold">Edit Job Posting</h1>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block mb-1 text-sm font-medium text-muted-foreground">Job Title</label>
-            <Input name="title" value={form.title} onChange={handleChange} required />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Job Basic Info */}
+          <div className="grid gap-4">
+            <div>
+              <Label htmlFor="title">Job Title*</Label>
+              <Input name="title" value={form.title} onChange={handleChange} required />
+            </div>
+            <div>
+              <Label htmlFor="location">Location*</Label>
+              <Input name="location" value={form.location} onChange={handleChange} required />
+            </div>
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="w-full">
+                <Label htmlFor="type">Job Type*</Label>
+                <Select value={form.type} onValueChange={v => handleSelectChange(v, "type")}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select job type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="full-time">Full-time</SelectItem>
+                    <SelectItem value="part-time">Part-time</SelectItem>
+                    <SelectItem value="contract">Contract</SelectItem>
+                    <SelectItem value="freelance">Freelance</SelectItem>
+                    <SelectItem value="internship">Internship</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="w-full">
+                <Label htmlFor="experience">Experience Level*</Label>
+                <Select value={form.experience} onValueChange={v => handleSelectChange(v, "experience")}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select experience level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="entry">Entry Level</SelectItem>
+                    <SelectItem value="junior">Junior</SelectItem>
+                    <SelectItem value="mid-level">Mid-Level</SelectItem>
+                    <SelectItem value="senior">Senior</SelectItem>
+                    <SelectItem value="lead">Lead / Principal</SelectItem>
+                    <SelectItem value="executive">Executive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="remote">Remote Job</Label>
+              <Switch checked={form.remote} onCheckedChange={handleToggleChange} />
+              <span className="ml-2 text-sm text-muted-foreground">
+                {form.remote ? "This job can be performed fully remotely" : "In-person or hybrid"}
+              </span>
+            </div>
+          </div>
+          {/* Salary */}
+          <div className="grid gap-4 border-t pt-4">
+            <div className="flex justify-between items-center">
+              <Label htmlFor="salary-visibility">Display Salary Range</Label>
+              <Switch
+                checked={form.salary.showSalary}
+                onCheckedChange={handleSalaryVisibilityChange}
+              />
+            </div>
+            {form.salary.showSalary && (
+              <div className="flex flex-col md:flex-row gap-4 items-end">
+                <div className="w-full">
+                  <Label htmlFor="salary.min">Minimum Salary</Label>
+                  <Input
+                    id="salary.min"
+                    name="salary.min"
+                    type="number"
+                    value={form.salary.min}
+                    onChange={handleChange}
+                    placeholder="e.g. 80000"
+                  />
+                </div>
+                <div className="w-full">
+                  <Label htmlFor="salary.max">Maximum Salary</Label>
+                  <Input
+                    id="salary.max"
+                    name="salary.max"
+                    type="number"
+                    value={form.salary.max}
+                    onChange={handleChange}
+                    placeholder="e.g. 120000"
+                  />
+                </div>
+                <div className="w-full">
+                  <Label htmlFor="salary.period">Period</Label>
+                  <Select
+                    value={form.salary.period}
+                    onValueChange={v => handleSelectChange(v, "salary.period")}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select period" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yearly">Per Year</SelectItem>
+                      <SelectItem value="monthly">Per Month</SelectItem>
+                      <SelectItem value="hourly">Per Hour</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+          </div>
+          {/* Skills and details */}
+          <div className="grid gap-4 border-t pt-4">
+            <div>
+              <Label htmlFor="skills">Required Skills (comma separated)*</Label>
+              <Input
+                name="skills"
+                value={form.skills}
+                onChange={handleChange}
+                required
+                placeholder="e.g. React, TypeScript, Node.js"
+              />
+            </div>
+            <div>
+              <Label htmlFor="description">Job Description*</Label>
+              <Textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                required
+                className="min-h-32"
+              />
+            </div>
+            <div>
+              <Label htmlFor="requirements">Requirements</Label>
+              <Textarea
+                name="requirements"
+                value={form.requirements}
+                onChange={handleChange}
+                className="min-h-24"
+              />
+            </div>
+            <div>
+              <Label htmlFor="benefits">Benefits & Perks</Label>
+              <Textarea
+                name="benefits"
+                value={form.benefits}
+                onChange={handleChange}
+                className="min-h-24"
+              />
+            </div>
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium text-muted-foreground">Location</label>
-            <Input name="location" value={form.location} onChange={handleChange} required />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm font-medium text-muted-foreground">Job Type</label>
-            <Input name="type" value={form.type} onChange={handleChange} required />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm font-medium text-muted-foreground">Experience Level</label>
-            <Input name="level" value={form.level} onChange={handleChange} required />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm font-medium text-muted-foreground">Status</label><br />
-            <Button type="button" 
-              className={form.status === "active" 
-                ? "bg-green-100 text-green-800 hover:bg-green-200" 
+            <Label className="block mb-1 text-sm font-medium text-muted-foreground">Status</Label><br />
+            <Button type="button"
+              className={form.status === "active"
+                ? "bg-green-100 text-green-800 hover:bg-green-200"
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"}
               onClick={handleStatusToggle}
             >
