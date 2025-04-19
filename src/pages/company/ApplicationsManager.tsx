@@ -89,20 +89,20 @@ const jobApplications = [
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'new': return 'bg-blue-100 text-blue-800';
-    case 'reviewing': return 'bg-purple-100 text-purple-800';
-    case 'shortlisted': return 'bg-green-100 text-green-800';
-    case 'interviewed': return 'bg-amber-100 text-amber-800';
-    case 'offered': return 'bg-emerald-100 text-emerald-800';
-    case 'rejected': return 'bg-red-100 text-red-800';
-    default: return 'bg-gray-100 text-gray-800';
+    case 'new': return 'bg-blue-600 text-white font-semibold';
+    case 'reviewing': return 'bg-purple-700 text-white font-semibold';
+    case 'shortlisted': return 'bg-green-600 text-white font-semibold';
+    case 'interviewed': return 'bg-amber-500 text-white font-semibold';
+    case 'offered': return 'bg-emerald-600 text-white font-semibold';
+    case 'rejected': return 'bg-red-600 text-white font-semibold';
+    default: return 'bg-gray-700 text-white font-semibold';
   }
 };
 
 const getPlagiarismColor = (score: number) => {
-  if (score < 5) return 'text-green-600';
-  if (score < 20) return 'text-amber-600';
-  return 'text-red-600';
+  if (score < 5) return 'text-green-400 font-semibold';
+  if (score < 20) return 'text-yellow-300 font-semibold';
+  return 'text-red-400 font-semibold';
 };
 
 const ApplicationsManager = () => {
@@ -111,7 +111,7 @@ const ApplicationsManager = () => {
   
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedApplication, setSelectedApplication] = useState<number | null>(1); // Default to first application
+  const [selectedApplication, setSelectedApplication] = useState<number | null>(1);
   const [isPlagiarismModalOpen, setIsPlagiarismModalOpen] = useState(false);
   
   const filteredApplications = jobApplications.filter(app => {
@@ -209,27 +209,27 @@ const ApplicationsManager = () => {
                         key={application.id}
                         className={`p-3 rounded-lg cursor-pointer transition-all ${
                           selectedApplication === application.id 
-                            ? 'bg-blue-50 border-blue-200 border' 
-                            : 'hover:bg-muted border border-transparent'
+                            ? 'bg-blue-700/60 border-blue-300 border' 
+                            : 'hover:bg-slate-800/70 border border-transparent'
                         }`}
                         onClick={() => setSelectedApplication(application.id)}
                       >
                         <div className="flex items-center space-x-3">
                           <Avatar>
                             <AvatarImage src={application.avatarUrl} />
-                            <AvatarFallback className="bg-blue-100 text-blue-700">
+                            <AvatarFallback className="bg-blue-900 text-blue-200 font-bold">
                               {application.name.split(' ').map(n => n[0]).join('')}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1 min-w-0">
                             <div className="flex justify-between items-start">
-                              <div className="truncate font-medium">{application.name}</div>
-                              <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(application.status)}`}>
+                              <div className="truncate font-bold text-white text-base leading-5">{application.name}</div>
+                              <span className={`text-xs px-2 py-1 rounded-full border border-white/20 drop-shadow font-semibold ${getStatusColor(application.status)}`}>
                                 {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
                               </span>
                             </div>
-                            <div className="text-sm text-muted-foreground truncate">{application.role}</div>
-                            <div className="flex items-center mt-1 text-xs text-muted-foreground">
+                            <div className="text-sm text-neutral-300 truncate">{application.role}</div>
+                            <div className="flex items-center mt-1 text-xs text-neutral-400">
                               <Clock className="h-3 w-3 mr-1" /> Applied {application.submittedAt}
                             </div>
                           </div>
@@ -403,7 +403,7 @@ const ApplicationsManager = () => {
                         variant="outline"
                         size="sm" 
                         onClick={() => handleStatusChange('rejected')}
-                        className="bg-white text-red-600 hover:bg-red-50 hover:text-red-700"
+                        className="bg-red-700 text-white border-red-700 hover:bg-red-800 hover:text-white font-semibold"
                       >
                         <X className="h-4 w-4 mr-2" />
                         Reject
@@ -413,7 +413,7 @@ const ApplicationsManager = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => handleStatusChange('interviewing')}
-                        className="bg-white"
+                        className="bg-blue-800 text-white border-blue-800 hover:bg-blue-900 hover:text-white font-semibold"
                       >
                         <MessageSquare className="h-4 w-4 mr-2" />
                         Contact
@@ -423,7 +423,7 @@ const ApplicationsManager = () => {
                     <Button 
                       size="sm"
                       onClick={() => handleStatusChange('shortlisted')}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-blue-600 text-white hover:bg-blue-700 font-semibold"
                     >
                       <Check className="h-4 w-4 mr-2" />
                       Shortlist Candidate
