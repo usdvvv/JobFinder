@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import CompanyNavBar from '@/components/company/CompanyNavBar';
 import { toast } from "@/hooks/use-toast";
 
-// Dummy data for job postings
 const initialJobPostings = [
   { id: 1, title: 'Senior Frontend Developer', location: 'San Francisco, CA', type: 'Full-time', level: 'Senior', applications: 12, status: 'active', createdAt: '2023-06-15' },
   { id: 2, title: 'Product Manager', location: 'New York, NY', type: 'Full-time', level: 'Mid-level', applications: 24, status: 'active', createdAt: '2023-06-10' },
@@ -69,7 +67,7 @@ const CompanyJobs = () => {
           </div>
           
           <Button asChild className="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-700">
-            <Link to="/company/jobs/create">
+            <Link to="/company/create-job">
               <PlusCircle className="mr-2 h-4 w-4" />
               Post New Job
             </Link>
@@ -144,7 +142,7 @@ const CompanyJobs = () => {
                 </p>
                 {!searchTerm && statusFilter === 'all' && (
                   <Button asChild className="mt-4 bg-blue-600 hover:bg-blue-700">
-                    <Link to="/company/jobs/create">
+                    <Link to="/company/create-job">
                       <PlusCircle className="mr-2 h-4 w-4" />
                       Post New Job
                     </Link>
@@ -225,7 +223,6 @@ const CompanyJobs = () => {
                               <Trash className="h-4 w-4" />
                             </Button>
                             
-                            {/* Mobile menu */}
                             <Select>
                               <SelectTrigger className="sm:hidden w-[100px]">
                                 <span>Actions</span>

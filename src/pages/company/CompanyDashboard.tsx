@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -23,7 +22,6 @@ import CompanyNavBar from '@/components/company/CompanyNavBar';
 import AnimatedSection from '@/components/AnimatedSection';
 import CodingLeaderboard from '@/components/CodingLeaderboard';
 
-// Dummy data for job postings
 const jobPostings = [
   { id: 1, title: 'Senior Frontend Developer', applications: 12, status: 'active', createdAt: '2023-06-15' },
   { id: 2, title: 'Product Manager', applications: 24, status: 'active', createdAt: '2023-06-10' },
@@ -34,7 +32,6 @@ const jobPostings = [
 const CompanyDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   
-  // Stats for the overview
   const stats = [
     { title: 'Active Jobs', value: jobPostings.filter(job => job.status === 'active').length, icon: <Briefcase className="h-5 w-5" />, color: 'bg-blue-100 text-blue-700' },
     { title: 'Total Applications', value: jobPostings.reduce((acc, job) => acc + job.applications, 0), icon: <FileText className="h-5 w-5" />, color: 'bg-emerald-100 text-emerald-700' },
@@ -42,7 +39,6 @@ const CompanyDashboard = () => {
     { title: 'Plagiarism Checks', value: 5, icon: <FileSearch className="h-5 w-5" />, color: 'bg-amber-100 text-amber-700' },
   ];
 
-  // Employee wellness services
   const wellnessServices = [
     { 
       title: 'Entertainment Zone', 
@@ -95,7 +91,7 @@ const CompanyDashboard = () => {
               </Link>
             </Button>
             <Button asChild className="bg-blue-600 hover:bg-blue-700">
-              <Link to="/company/jobs/create">
+              <Link to="/company/create-job">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Post New Job
               </Link>
@@ -133,7 +129,6 @@ const CompanyDashboard = () => {
               </div>
             </AnimatedSection>
             
-            {/* Employee Wellness Services */}
             <AnimatedSection animation="slide-up" delay={150} className="mb-8">
               <h2 className="text-xl font-bold mb-4 text-white">Employee Wellness</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -280,7 +275,7 @@ const CompanyDashboard = () => {
                   <div className="flex justify-between items-center">
                     <CardTitle className="text-white">All Job Postings</CardTitle>
                     <Button asChild className="bg-blue-600 hover:bg-blue-700">
-                      <Link to="/company/jobs/create">
+                      <Link to="/company/create-job">
                         <PlusCircle className="mr-2 h-4 w-4" />
                         Post New Job
                       </Link>

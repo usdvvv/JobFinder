@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -87,7 +86,7 @@ const CompanyNavBar = () => {
               <NavLink to="/company/entertainment" icon={<Puzzle className="h-4 w-4" />} text="Entertainment" />
               <NavLink to="/company/therapist" icon={<HeartPulse className="h-4 w-4" />} text="AI Therapist" />
               <NavLink to="/company/peer-chat" icon={<MessageSquare className="h-4 w-4" />} text="Peer Chat" />
-              <Link to="/company/jobs/create" className="post-job-button">
+              <Link to="/company/create-job" className="post-job-button">
                 <Button size="sm" className="bg-blue-600 hover:bg-blue-700 ml-2">
                   <PlusCircle className="h-4 w-4 mr-2" />
                   Post Job
@@ -138,7 +137,7 @@ const CompanyNavBar = () => {
             <MobileNavLink to="/company/peer-chat" icon={<MessageSquare className="h-5 w-5" />} text="Peer Chat" />
             <div className="pt-2 border-t border-gray-200/30 mt-2">
               <Link 
-                to="/company/jobs/create"
+                to="/company/create-job"
                 className="w-full px-3 py-2 rounded-md text-base font-medium text-white bg-blue-600 hover:bg-blue-700 flex items-center"
               >
                 <PlusCircle className="h-5 w-5 mr-3" />
