@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import CompanyNavBar from "@/components/company/CompanyNavBar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Building2, Send, HeartPulse, Clock, Calendar, BarChart } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import AnimatedSection from '@/components/AnimatedSection';
+import WellnessCompanyOverview from "@/components/WellnessCompanyOverview";
 
 const CompanyAITherapist = () => {
   const [message, setMessage] = useState("");
@@ -58,6 +58,7 @@ const CompanyAITherapist = () => {
       <CompanyNavBar />
       
       <div className="container mx-auto px-4 py-24 max-w-7xl">
+        <WellnessCompanyOverview />
         <AnimatedSection animation="fade-in">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-red-500 to-red-600 bg-clip-text text-transparent">

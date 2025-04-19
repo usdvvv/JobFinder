@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +25,7 @@ import {
 } from 'lucide-react';
 import NavBar from '@/components/NavBar';
 import AnimatedSection from '@/components/AnimatedSection';
+import WellnessUserOverview from "@/components/WellnessUserOverview";
 
 type Message = {
   id: string;
@@ -144,6 +144,7 @@ const AITherapist = () => {
       
       <div className="pt-24 pb-16 px-4">
         <div className="max-w-6xl mx-auto">
+          <WellnessUserOverview />
           <AnimatedSection animation="slide-down" className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-bold">AI Career Therapist</h1>
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
@@ -608,7 +609,6 @@ const AITherapist = () => {
   );
 };
 
-// Missing PhoneOff icon, let's create it
 const PhoneOff = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg" 
