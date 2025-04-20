@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -92,15 +91,36 @@ const Signup = () => {
     return valid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;
     
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
+    // Simulate API call and send confirmation email
+    setTimeout(async () => {
+      try {
+        // Call the edge function for sending the email
+        await fetch("https://bcnbrvpbmijsmhyvnngv.supabase.co/functions/v1/send-signup-confirmation", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            fullName: formData.fullName,
+          }),
+        });
+      } catch (error) {
+        console.error("Error sending confirmation email:", error);
+        toast({
+          variant: "destructive",
+          title: "Email failed",
+          description: "Could not send confirmation email. Please contact support.",
+        });
+      }
+
       toast({
         title: "Account created successfully",
         description: "Welcome to DreamJob! You can now log in.",
