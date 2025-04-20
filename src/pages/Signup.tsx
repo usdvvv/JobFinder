@@ -181,21 +181,21 @@ const Signup = () => {
         <div className="absolute top-0 left-0 w-full h-full bg-hero-pattern opacity-50 z-0"></div>
         
         <AnimatedSection animation="slide-up" className="w-full max-w-md z-10">
-          <Card className="w-full backdrop-blur-sm bg-white/95 border-primary/10 shadow-xl">
+          <Card className="w-full backdrop-blur-sm bg-white/90 dark:bg-blue-950/80 border border-gray-300 dark:border-blue-900 shadow-xl">
             <CardHeader className="space-y-1">
               <div className="w-full flex justify-center mb-2">
                 <div className="h-12 w-12 rounded-full bg-gradient-to-r from-primary via-secondary to-accent flex items-center justify-center">
                   <UserPlus className="h-6 w-6 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>
-              <CardDescription className="text-center">
+              <CardTitle className="text-2xl font-bold text-center text-gray-900 dark:text-white">Create an account</CardTitle>
+              <CardDescription className="text-center text-gray-700 dark:text-blue-100">
                 Enter your information to create your account
               </CardDescription>
             </CardHeader>
             
             {errors.general && (
-              <div className="mx-6 mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md flex items-center text-destructive text-sm">
+              <div className="mx-6 mb-4 p-3 bg-red-100 dark:bg-destructive/10 border border-red-300 dark:border-destructive/20 rounded-md flex items-center text-red-700 dark:text-destructive text-sm">
                 <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
                 {errors.general}
               </div>
@@ -204,22 +204,25 @@ const Signup = () => {
             <form onSubmit={handleSubmit}>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
+                  <Label htmlFor="fullName" className="text-gray-800 dark:text-blue-100">Full Name</Label>
                   <Input
                     id="fullName"
                     name="fullName"
                     placeholder="John Doe"
                     value={formData.fullName}
                     onChange={handleChange}
-                    className={`${errors.fullName ? 'border-destructive' : ''}`}
+                    className={`${
+                      errors.fullName ? 'border-red-400 focus:ring-red-500' : 
+                      'border-gray-300 focus:ring-blue-500 dark:border-blue-800 dark:focus:ring-blue-500'
+                    } text-gray-900 dark:text-blue-50 dark:bg-blue-900/60 placeholder:text-gray-400 dark:placeholder:text-blue-200/70`}
                   />
                   {errors.fullName && (
-                    <p className="text-destructive text-xs mt-1">{errors.fullName}</p>
+                    <p className="text-red-600 dark:text-red-400 text-xs mt-1">{errors.fullName}</p>
                   )}
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-gray-800 dark:text-blue-100">Email</Label>
                   <Input
                     id="email"
                     name="email"
@@ -227,15 +230,18 @@ const Signup = () => {
                     placeholder="your.email@example.com"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`${errors.email ? 'border-destructive' : ''}`}
+                    className={`${
+                      errors.email ? 'border-red-400 focus:ring-red-500' : 
+                      'border-gray-300 focus:ring-blue-500 dark:border-blue-800 dark:focus:ring-blue-500'
+                    } text-gray-900 dark:text-blue-50 dark:bg-blue-900/60 placeholder:text-gray-400 dark:placeholder:text-blue-200/70`}
                   />
                   {errors.email && (
-                    <p className="text-destructive text-xs mt-1">{errors.email}</p>
+                    <p className="text-red-600 dark:text-red-400 text-xs mt-1">{errors.email}</p>
                   )}
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password" className="text-gray-800 dark:text-blue-100">Password</Label>
                   <div className="relative">
                     <Input
                       id="password"
@@ -243,12 +249,15 @@ const Signup = () => {
                       type={showPassword ? 'text' : 'password'}
                       value={formData.password}
                       onChange={handleChange}
-                      className={`pr-10 ${errors.password ? 'border-destructive' : ''}`}
+                      className={`pr-10 ${
+                        errors.password ? 'border-red-400 focus:ring-red-500' : 
+                        'border-gray-300 focus:ring-blue-500 dark:border-blue-800 dark:focus:ring-blue-500'
+                      } text-gray-900 dark:text-blue-50 dark:bg-blue-900/60 placeholder:text-gray-400 dark:placeholder:text-blue-200/70`}
                     />
                     <button
                       type="button"
                       onClick={toggleShowPassword}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-800 dark:text-blue-300 dark:hover:text-blue-100"
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -261,25 +270,25 @@ const Signup = () => {
                   {/* Password strength indicator */}
                   {formData.password && (
                     <div className="mt-2 space-y-1">
-                      <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
+                      <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-blue-950/40">
                         <div
                           className={`${getStrengthColor(passwordStrength)} transition-all duration-300`}
                           style={{ width: `${(passwordStrength / 5) * 100}%` }}
                         />
                       </div>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-gray-800 dark:text-blue-200">
                         Password strength: <span className="font-medium">{getStrengthText(passwordStrength)}</span>
                       </p>
                     </div>
                   )}
                   
                   {errors.password && (
-                    <p className="text-destructive text-xs mt-1">{errors.password}</p>
+                    <p className="text-red-600 dark:text-red-400 text-xs mt-1">{errors.password}</p>
                   )}
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword" className="text-gray-800 dark:text-blue-100">Confirm Password</Label>
                   <div className="relative">
                     <Input
                       id="confirmPassword"
@@ -287,15 +296,18 @@ const Signup = () => {
                       type={showPassword ? 'text' : 'password'}
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className={`${errors.confirmPassword ? 'border-destructive' : ''}`}
+                      className={`${
+                        errors.confirmPassword ? 'border-red-400 focus:ring-red-500' : 
+                        'border-gray-300 focus:ring-blue-500 dark:border-blue-800 dark:focus:ring-blue-500'
+                      } text-gray-900 dark:text-blue-50 dark:bg-blue-900/60 placeholder:text-gray-400 dark:placeholder:text-blue-200/70`}
                     />
                   </div>
                   {errors.confirmPassword && (
-                    <p className="text-destructive text-xs mt-1">{errors.confirmPassword}</p>
+                    <p className="text-red-600 dark:text-red-400 text-xs mt-1">{errors.confirmPassword}</p>
                   )}
                   
                   {formData.password && formData.confirmPassword && formData.password === formData.confirmPassword && (
-                    <p className="text-green-600 text-xs mt-1 flex items-center">
+                    <p className="text-green-700 dark:text-green-400 text-xs mt-1 flex items-center">
                       <CheckCircle className="h-3 w-3 mr-1" /> Passwords match
                     </p>
                   )}
@@ -308,20 +320,20 @@ const Signup = () => {
                     onCheckedChange={(checked) => {
                       setAcceptTerms(checked as boolean);
                     }}
-                    className={`${errors.terms ? 'border-destructive' : ''} mt-1`}
+                    className={`${errors.terms ? 'border-red-400' : 'border-gray-300 dark:border-blue-800'} mt-1`}
                   />
                   <div>
                     <Label 
                       htmlFor="terms" 
-                      className="text-sm font-normal cursor-pointer"
+                      className="text-sm font-normal cursor-pointer text-gray-800 dark:text-blue-200"
                     >
                       I accept the{' '}
-                      <Link to="/terms" className="text-primary hover:underline">
+                      <Link to="/terms" className="text-blue-700 hover:text-blue-500 dark:text-blue-200 dark:hover:text-blue-100 underline">
                         terms and conditions
                       </Link>
                     </Label>
                     {errors.terms && (
-                      <p className="text-destructive text-xs mt-1">{errors.terms}</p>
+                      <p className="text-red-600 dark:text-red-400 text-xs mt-1">{errors.terms}</p>
                     )}
                   </div>
                 </div>
@@ -330,7 +342,7 @@ const Signup = () => {
               <CardFooter className="flex flex-col space-y-4">
                 <Button 
                   type="submit" 
-                  className="w-full"
+                  className="w-full bg-blue-700 hover:bg-blue-800 text-white"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -346,9 +358,9 @@ const Signup = () => {
                   )}
                 </Button>
                 
-                <p className="text-center text-sm text-muted-foreground">
+                <p className="text-center text-sm text-gray-800 dark:text-blue-200">
                   Already have an account?{' '}
-                  <Link to="/login" className="text-primary hover:underline">
+                  <Link to="/login" className="text-blue-700 hover:text-blue-500 dark:text-blue-300 dark:hover:text-blue-100 underline">
                     Sign in
                   </Link>
                 </p>
