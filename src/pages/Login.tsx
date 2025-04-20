@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -32,7 +31,6 @@ const Login = () => {
     general: ''
   });
 
-  // Check if coming from the company route
   const isCompanyLogin = location.pathname.includes('/company');
 
   const validateForm = () => {
@@ -67,11 +65,8 @@ const Login = () => {
     
     setIsLoading(true);
     
-    // Simulate API call
     setTimeout(() => {
-      // Different login logic for users vs companies
       if (isCompanyLogin) {
-        // Company login
         if (email === 'company@example.com' && password === 'password') {
           toast({
             title: "Login successful",
@@ -90,7 +85,6 @@ const Login = () => {
           });
         }
       } else {
-        // Regular user login
         if (email === 'user@example.com' && password === 'password') {
           toast({
             title: "Login successful",
@@ -117,7 +111,6 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
-  // Change title based on login type
   useEffect(() => {
     document.title = isCompanyLogin ? "Company Login - JobFinder" : "Login - JobFinder";
   }, [isCompanyLogin]);
@@ -127,22 +120,21 @@ const Login = () => {
       {!isCompanyLogin && <NavBar />}
       
       <div className="flex min-h-screen items-center justify-center px-4 py-12">
-        {/* Overlay backgrounds */}
         <div className="absolute top-0 left-0 w-full h-full bg-hero-pattern opacity-50 z-0"></div>
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-blue-100/65 to-blue-400/90 dark:from-blue-900/70 dark:to-blue-950/80 z-1"></div>
         
         <AnimatedSection animation="slide-up" className="w-full max-w-md z-10">
-          <Card className="w-full backdrop-blur-sm bg-white/90 dark:bg-blue-950/80 border border-gray-300 dark:border-blue-900 shadow-xl">
+          <Card className="w-full backdrop-blur-sm bg-white/95 dark:bg-blue-950/95 border border-gray-200 dark:border-blue-900 shadow-xl">
             <CardHeader className="space-y-1">
               <div className="w-full flex justify-center mb-2">
-                <div className="h-12 w-12 rounded-full bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 flex items-center justify-center">
+                <div className="h-12 w-12 rounded-full bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 flex items-center justify-center">
                   <LogIn className="h-6 w-6 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl font-bold text-center text-gray-900 dark:text-white">
-                {isCompanyLogin ? "Company Login" : "Welcome back"}
+              <CardTitle className="text-2xl font-bold text-center text-gray-900 dark:text-blue-100">
+                {isCompanyLogin ? "Company Login" : "Welcome to JobFinder"}
               </CardTitle>
-              <CardDescription className="text-center text-gray-700 dark:text-blue-100">
+              <CardDescription className="text-center text-gray-800 dark:text-blue-200">
                 {isCompanyLogin 
                   ? "Enter your credentials to access your company account" 
                   : "Enter your credentials to access your account"}
@@ -159,7 +151,7 @@ const Login = () => {
             <form onSubmit={handleSubmit}>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-800 dark:text-blue-100">Email</Label>
+                  <Label htmlFor="email" className="text-gray-900 dark:text-blue-100">Email</Label>
                   <Input
                     id="email"
                     type="email"
@@ -167,21 +159,22 @@ const Login = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className={`${
-                      errors.email ? 'border-red-400 focus:ring-red-500' : 
-                      'border-gray-300 focus:ring-blue-500 dark:border-blue-800 dark:focus:ring-blue-500'
-                    } text-gray-900 dark:text-blue-50 dark:bg-blue-900/60 placeholder:text-gray-400 dark:placeholder:text-blue-200/70`}
+                      errors.email 
+                      ? 'border-red-600 focus:ring-red-600' 
+                      : 'border-gray-400 focus:ring-blue-600 dark:border-blue-700 dark:focus:ring-blue-400'
+                    } text-gray-900 dark:text-blue-50 dark:bg-blue-950 placeholder:text-gray-500 dark:placeholder:text-blue-200/80`}
                   />
                   {errors.email && (
-                    <p className="text-red-600 dark:text-red-400 text-xs mt-1">{errors.email}</p>
+                    <p className="text-red-700 dark:text-red-400 text-xs mt-1">{errors.email}</p>
                   )}
                 </div>
                 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-gray-800 dark:text-blue-100">Password</Label>
+                    <Label htmlFor="password" className="text-gray-900 dark:text-blue-100">Password</Label>
                     <Link 
                       to={isCompanyLogin ? "/company/forgot-password" : "/forgot-password"} 
-                      className="text-xs text-blue-600 dark:text-blue-200 hover:underline"
+                      className="text-xs text-blue-700 dark:text-blue-200 hover:underline"
                     >
                       Forgot password?
                     </Link>
@@ -193,14 +186,15 @@ const Login = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className={`pr-10 ${
-                        errors.password ? 'border-red-400 focus:ring-red-500' : 
-                        'border-gray-300 focus:ring-blue-500 dark:border-blue-800 dark:focus:ring-blue-500'
-                      } text-gray-900 dark:text-blue-50 dark:bg-blue-900/60 placeholder:text-gray-400 dark:placeholder:text-blue-200/70`}
+                        errors.password 
+                        ? 'border-red-600 focus:ring-red-600' 
+                        : 'border-gray-400 focus:ring-blue-600 dark:border-blue-700 dark:focus:ring-blue-400'
+                      } text-gray-900 dark:text-blue-50 dark:bg-blue-950 placeholder:text-gray-500 dark:placeholder:text-blue-200/80`}
                     />
                     <button
                       type="button"
                       onClick={toggleShowPassword}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-800 dark:text-blue-300 dark:hover:text-blue-100"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-100"
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -210,7 +204,7 @@ const Login = () => {
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-red-600 dark:text-red-400 text-xs mt-1">{errors.password}</p>
+                    <p className="text-red-700 dark:text-red-400 text-xs mt-1">{errors.password}</p>
                   )}
                 </div>
                 
@@ -224,7 +218,7 @@ const Login = () => {
                   />
                   <Label 
                     htmlFor="remember" 
-                    className="text-sm font-normal cursor-pointer text-gray-700 dark:text-blue-200"
+                    className="text-sm font-normal cursor-pointer text-gray-800 dark:text-blue-200"
                   >
                     Remember me
                   </Label>
@@ -250,18 +244,18 @@ const Login = () => {
                   )}
                 </Button>
                 
-                <p className="text-center text-sm text-gray-800 dark:text-blue-200">
+                <p className="text-center text-sm text-gray-900 dark:text-blue-100">
                   Don't have an account?{' '}
                   <Link 
                     to={isCompanyLogin ? "/company/signup" : "/signup"} 
-                    className="text-blue-700 hover:text-blue-500 dark:text-blue-300 dark:hover:text-blue-100 hover:underline"
+                    className="text-blue-700 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-100 hover:underline"
                   >
                     {isCompanyLogin ? "Register your company" : "Create an account"}
                   </Link>
                 </p>
                 {isCompanyLogin && (
-                  <p className="text-center text-sm text-gray-800 dark:text-blue-200">
-                    <Link to="/" className="text-blue-700 hover:text-blue-500 dark:text-blue-300 dark:hover:text-blue-100 hover:underline">
+                  <p className="text-center text-sm text-gray-900 dark:text-blue-100">
+                    <Link to="/" className="text-blue-700 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-100 hover:underline">
                       Return to role selection
                     </Link>
                   </p>
@@ -276,4 +270,3 @@ const Login = () => {
 };
 
 export default Login;
-
