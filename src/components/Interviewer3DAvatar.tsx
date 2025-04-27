@@ -1,6 +1,20 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Video, Mic, MicOff, Clock } from 'lucide-react';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, useGLTF } from '@react-three/drei';
+
+function Model({ speaking }: { speaking: boolean }) {
+  const { scene } = useGLTF('/white_mesh.glb');
+  
+  useEffect(() => {
+    // Animate based on speaking state
+    if (scene.animations && scene.animations.length > 0) {
+      // Add animation logic here when your model has animations
+    }
+  }, [speaking, scene]);
+
+  return <primitive object={scene} scale={1} position={[0, -1, 0]} />;
+}
 
 interface Interviewer3DAvatarProps {
   speaking?: boolean;
@@ -55,15 +69,13 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
   
   return (
     <div style={{ width: size, height: size, margin: '0 auto', position: 'relative' }}>
-      {/* Video conference frame */}
       <div 
         className="rounded-lg overflow-hidden shadow-lg border border-gray-200" 
         style={{ 
           width: '100%', 
           height: '100%', 
           position: 'relative',
-          background: backgrounds[backgroundIndex],
-          transition: 'background 2s ease-in-out'
+          background: 'linear-gradient(to right, #1a1a1a, #2a2a2a)',
         }}
       >
         {/* Top bar with controls */}
@@ -78,83 +90,38 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
           </div>
         </div>
         
-        {/* Interviewer container */}
-        <div className="w-full h-full flex items-center justify-center p-4">
-          <div className="relative w-3/4 h-3/4 flex items-center justify-center">
-            {/* Professional interviewer representation */}
-            <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-gray-300 shadow-lg">
-              {/* Face shape with gradient */}
-              <div className="absolute inset-0 bg-gradient-to-b from-amber-50 to-amber-100 rounded-full shadow-inner"></div>
-              
-              {/* Hair */}
-              <div className="absolute -top-5 left-0 right-0 h-32 bg-gray-800 rounded-t-full"></div>
-              
-              {/* Eyes container */}
-              <div className="absolute w-full top-1/3 flex justify-center space-x-16 z-10">
-                {/* Left eye */}
-                <div className="relative">
-                  <div className="w-10 h-6 bg-white rounded-full shadow-inner"></div>
-                  <div className={`absolute top-1 left-2 w-5 h-5 bg-gray-800 rounded-full transition-all duration-300 
-                    ${interviewerState === 'thinking' ? 'transform translate-y-1 scale-90' : ''}`}>
-                    <div className="absolute top-0 right-0 w-2 h-2 bg-white rounded-full opacity-70"></div>
-                  </div>
-                </div>
-                
-                {/* Right eye */}
-                <div className="relative">
-                  <div className="w-10 h-6 bg-white rounded-full shadow-inner"></div>
-                  <div className={`absolute top-1 left-2 w-5 h-5 bg-gray-800 rounded-full transition-all duration-300
-                    ${interviewerState === 'thinking' ? 'transform translate-y-1 scale-90' : ''}`}>
-                    <div className="absolute top-0 right-0 w-2 h-2 bg-white rounded-full opacity-70"></div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Eyebrows */}
-              <div className="absolute w-full top-1/4 flex justify-center space-x-12 z-10">
-                <div className={`w-14 h-2.5 bg-gray-800 rounded-full transform origin-bottom transition-transform duration-300
-                  ${interviewerState === 'thinking' ? 'rotate-12' : interviewerState === 'speaking' ? '-rotate-3' : ''}`}></div>
-                <div className={`w-14 h-2.5 bg-gray-800 rounded-full transform origin-bottom transition-transform duration-300
-                  ${interviewerState === 'thinking' ? '-rotate-12' : interviewerState === 'speaking' ? 'rotate-3' : ''}`}></div>
-              </div>
-              
-              {/* Nose */}
-              <div className="absolute left-1/2 top-[45%] transform -translate-x-1/2 w-4 h-8 bg-amber-200 rounded-full"></div>
-              
-              {/* Mouth */}
-              <div className="absolute bottom-1/3 left-1/2 transform -translate-x-1/2 z-10">
-                {interviewerState === 'speaking' ? (
-                  <div className="relative">
-                    <div className="w-28 h-12 bg-gray-800 rounded-full transform -rotate-6 transition-all duration-300"></div>
-                    <div className="absolute top-2 left-4 w-20 h-6 bg-red-400 rounded-full"></div>
-                    <div className="absolute top-4 left-7 w-14 h-1 bg-white rounded-full opacity-60"></div>
-                  </div>
-                ) : interviewerState === 'thinking' ? (
-                  <div className="w-16 h-2 bg-gray-800 rounded-full transform rotate-6 translate-x-2 transition-all duration-300"></div>
-                ) : (
-                  <div className="w-24 h-2 bg-gray-800 rounded-full transition-all duration-300"></div>
-                )}
-              </div>
-              
-              {/* Professional attire hint */}
-              <div className="absolute bottom-0 left-0 right-0 h-1/5 bg-gray-800 rounded-b-full"></div>
-              <div className="absolute bottom-[15%] left-0 right-0 h-4 bg-white rounded-full transform scale-x-80"></div>
-            </div>
-            
-            {/* Mic indicator */}
-            <div className="absolute bottom-3 left-3 bg-black/70 rounded-full p-2">
-              {speaking ? (
-                <Mic size={18} className="text-green-400" />
-              ) : (
-                <MicOff size={18} className="text-gray-400" />
-              )}
-            </div>
-            
-            {/* Name badge */}
-            <div className="absolute bottom-3 right-3 bg-primary/80 text-primary-foreground px-3 py-1 rounded-full text-xs font-medium">
-              AI Interviewer
-            </div>
-          </div>
+        {/* 3D Model Container */}
+        <div className="w-full h-full">
+          <Canvas
+            camera={{ position: [0, 0, 5], fov: 50 }}
+            style={{ background: 'transparent' }}
+          >
+            <ambientLight intensity={0.5} />
+            <directionalLight position={[10, 10, 5]} intensity={1} />
+            <Suspense fallback={null}>
+              <Model speaking={speaking} />
+            </Suspense>
+            <OrbitControls 
+              enableZoom={false}
+              enablePan={false}
+              minPolarAngle={Math.PI/2}
+              maxPolarAngle={Math.PI/2}
+            />
+          </Canvas>
+        </div>
+        
+        {/* Mic indicator */}
+        <div className="absolute bottom-3 left-3 bg-black/70 rounded-full p-2 z-10">
+          {speaking ? (
+            <Mic size={18} className="text-green-400" />
+          ) : (
+            <MicOff size={18} className="text-gray-400" />
+          )}
+        </div>
+        
+        {/* Name badge */}
+        <div className="absolute bottom-3 right-3 bg-primary/80 text-primary-foreground px-3 py-1 rounded-full text-xs font-medium z-10">
+          AI Interviewer
         </div>
       </div>
       
@@ -167,40 +134,6 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
           </div>
         </div>
       )}
-      
-      {/* Sound wave animation when speaking */}
-      {speaking && (
-        <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-10">
-          <div className="absolute bottom-0 w-full flex justify-center items-end h-8 overflow-hidden">
-            <div className="flex space-x-1 h-full items-end">
-              {[...Array(8)].map((_, i) => (
-                <div 
-                  key={i}
-                  className="w-1 bg-primary/40 rounded-full"
-                  style={{
-                    height: `${Math.max(4, (Math.sin(Date.now() / 200 + i) + 1) * 10)}px`,
-                    animation: `speechWave ${0.5 + i * 0.1}s ease-in-out infinite alternate`,
-                    animationDelay: `${i * 0.05}s`
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-      
-      <style>
-        {`
-          @keyframes speechWave {
-            0% {
-              transform: scaleY(0.3);
-            }
-            100% {
-              transform: scaleY(1);
-            }
-          }
-        `}
-      </style>
     </div>
   );
 };
