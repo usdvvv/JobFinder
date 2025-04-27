@@ -1,4 +1,3 @@
-
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { Video, Mic, MicOff, Clock } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
@@ -24,6 +23,21 @@ function Model({ speaking }: { speaking: boolean }) {
     }
   }, [speaking, hovered, scene]);
 
+  useEffect(() => {
+    let animationFrame: number;
+    const animate = () => {
+      if (modelRef.current && speaking) {
+        const time = Date.now() * 0.005;
+        const scale = 1 + Math.sin(time) * 0.05;
+        modelRef.current.scale.set(2 * scale, 2, 2);
+      }
+      animationFrame = requestAnimationFrame(animate);
+    };
+    
+    animate();
+    return () => cancelAnimationFrame(animationFrame);
+  }, [speaking]);
+
   return (
     <primitive 
       ref={modelRef}
@@ -37,7 +51,6 @@ function Model({ speaking }: { speaking: boolean }) {
   );
 }
 
-// Create a fallback component to show when model is loading
 function ModelFallback() {
   return (
     <mesh>
@@ -52,7 +65,6 @@ interface Interviewer3DAvatarProps {
   size?: number;
 }
 
-// Add ErrorBoundary to catch and handle 3D rendering errors
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
   constructor(props: {children: React.ReactNode}) {
     super(props);
