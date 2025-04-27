@@ -1,19 +1,36 @@
 import { useState, useEffect, Suspense } from 'react';
 import { Video, Mic, MicOff, Clock } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
+import { OrbitControls, useGLTF, useAnimations } from '@react-three/drei';
 
 function Model({ speaking }: { speaking: boolean }) {
   const { scene } = useGLTF('/white_mesh.glb');
+  const [hovered, setHovered] = useState(false);
   
   useEffect(() => {
-    // Animate based on speaking state
-    if (scene.animations && scene.animations.length > 0) {
-      // Add animation logic here when your model has animations
+    if (scene.children.length > 0) {
+      scene.traverse((child: any) => {
+        if (child.isMesh) {
+          child.material.color.set(speaking ? '#60a5fa' : '#3b82f6');
+          child.material.emissive.set(hovered ? '#1d4ed8' : '#000000');
+          child.material.emissiveIntensity = hovered ? 0.5 : 0;
+          child.material.metalness = 0.5;
+          child.material.roughness = 0.5;
+        }
+      });
     }
-  }, [speaking, scene]);
+  }, [speaking, hovered, scene]);
 
-  return <primitive object={scene} scale={1} position={[0, -1, 0]} />;
+  return (
+    <primitive 
+      object={scene} 
+      scale={2}
+      position={[0, -2, 0]} 
+      rotation={[0, speaking ? Math.sin(Date.now() * 0.001) * 0.1 : 0, 0]}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+    />
+  );
 }
 
 interface Interviewer3DAvatarProps {
@@ -21,19 +38,17 @@ interface Interviewer3DAvatarProps {
   size?: number;
 }
 
-const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvatarProps) => {
+const Interviewer3DAvatar = ({ speaking = false, size = 400 }: Interviewer3DAvatarProps) => {
   const [currentTime, setCurrentTime] = useState('');
   const [interviewerState, setInterviewerState] = useState<'listening' | 'speaking' | 'thinking'>('listening');
   const [backgroundIndex, setBackgroundIndex] = useState(0);
   
-  // Office backgrounds that subtly change
   const backgrounds = [
     'linear-gradient(to right, #e6e9f0 0%, #eef1f5 100%)',
     'linear-gradient(to right, #d7d2cc 0%, #304352 100%)',
     'linear-gradient(to top, #accbee 0%, #e7f0fd 100%)'
   ];
   
-  // Update current time
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -48,17 +63,14 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
     return () => clearInterval(interval);
   }, []);
   
-  // Update interviewer state based on speaking prop
   useEffect(() => {
     if (speaking) {
       setInterviewerState('speaking');
     } else {
-      // Random choice between listening and thinking when not speaking
       setInterviewerState(Math.random() > 0.7 ? 'thinking' : 'listening');
     }
   }, [speaking]);
   
-  // Occasionally change the office background
   useEffect(() => {
     const interval = setInterval(() => {
       setBackgroundIndex(prev => (prev + 1) % backgrounds.length);
@@ -75,10 +87,9 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
           width: '100%', 
           height: '100%', 
           position: 'relative',
-          background: 'linear-gradient(to right, #1a1a1a, #2a2a2a)',
+          background: 'linear-gradient(to bottom, #1e293b, #0f172a)',
         }}
       >
-        {/* Top bar with controls */}
         <div className="absolute top-0 left-0 right-0 bg-black/70 text-white px-3 py-2 flex justify-between items-center z-10">
           <div className="flex items-center space-x-2">
             <Video size={14} />
@@ -90,27 +101,33 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
           </div>
         </div>
         
-        {/* 3D Model Container */}
         <div className="w-full h-full">
           <Canvas
-            camera={{ position: [0, 0, 5], fov: 50 }}
+            camera={{ position: [0, 0, 8], fov: 45 }}
             style={{ background: 'transparent' }}
           >
             <ambientLight intensity={0.5} />
-            <directionalLight position={[10, 10, 5]} intensity={1} />
+            <directionalLight position={[5, 5, 5]} intensity={1} />
+            <spotLight 
+              position={[0, 5, 5]} 
+              angle={0.4} 
+              penumbra={1} 
+              intensity={1.5} 
+              castShadow
+            />
             <Suspense fallback={null}>
               <Model speaking={speaking} />
             </Suspense>
             <OrbitControls 
               enableZoom={false}
               enablePan={false}
-              minPolarAngle={Math.PI/2}
-              maxPolarAngle={Math.PI/2}
+              minPolarAngle={Math.PI/2.5}
+              maxPolarAngle={Math.PI/1.8}
+              rotateSpeed={0.5}
             />
           </Canvas>
         </div>
         
-        {/* Mic indicator */}
         <div className="absolute bottom-3 left-3 bg-black/70 rounded-full p-2 z-10">
           {speaking ? (
             <Mic size={18} className="text-green-400" />
@@ -119,13 +136,11 @@ const Interviewer3DAvatar = ({ speaking = false, size = 300 }: Interviewer3DAvat
           )}
         </div>
         
-        {/* Name badge */}
         <div className="absolute bottom-3 right-3 bg-primary/80 text-primary-foreground px-3 py-1 rounded-full text-xs font-medium z-10">
           AI Interviewer
         </div>
       </div>
       
-      {/* Speaking indicator */}
       {speaking && (
         <div className="absolute bottom-2 left-0 right-0 flex justify-center z-20">
           <div className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-xs font-medium animate-pulse flex items-center gap-1.5">
