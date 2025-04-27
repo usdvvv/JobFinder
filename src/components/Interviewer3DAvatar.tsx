@@ -1,14 +1,17 @@
-import { useState, useEffect, Suspense } from 'react';
+
+import { useState, useEffect, Suspense, useRef } from 'react';
 import { Video, Mic, MicOff, Clock } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF, useAnimations } from '@react-three/drei';
+import { OrbitControls, useGLTF } from '@react-three/drei';
+import React from 'react';
 
 function Model({ speaking }: { speaking: boolean }) {
   const { scene } = useGLTF('/white_mesh.glb');
   const [hovered, setHovered] = useState(false);
+  const modelRef = useRef();
   
   useEffect(() => {
-    if (scene.children.length > 0) {
+    if (scene) {
       scene.traverse((child: any) => {
         if (child.isMesh) {
           child.material.color.set(speaking ? '#60a5fa' : '#3b82f6');
@@ -23,6 +26,7 @@ function Model({ speaking }: { speaking: boolean }) {
 
   return (
     <primitive 
+      ref={modelRef}
       object={scene} 
       scale={2}
       position={[0, -2, 0]} 
@@ -33,9 +37,56 @@ function Model({ speaking }: { speaking: boolean }) {
   );
 }
 
+// Create a fallback component to show when model is loading
+function ModelFallback() {
+  return (
+    <mesh>
+      <sphereGeometry args={[1, 16, 16]} />
+      <meshStandardMaterial color="#3b82f6" />
+    </mesh>
+  );
+}
+
 interface Interviewer3DAvatarProps {
   speaking?: boolean;
   size?: number;
+}
+
+// Add ErrorBoundary to catch and handle 3D rendering errors
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
+  constructor(props: {children: React.ReactNode}) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error("3D Rendering Error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="w-full h-full flex items-center justify-center bg-gray-800 text-white p-4 rounded-lg">
+          <div className="text-center">
+            <p className="text-lg font-semibold mb-2">3D Rendering Error</p>
+            <p className="text-sm mb-4">There was a problem loading the 3D model.</p>
+            <button 
+              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-sm"
+              onClick={() => this.setState({ hasError: false })}
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
 }
 
 const Interviewer3DAvatar = ({ speaking = false, size = 400 }: Interviewer3DAvatarProps) => {
@@ -102,30 +153,32 @@ const Interviewer3DAvatar = ({ speaking = false, size = 400 }: Interviewer3DAvat
         </div>
         
         <div className="w-full h-full">
-          <Canvas
-            camera={{ position: [0, 0, 8], fov: 45 }}
-            style={{ background: 'transparent' }}
-          >
-            <ambientLight intensity={0.5} />
-            <directionalLight position={[5, 5, 5]} intensity={1} />
-            <spotLight 
-              position={[0, 5, 5]} 
-              angle={0.4} 
-              penumbra={1} 
-              intensity={1.5} 
-              castShadow
-            />
-            <Suspense fallback={null}>
-              <Model speaking={speaking} />
-            </Suspense>
-            <OrbitControls 
-              enableZoom={false}
-              enablePan={false}
-              minPolarAngle={Math.PI/2.5}
-              maxPolarAngle={Math.PI/1.8}
-              rotateSpeed={0.5}
-            />
-          </Canvas>
+          <ErrorBoundary>
+            <Canvas
+              camera={{ position: [0, 0, 8], fov: 45 }}
+              style={{ background: 'transparent' }}
+            >
+              <ambientLight intensity={0.5} />
+              <directionalLight position={[5, 5, 5]} intensity={1} />
+              <spotLight 
+                position={[0, 5, 5]} 
+                angle={0.4} 
+                penumbra={1} 
+                intensity={1.5} 
+                castShadow
+              />
+              <Suspense fallback={<ModelFallback />}>
+                <Model speaking={speaking} />
+              </Suspense>
+              <OrbitControls 
+                enableZoom={false}
+                enablePan={false}
+                minPolarAngle={Math.PI/2.5}
+                maxPolarAngle={Math.PI/1.8}
+                rotateSpeed={0.5}
+              />
+            </Canvas>
+          </ErrorBoundary>
         </div>
         
         <div className="absolute bottom-3 left-3 bg-black/70 rounded-full p-2 z-10">
