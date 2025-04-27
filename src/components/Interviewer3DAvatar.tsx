@@ -1,13 +1,15 @@
+
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { Video, Mic, MicOff, Clock } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 import React from 'react';
+import * as THREE from 'three';
 
 function Model({ speaking }: { speaking: boolean }) {
   const { scene } = useGLTF('/white_mesh.glb');
   const [hovered, setHovered] = useState(false);
-  const modelRef = useRef();
+  const modelRef = useRef<THREE.Object3D>(null);
   
   useEffect(() => {
     if (scene) {
@@ -29,6 +31,7 @@ function Model({ speaking }: { speaking: boolean }) {
       if (modelRef.current && speaking) {
         const time = Date.now() * 0.005;
         const scale = 1 + Math.sin(time) * 0.05;
+        // Safe access to scale property now that modelRef is properly typed
         modelRef.current.scale.set(2 * scale, 2, 2);
       }
       animationFrame = requestAnimationFrame(animate);
