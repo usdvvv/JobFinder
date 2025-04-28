@@ -1,10 +1,10 @@
-
 import { useState, useEffect, Suspense, useRef } from 'react';
-import { Video, Mic, MicOff, Clock } from 'lucide-react';
+import { Video, Mic, MicOff, Clock, HeartPulse } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 import React from 'react';
 import * as THREE from 'three';
+import WellnessUserOverview from './WellnessUserOverview';
 
 function Model({ speaking }: { speaking: boolean }) {
   const { scene } = useGLTF('/white_mesh.glb');
@@ -31,7 +31,6 @@ function Model({ speaking }: { speaking: boolean }) {
       if (modelRef.current && speaking) {
         const time = Date.now() * 0.005;
         const scale = 1 + Math.sin(time) * 0.05;
-        // Safe access to scale property now that modelRef is properly typed
         modelRef.current.scale.set(2 * scale, 2, 2);
       }
       animationFrame = requestAnimationFrame(animate);
@@ -66,6 +65,7 @@ function ModelFallback() {
 interface Interviewer3DAvatarProps {
   speaking?: boolean;
   size?: number;
+  showWellnessData?: boolean;
 }
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
@@ -104,7 +104,11 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
   }
 }
 
-const Interviewer3DAvatar = ({ speaking = false, size = 400 }: Interviewer3DAvatarProps) => {
+const Interviewer3DAvatar = ({ 
+  speaking = false, 
+  size = 400, 
+  showWellnessData = false 
+}: Interviewer3DAvatarProps) => {
   const [currentTime, setCurrentTime] = useState('');
   const [interviewerState, setInterviewerState] = useState<'listening' | 'speaking' | 'thinking'>('listening');
   const [backgroundIndex, setBackgroundIndex] = useState(0);
@@ -147,6 +151,20 @@ const Interviewer3DAvatar = ({ speaking = false, size = 400 }: Interviewer3DAvat
   
   return (
     <div style={{ width: size, height: size, margin: '0 auto', position: 'relative' }}>
+      {showWellnessData && (
+        <div className="absolute top-12 left-0 right-0 z-20 px-2">
+          <div className="bg-black/80 rounded-md mb-2 shadow-2xl border border-blue-900/50">
+            <div className="bg-gradient-to-r from-blue-700 to-indigo-700 px-3 py-1.5 text-white rounded-t-md flex items-center">
+              <HeartPulse size={14} className="mr-1.5 text-red-400" />
+              <h3 className="text-xs font-medium">Real-time Wellness Metrics</h3>
+            </div>
+            <div className="p-1 rounded-b-md">
+              <WellnessUserOverview hideTitle hideCard forceConnected />
+            </div>
+          </div>
+        </div>
+      )}
+
       <div 
         className="rounded-lg overflow-hidden shadow-lg border border-gray-200" 
         style={{ 

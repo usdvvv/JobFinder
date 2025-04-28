@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Play, MicIcon, StopCircle, Volume2, VolumeX } from 'lucide-react';
@@ -105,7 +104,6 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
   useEffect(() => {
     if (isInterviewing && recognitionRef.current) {
       recognitionRef.current.start();
-      // Show wellness data when interview starts
       setShowWellnessData(true);
     } else if (recognitionRef.current) {
       recognitionRef.current.stop();
@@ -304,21 +302,12 @@ Provide a brief, professional response and ask the next relevant interview quest
 
   return (
     <div className="relative w-full space-y-6">
-      {/* Wellness data section */}
-      {showWellnessData && (
-        <div className="mb-4 rounded-lg overflow-hidden shadow-lg">
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-white">
-            <h3 className="text-sm font-medium">Real-time Wellness Metrics</h3>
-            <p className="text-xs opacity-80">Monitor your metrics during the interview</p>
-          </div>
-          <div className="bg-gradient-to-b from-gray-900 to-slate-900 p-2">
-            <WellnessUserOverview hideTitle hideCard forceConnected />
-          </div>
-        </div>
-      )}
-      
       <div className="relative flex justify-center">
-        <Interviewer3DAvatar speaking={isSpeaking} size={320} />
+        <Interviewer3DAvatar 
+          speaking={isSpeaking} 
+          size={320} 
+          showWellnessData={showWellnessData} 
+        />
         
         {isInterviewing && (
           <button 
