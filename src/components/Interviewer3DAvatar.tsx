@@ -1,3 +1,4 @@
+
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { Video, Mic, MicOff, Clock, HeartPulse } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
@@ -152,15 +153,16 @@ const Interviewer3DAvatar = ({
   return (
     <div style={{ width: size, height: size, margin: '0 auto', position: 'relative' }}>
       {showWellnessData && (
-        <div className="absolute top-12 left-0 right-0 z-20 px-2">
-          <div className="bg-black/80 rounded-md mb-2 shadow-2xl border border-blue-900/50">
-            <div className="bg-gradient-to-r from-blue-700 to-indigo-700 px-3 py-1.5 text-white rounded-t-md flex items-center">
-              <HeartPulse size={14} className="mr-1.5 text-red-400" />
-              <h3 className="text-xs font-medium">Real-time Wellness Metrics</h3>
+        <div className="absolute top-0 left-0 right-0 z-30 px-2">
+          <div className="bg-black/90 rounded-md mb-2 shadow-2xl border-2 border-blue-600/80 animate-pulse">
+            <div className="bg-gradient-to-r from-blue-700 to-indigo-700 px-3 py-2 text-white rounded-t-md flex items-center">
+              <HeartPulse size={16} className="mr-2 text-red-400 animate-pulse" />
+              <h3 className="text-sm font-semibold">Real-time Wellness Monitoring</h3>
             </div>
-            <div className="p-1 rounded-b-md">
+            <div className="p-2 rounded-b-md">
               <WellnessUserOverview hideTitle hideCard forceConnected />
             </div>
+            <div className="absolute -right-1 -top-1 w-3 h-3 bg-green-500 rounded-full border border-white shadow-lg"></div>
           </div>
         </div>
       )}
