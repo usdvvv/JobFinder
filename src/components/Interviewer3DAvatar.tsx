@@ -153,13 +153,13 @@ const Interviewer3DAvatar = ({
   return (
     <div style={{ width: size, height: size, margin: '0 auto', position: 'relative' }}>
       {showWellnessData && (
-        <div className="absolute top-0 left-0 right-0 z-30 px-2">
-          <div className="bg-black/90 rounded-md mb-2 shadow-2xl border-2 border-blue-600/80 animate-pulse">
-            <div className="bg-gradient-to-r from-blue-700 to-indigo-700 px-3 py-2 text-white rounded-t-md flex items-center">
-              <HeartPulse size={16} className="mr-2 text-red-400 animate-pulse" />
-              <h3 className="text-sm font-semibold">Real-time Wellness Monitoring</h3>
+        <div className="absolute top-0 left-0 w-full z-30">
+          <div className="bg-gradient-to-br from-purple-900/90 to-blue-950/90 backdrop-blur-lg border border-white/10 shadow-lg rounded-md mb-2">
+            <div className="bg-gradient-to-r from-blue-700 to-indigo-700 px-4 py-2 text-white rounded-t-md flex items-center">
+              <HeartPulse size={18} className="mr-2 text-red-400 animate-pulse" />
+              <h3 className="text-base font-semibold">Your Wellness Overview</h3>
             </div>
-            <div className="p-2 rounded-b-md">
+            <div className="p-3 rounded-b-md">
               <WellnessUserOverview hideTitle hideCard forceConnected />
             </div>
             <div className="absolute -right-1 -top-1 w-3 h-3 bg-green-500 rounded-full border border-white shadow-lg"></div>

@@ -206,6 +206,7 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then(async () => {
         setIsInterviewing(true);
+        setShowWellnessData(true);
         
         const context = `You are an AI interviewer for a ${industry} position. 
 This is a ${difficulty} interview. 
