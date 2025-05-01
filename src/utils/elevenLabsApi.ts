@@ -1,13 +1,5 @@
-
 import { useConversation } from '@11labs/react';
 import { toast } from "@/components/ui/use-toast";
-
-// Define the Language type used by ElevenLabs
-type Language = 
-  | "en" | "es" | "fr" | "de" | "it" | "pt" | "pl" | "hi" 
-  | "ar" | "zh" | "cs" | "dk" | "nl" | "fi" | "ja" | "ko" 
-  | "no" | "ru" | "sv" | "tr" | "bg" | "hr" | "hu" | "id" 
-  | "ro" | "sk" | "ta" | "uk" | "vi";
 
 // Store active conversation instances
 let activeConversations: Record<string, any> = {};
@@ -20,7 +12,7 @@ interface StartConversationOptions {
         prompt?: string;
       };
       firstMessage?: string;
-      language?: Language;  // Now using the Language type instead of string
+      language?: string;  // Using string type to match the package's expected type
     };
     tts?: {
       voiceId?: string;
