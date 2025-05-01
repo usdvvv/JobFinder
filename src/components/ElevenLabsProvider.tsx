@@ -1,16 +1,25 @@
 
-import React, { ReactNode, useEffect } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useElevenLabsConversation } from '@/hooks/useElevenLabsConversation';
+import { toast } from '@/components/ui/use-toast';
 
 interface Props {
   children: ReactNode;
 }
 
 const ElevenLabsApiProvider = ({ children }: Props) => {
-  // Initialize the ElevenLabs conversation with the API key
+  const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Initialize with API key - consider moving this to an environment variable in production
   const { isReady } = useElevenLabsConversation("sk_6e665da7f8815ceb8a0e9dcb3f728a60d1f4999d0e265060");
   
-  // Simply render children - we're using the conversation through the global variable
+  useEffect(() => {
+    if (isReady && !isInitialized) {
+      setIsInitialized(true);
+      console.log("ElevenLabs conversation system initialized successfully");
+    }
+  }, [isReady, isInitialized]);
+
   return <>{children}</>;
 };
 

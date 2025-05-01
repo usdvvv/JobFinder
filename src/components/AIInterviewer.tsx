@@ -68,13 +68,18 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
   // Check if ElevenLabs package is available
   useEffect(() => {
     try {
-      // This is just to check if the package exists
-      // If it doesn't, it will throw an error and we'll use Ollama instead
-      require('@11labs/react');
-      setIsUsingElevenLabs(true);
+      // Check if the ElevenLabs global variable is defined
+      const elevenLabsAvailable = !!(window as any).__elevenLabsConversation;
+      setIsUsingElevenLabs(elevenLabsAvailable);
+      
+      if (elevenLabsAvailable) {
+        console.log('ElevenLabs is available and will be used');
+      } else {
+        console.log('ElevenLabs not available, using Ollama fallback');
+      }
     } catch (error) {
       setIsUsingElevenLabs(false);
-      console.log('ElevenLabs not available, using Ollama fallback');
+      console.log('Error checking ElevenLabs availability:', error);
     }
   }, []);
   

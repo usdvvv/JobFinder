@@ -1,4 +1,3 @@
-
 import { useConversation } from '@11labs/react';
 import { toast } from "@/components/ui/use-toast";
 
@@ -31,32 +30,7 @@ export const startElevenLabsConversation = async (
   options: StartConversationOptions
 ): Promise<string | null> => {
   try {
-    // Create the conversation config
-    const conversationConfig = {
-      apiKey: ELEVENLABS_API_KEY,
-      onConnect: () => {
-        console.log('ElevenLabs conversation connected');
-      },
-      onDisconnect: () => {
-        console.log('ElevenLabs conversation disconnected');
-      },
-      onMessage: (message: any) => {
-        console.log('ElevenLabs message received:', message);
-      },
-      onError: (error: any) => {
-        console.error('ElevenLabs conversation error:', error);
-        toast({
-          variant: "destructive",
-          title: "Connection Error",
-          description: "Failed to connect to ElevenLabs. Please try again.",
-        });
-      },
-      overrides: options.overrides
-    };
-
-    // Initialize the conversation outside of React components
-    // Note: useConversation is a hook, so we can't use it in a regular function
-    // This is a workaround - in real implementations, use this inside a React component
+    // Get the conversation instance from the global variable
     const conversation = (window as any).__elevenLabsConversation;
     
     if (!conversation) {
@@ -64,19 +38,29 @@ export const startElevenLabsConversation = async (
       toast({
         variant: "destructive",
         title: "Initialization Error",
-        description: "ElevenLabs conversation system not properly initialized.",
+        description: "ElevenLabs conversation system not properly initialized. Please refresh the page.",
       });
       return null;
     }
 
+    console.log('Starting ElevenLabs conversation with agent:', options.agentId);
+    
     // Start the session with the agent ID
     const conversationId = await conversation.startSession({
-      agentId: options.agentId
+      agentId: options.agentId,
+      overrides: options.overrides
     });
+    
+    console.log('ElevenLabs conversation started with ID:', conversationId);
 
     // Store the active conversation
     if (conversationId) {
       activeConversations[conversationId] = conversation;
+      
+      toast({
+        title: "ElevenLabs Connected",
+        description: "Voice AI system is now active",
+      });
     }
 
     return conversationId;
@@ -84,8 +68,8 @@ export const startElevenLabsConversation = async (
     console.error('Error starting ElevenLabs conversation:', error);
     toast({
       variant: "destructive",
-      title: "Conversation Error",
-      description: error instanceof Error ? error.message : "Failed to start conversation",
+      title: "ElevenLabs Error",
+      description: error instanceof Error ? error.message : "Failed to start conversation. Please check your API key.",
     });
     return null;
   }

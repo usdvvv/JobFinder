@@ -10,6 +10,7 @@ export const useElevenLabsConversation = (apiKey: string) => {
     apiKey,
     onConnect: () => {
       console.log('ElevenLabs conversation connected');
+      setIsReady(true);
     },
     onDisconnect: () => {
       console.log('ElevenLabs conversation disconnected');
@@ -19,6 +20,7 @@ export const useElevenLabsConversation = (apiKey: string) => {
     },
     onError: (error) => {
       console.error('ElevenLabs conversation error:', error);
+      setIsReady(false);
     }
   });
 
@@ -26,12 +28,15 @@ export const useElevenLabsConversation = (apiKey: string) => {
   useEffect(() => {
     if (conversation) {
       (window as any).__elevenLabsConversation = conversation;
-      setIsReady(true);
+      
+      // Debug check to verify the conversation object
+      console.log("ElevenLabs conversation object initialized:", Boolean((window as any).__elevenLabsConversation));
     }
     
     return () => {
       // Clean up if needed
       if ((window as any).__elevenLabsConversation) {
+        console.log("Cleaning up ElevenLabs conversation");
         (window as any).__elevenLabsConversation = null;
       }
     };
