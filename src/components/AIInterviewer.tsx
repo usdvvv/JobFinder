@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Play, MicIcon, StopCircle, Volume2, VolumeX } from 'lucide-react';
@@ -6,6 +5,12 @@ import { useToast } from "@/components/ui/use-toast";
 import Interviewer3DAvatar from './Interviewer3DAvatar';
 import WellnessUserOverview from './WellnessUserOverview';
 import { askMistral, checkOllamaConnection } from '@/utils/ollamaApi';
+import { 
+  startElevenLabsConversation, 
+  endElevenLabsConversation, 
+  setElevenLabsVolume,
+  ELEVENLABS_AGENTS 
+} from '@/utils/elevenLabsApi';
 
 interface SpeechRecognitionEvent extends Event {
   resultIndex: number;
@@ -52,25 +57,41 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
   const [conversation, setConversation] = useState<{role: 'ai' | 'user', message: string}[]>([]);
   const [isMuted, setIsMuted] = useState(false);
   const [isOllamaConnected, setIsOllamaConnected] = useState(false);
+  const [isUsingElevenLabs, setIsUsingElevenLabs] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const { toast } = useToast();
   const [showWellnessData, setShowWellnessData] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
+  // Check if ElevenLabs package is available
+  useEffect(() => {
+    try {
+      // This is just to check if the package exists
+      // If it doesn't, it will throw an error and we'll use Ollama instead
+      require('@11labs/react');
+      setIsUsingElevenLabs(true);
+    } catch (error) {
+      setIsUsingElevenLabs(false);
+      console.log('ElevenLabs not available, using Ollama fallback');
+    }
+  }, []);
+  
+  // Setup audio and check Ollama connection (as fallback)
   useEffect(() => {
     audioRef.current = new Audio();
     
-    // Check Ollama connection
+    // Check Ollama connection as fallback
     const checkConnection = async () => {
       const connected = await checkOllamaConnection();
       setIsOllamaConnected(connected);
       
-      if (!connected) {
+      if (!connected && !isUsingElevenLabs) {
         toast({
           variant: "destructive",
           title: "Ollama Connection Failed",
-          description: "Please make sure Ollama is running locally with the Mistral model. Run: 'ollama run mistral'",
+          description: "Please make sure Ollama is running locally with the Mistral model or enable ElevenLabs.",
         });
       }
     };
@@ -83,7 +104,7 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
         audioRef.current = null;
       }
     };
-  }, [toast]);
+  }, [toast, isUsingElevenLabs]);
 
   useEffect(() => {
     if (window.SpeechRecognition || window.webkitSpeechRecognition) {
@@ -130,7 +151,7 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
   }, [isInterviewing]);
 
   const speakText = (text: string) => {
-    if (isMuted || !text) return;
+    if (isMuted || !text || isUsingElevenLabs) return;
     
     setIsSpeaking(true);
     
@@ -180,20 +201,7 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
   };
 
   const handleStartInterview = async () => {
-    // Check Ollama connection before starting
     try {
-      const connected = await checkOllamaConnection();
-      setIsOllamaConnected(connected);
-      
-      if (!connected) {
-        toast({
-          variant: "destructive",
-          title: "Cannot connect to Ollama",
-          description: "Make sure Ollama is running locally. Run: 'ollama run mistral'",
-        });
-        return;
-      }
-      
       // Check for microphone access
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       
@@ -201,27 +209,42 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
       setIsInterviewing(true);
       setShowWellnessData(true);
       
-      // Prepare prompt for Mistral
-      const context = `You are an AI interviewer for a ${industry} position. 
+      if (isUsingElevenLabs) {
+        // Start ElevenLabs conversation
+        const context = `You are an AI interviewer for a ${industry} position. 
 This is a ${difficulty} interview. 
 ${jobDescription ? "The job description is: " + jobDescription : ""}
-Please provide a brief welcome message and ask the first interview question.
 Keep responses concise, professional, and encouraging.`;
-      
-      // Get response from Mistral
-      const aiResponse = await askMistral(context);
-      
-      setConversation([{ role: 'ai', message: aiResponse }]);
-      
-      speakText(aiResponse);
-      
-      toast({
-        title: "Interview started",
-        description: "You can now speak to the AI interviewer.",
-      });
-      
-      if (recognitionRef.current) {
-        recognitionRef.current.start();
+        
+        const id = await startElevenLabsConversation({
+          agentId: ELEVENLABS_AGENTS.INTERVIEWER,
+          overrides: {
+            agent: {
+              prompt: {
+                prompt: context
+              },
+              language: "en"
+            },
+            tts: {
+              voiceId: "pFZP5JQG7iQjIQuC4Bku" // Lily voice
+            }
+          }
+        });
+        
+        setConversationId(id);
+        
+        if (id) {
+          toast({
+            title: "Interview started",
+            description: "You can now speak with the ElevenLabs AI interviewer.",
+          });
+        } else {
+          // Fallback to Ollama
+          handleOllamaStartInterview();
+        }
+      } else {
+        // Use Ollama as fallback
+        handleOllamaStartInterview();
       }
       
       // Clean up audio stream
@@ -231,25 +254,54 @@ Keep responses concise, professional, and encouraging.`;
       toast({
         variant: "destructive",
         title: "Failed to start interview",
-        description: "Please check your microphone access and Ollama connection.",
+        description: "Please check your microphone access and connections.",
       });
     }
   };
 
-  const handleStopInterview = () => {
+  const handleOllamaStartInterview = async () => {
+    if (!isOllamaConnected) {
+      toast({
+        variant: "destructive",
+        title: "Cannot connect to Ollama",
+        description: "Make sure Ollama is running locally. Run: 'ollama run mistral'",
+      });
+      return;
+    }
+    
+    // Prepare prompt for Mistral
+    const context = `You are an AI interviewer for a ${industry} position. 
+This is a ${difficulty} interview. 
+${jobDescription ? "The job description is: " + jobDescription : ""}
+Please provide a brief welcome message and ask the first interview question.
+Keep responses concise, professional, and encouraging.`;
+    
+    // Get response from Mistral
+    const aiResponse = await askMistral(context);
+    
+    setConversation([{ role: 'ai', message: aiResponse }]);
+    
+    speakText(aiResponse);
+    
+    toast({
+      title: "Interview started",
+      description: "You can now speak to the AI interviewer.",
+    });
+  };
+
+  const handleStopInterview = async () => {
     setIsInterviewing(false);
     setIsSpeaking(false);
     setShowWellnessData(false);
     
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
+    // Stop ElevenLabs conversation if active
+    if (conversationId) {
+      await endElevenLabsConversation(conversationId);
+      setConversationId(null);
     }
     
+    // Cancel any speech synthesis
     window.speechSynthesis.cancel();
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
     
     toast({
       title: "Interview ended",
@@ -291,10 +343,17 @@ Provide a brief, professional response and ask the next relevant interview quest
     return () => clearTimeout(timer);
   }, [transcript, isInterviewing, isSpeaking, conversation, industry, difficulty, jobDescription]);
 
-  const toggleMute = () => {
+  const toggleMute = async () => {
     setIsMuted(!isMuted);
-    if (isMuted) {
-      window.speechSynthesis.cancel();
+    
+    // Adjust ElevenLabs volume if using it
+    if (conversationId) {
+      await setElevenLabsVolume(conversationId, isMuted ? 1.0 : 0.0);
+    } else {
+      // Otherwise cancel any ongoing speech
+      if (isMuted) {
+        window.speechSynthesis.cancel();
+      }
     }
   };
 
@@ -348,7 +407,7 @@ Provide a brief, professional response and ask the next relevant interview quest
             onClick={handleStartInterview} 
             className="px-6 gap-2"
             size="lg"
-            disabled={!isOllamaConnected}
+            disabled={!isOllamaConnected && !isUsingElevenLabs}
           >
             <Play className="w-4 h-4" />
             Start Interview
@@ -366,13 +425,20 @@ Provide a brief, professional response and ask the next relevant interview quest
         )}
       </div>
       
-      {!isOllamaConnected && (
+      {!isOllamaConnected && !isUsingElevenLabs && (
         <div className="flex items-center justify-center p-2 bg-red-950/30 border border-red-500/30 rounded-md text-sm text-red-400">
-          <p>Ollama connection failed. Make sure it's running with the Mistral model.</p>
+          <p>Speech system not available. Enable ElevenLabs or make sure Ollama is running locally.</p>
         </div>
       )}
       
-      {isInterviewing && (
+      {isInterviewing && isUsingElevenLabs && (
+        <div className="flex items-center justify-center gap-2 text-sm">
+          <MicIcon className="w-4 h-4 text-green-500 animate-pulse" />
+          <span>ElevenLabs Voice AI active</span>
+        </div>
+      )}
+      
+      {isInterviewing && !isUsingElevenLabs && (
         <div className="flex items-center justify-center gap-2 text-sm">
           <MicIcon className="w-4 h-4 text-destructive animate-pulse" />
           <span>Microphone active</span>
