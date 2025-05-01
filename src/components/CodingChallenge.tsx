@@ -1,15 +1,15 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Play, Check, RefreshCw, Code, FileText, EyeOff } from 'lucide-react';
+import { Play, Check, RefreshCw, Code, FileText, EyeOff, AlertTriangle } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { executeCode, validateCodeSafety } from "@/services/codeExecutionService";
 
 interface CodingChallengeProps {
   title: string;
@@ -182,6 +182,7 @@ const CodingChallenge = ({
   const [activeTab, setActiveTab] = useState('problem');
   const [showSolution, setShowSolution] = useState(false);
   const [hasSelectedLanguage, setHasSelectedLanguage] = useState(false);
+  const [hasCompileError, setHasCompileError] = useState(false);
   
   const { toast } = useToast();
   
@@ -202,6 +203,9 @@ const CodingChallenge = ({
   const handleLanguageSelect = (value: string) => {
     setSelectedLanguage(value);
     setHasSelectedLanguage(true);
+    setOutput('');
+    setIsCorrect(null);
+    setHasCompileError(false);
     
     toast({
       title: `Language changed to ${programmingLanguages.find(lang => lang.value === value)?.label}`,
@@ -210,63 +214,55 @@ const CodingChallenge = ({
     });
   };
 
-  const runCode = () => {
+  const runCode = async () => {
     setIsRunning(true);
     setOutput('');
+    setHasCompileError(false);
     
-    const originalConsoleLog = console.log;
-    let logs: string[] = [];
+    // Check for potentially unsafe code
+    const safetyCheck = validateCodeSafety(code);
+    if (!safetyCheck.safe) {
+      setIsRunning(false);
+      setOutput(`⚠️ Safety Warning: Your code contains potentially unsafe operations (${safetyCheck.reason}).\n\nFor security reasons, certain operations like network requests, imports, and access to browser storage are restricted.`);
+      setHasCompileError(true);
+      return;
+    }
     
-    console.log = (...args) => {
-      logs.push(args.map(arg => String(arg)).join(' '));
-      originalConsoleLog(...args);
-    };
-    
-    setTimeout(() => {
-      try {
-        if (selectedLanguage !== 'javascript' && selectedLanguage !== 'typescript') {
-          setOutput(`Running ${programmingLanguages.find(lang => lang.value === selectedLanguage)?.label} code...\n\nNote: Only JavaScript execution is supported in this environment. Your code is being treated as pseudocode for demonstration purposes.`);
-          setIsCorrect(null);
-        } else {
-          const userCodeFunction = new Function(`
-            let output = [];
-            const console = {
-              log: (...args) => {
-                output.push(args.map(arg => String(arg)).join(' '));
-              }
-            };
-            
-            ${code}
-            
-            return output;
-          `);
-          
-          const result = userCodeFunction();
-          setOutput(result.join('\n'));
-          
-          if (result.join('\n').trim()) {
-            if (code.includes('return') && !code.includes('// TODO')) {
-              setIsCorrect(true);
-              toast({
-                title: "Success!",
-                description: "Your solution passed the tests!",
-                variant: "default",
-              });
-            } else {
-              setIsCorrect(false);
-            }
-          } else {
-            setIsCorrect(null);
-          }
-        }
-      } catch (error) {
-        setOutput(`Error: ${error.message}`);
+    try {
+      const result = await executeCode({
+        code,
+        language: selectedLanguage
+      });
+      
+      setOutput(result.output || '');
+      
+      if (!result.success) {
+        setHasCompileError(true);
         setIsCorrect(false);
-      } finally {
-        setIsRunning(false);
-        console.log = originalConsoleLog;
+      } else {
+        setHasCompileError(false);
+        
+        // Check if the code likely contains a solution (not just starter code)
+        if (result.output && code.includes('return') && !code.includes('// TODO')) {
+          // For simplicity, consider any output as potentially correct
+          // In a real implementation, we'd verify against test cases
+          setIsCorrect(true);
+          toast({
+            title: "Code executed successfully",
+            description: "Your solution produced an output. Check if it matches the expected result.",
+            variant: "default",
+          });
+        } else {
+          setIsCorrect(null);
+        }
       }
-    }, 1000);
+    } catch (error) {
+      setOutput(`Error: ${error instanceof Error ? error.message : String(error)}`);
+      setHasCompileError(true);
+      setIsCorrect(false);
+    } finally {
+      setIsRunning(false);
+    }
   };
   
   const resetCode = () => {
@@ -274,6 +270,7 @@ const CodingChallenge = ({
     setCode(getLanguageTemplate(selectedLanguage, functionName));
     setOutput('');
     setIsCorrect(null);
+    setHasCompileError(false);
     
     toast({
       title: "Code Reset",
@@ -478,12 +475,13 @@ const CodingChallenge = ({
                     {isCorrect === true && (
                       <div className="flex items-center text-green-600">
                         <Check className="h-4 w-4 mr-1" />
-                        <span className="text-sm">All tests passed!</span>
+                        <span className="text-sm">Code executed successfully!</span>
                       </div>
                     )}
-                    {isCorrect === false && (
-                      <div className="text-sm text-red-600">
-                        Some tests failed. Check your solution.
+                    {hasCompileError && (
+                      <div className="flex items-center text-red-600">
+                        <AlertTriangle className="h-4 w-4 mr-1" />
+                        <span className="text-sm">Execution error</span>
                       </div>
                     )}
                   </div>
@@ -493,6 +491,16 @@ const CodingChallenge = ({
                       {output || "Output will appear here after running your code."}
                     </pre>
                   </ScrollArea>
+                  
+                  {selectedLanguage !== 'javascript' && selectedLanguage !== 'typescript' && (
+                    <div className="p-3 border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-900/30 rounded-md">
+                      <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                        <AlertTriangle className="h-4 w-4 inline mr-1" />
+                        Note: Full compilation for {programmingLanguages.find(lang => lang.value === selectedLanguage)?.label} 
+                        requires a backend service. This is a simulated execution showing the expected output format.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </TabsContent>
             </div>
