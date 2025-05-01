@@ -375,6 +375,7 @@ const CodingChallenge = ({
             </div>
             
             <div className="flex-1 overflow-hidden p-4">
+              {/* Problem Tab */}
               <TabsContent value="problem" className="h-full mt-0">
                 <ScrollArea className="h-full pr-4">
                   <div className="space-y-4">
@@ -416,9 +417,10 @@ const CodingChallenge = ({
                 </ScrollArea>
               </TabsContent>
               
-              <TabsContent value="code" className="h-full mt-0">
+              {/* Code Tab */}
+              <TabsContent value="code" className="h-full mt-0 flex flex-col">
                 <div className="space-y-4 h-full flex flex-col">
-                  <div className="flex-1">
+                  <div className="flex-1 overflow-hidden">
                     <Textarea
                       className="font-mono text-sm h-full min-h-[400px] p-3"
                       value={code}
@@ -456,11 +458,11 @@ const CodingChallenge = ({
                   </div>
                   
                   {showSolution && (
-                    <div className="border rounded-md p-3 h-[200px] overflow-hidden">
+                    <div className="border rounded-md overflow-hidden" style={{ height: "240px" }}>
                       <ScrollArea className="h-full w-full">
-                        <div className="p-2">
+                        <div className="p-4">
                           <h4 className="text-sm font-medium mb-2">Solution ({programmingLanguages.find(lang => lang.value === selectedLanguage)?.label}):</h4>
-                          <pre className="p-3 bg-muted rounded text-xs whitespace-pre-wrap">
+                          <pre className="p-3 bg-muted rounded text-xs whitespace-pre-wrap overflow-visible">
                             {solution}
                           </pre>
                         </div>
@@ -470,6 +472,7 @@ const CodingChallenge = ({
                 </div>
               </TabsContent>
               
+              {/* Output Tab */}
               <TabsContent value="output" className="h-full mt-0">
                 <div className="space-y-4 h-full flex flex-col">
                   <div className="flex items-center space-x-2">
