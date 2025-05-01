@@ -1,31 +1,50 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JobFinder</title>
-    <link rel="icon" href="/lovable-uploads/b0904a95-8422-4490-a3b1-b5153647bd52.webp" type="image/png" />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobFinder - AI Powered Career Platform</title>
+  <link rel="stylesheet" href="./css/index.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/animations.css">
+  <!-- Load Three.js for 3D avatar -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r132/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@react-three/drei@9.80.0/index.min.js"></script>
+  <!-- Load GSAP for animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-background text-foreground">
+  <div id="app">
+    <!-- App container - similar to Vue's mounting point -->
+    <div id="navbar-component"></div>
+    
+    <!-- Main content area will be dynamically populated -->
+    <div id="page-content"></div>
+    
+    <!-- Theme toggle component -->
+    <div id="theme-toggle-component" class="fixed bottom-4 right-4 z-50"></div>
+  </div>
 
-    <meta name="description" content="Find your dream job with JobFinder" />
-    <meta name="author" content="JobFinder" />
-
-    <meta property="og:title" content="JobFinder - Your Career Partner" />
-    <meta property="og:description" content="Find your dream job with JobFinder" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@jobfinder" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  </head>
-
-  <body>
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <!-- Load utility scripts -->
+  <script src="./js/utils.js"></script>
+  
+  <!-- Load components -->
+  <script src="./js/components/ThemeToggle.js"></script>
+  <script src="./js/components/NavBar.js"></script>
+  <script src="./js/components/Interviewer3DAvatar.js"></script>
+  <script src="./js/components/WellnessUserOverview.js"></script>
+  
+  <!-- Load pages -->
+  <script src="./js/pages/LandingPage.js"></script>
+  <script src="./js/pages/InterviewPrep.js"></script>
+  <script src="./js/pages/Entertainment.js"></script>
+  <script src="./js/pages/AboutUs.js"></script>
+  
+  <!-- Router and main app logic -->
+  <script src="./js/router.js"></script>
+  <script src="./js/main.js"></script>
+</body>
 </html>
