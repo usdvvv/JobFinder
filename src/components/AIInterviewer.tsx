@@ -1,9 +1,11 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Play, MicIcon, StopCircle, Volume2, VolumeX } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import Interviewer3DAvatar from './Interviewer3DAvatar';
 import WellnessUserOverview from './WellnessUserOverview';
+import { askMistral, checkOllamaConnection } from '@/utils/ollamaApi';
 
 interface SpeechRecognitionEvent extends Event {
   resultIndex: number;
@@ -48,8 +50,8 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [conversation, setConversation] = useState<{role: 'ai' | 'user', message: string}[]>([]);
-  const ollamaUrl = 'http://localhost:11434';
   const [isMuted, setIsMuted] = useState(false);
+  const [isOllamaConnected, setIsOllamaConnected] = useState(false);
   const { toast } = useToast();
   const [showWellnessData, setShowWellnessData] = useState(false);
   
@@ -58,13 +60,30 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
 
   useEffect(() => {
     audioRef.current = new Audio();
+    
+    // Check Ollama connection
+    const checkConnection = async () => {
+      const connected = await checkOllamaConnection();
+      setIsOllamaConnected(connected);
+      
+      if (!connected) {
+        toast({
+          variant: "destructive",
+          title: "Ollama Connection Failed",
+          description: "Please make sure Ollama is running locally with the Mistral model. Run: 'ollama run mistral'",
+        });
+      }
+    };
+    
+    checkConnection();
+    
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
       }
     };
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     if (window.SpeechRecognition || window.webkitSpeechRecognition) {
@@ -160,83 +179,61 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
     }
   };
 
-  const askMistral = async (prompt: string) => {
-    try {
-      const response = await fetch(`${ollamaUrl}/api/generate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'mistral',
-          prompt: prompt,
-          stream: false
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to communicate with Ollama');
-      }
-
-      const data = await response.json();
-      return data.response;
-    } catch (error) {
-      console.error('Ollama API Error:', error);
-      toast({
-        variant: "destructive",
-        title: "Ollama API Error",
-        description: "Make sure Ollama is running locally with the Mistral model. Run: 'ollama run mistral'",
-      });
-      return "I'm having trouble connecting to my AI brain right now. Please check that Ollama is running with the Mistral model.";
-    }
-  };
-
   const handleStartInterview = async () => {
+    // Check Ollama connection before starting
     try {
-      await fetch(`${ollamaUrl}/api/tags`, { method: 'GET' });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Cannot connect to Ollama",
-        description: "Make sure Ollama is running locally. Run: 'ollama run mistral'",
-      });
-      return;
-    }
-    
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(async () => {
-        setIsInterviewing(true);
-        setShowWellnessData(true);
-        
-        const context = `You are an AI interviewer for a ${industry} position. 
+      const connected = await checkOllamaConnection();
+      setIsOllamaConnected(connected);
+      
+      if (!connected) {
+        toast({
+          variant: "destructive",
+          title: "Cannot connect to Ollama",
+          description: "Make sure Ollama is running locally. Run: 'ollama run mistral'",
+        });
+        return;
+      }
+      
+      // Check for microphone access
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      
+      // If we got here, microphone access was granted
+      setIsInterviewing(true);
+      setShowWellnessData(true);
+      
+      // Prepare prompt for Mistral
+      const context = `You are an AI interviewer for a ${industry} position. 
 This is a ${difficulty} interview. 
 ${jobDescription ? "The job description is: " + jobDescription : ""}
 Please provide a brief welcome message and ask the first interview question.
 Keep responses concise, professional, and encouraging.`;
-
-        const aiResponse = await askMistral(context);
-        
-        setConversation([{ role: 'ai', message: aiResponse }]);
-        
-        speakText(aiResponse);
-        
-        toast({
-          title: "Interview started",
-          description: "You can now speak to the AI interviewer.",
-        });
-        
-        if (recognitionRef.current) {
-          recognitionRef.current.start();
-        }
-      })
-      .catch(error => {
-        console.error('Error accessing microphone:', error);
-        toast({
-          variant: "destructive",
-          title: "Microphone access denied",
-          description: "We need microphone access to conduct the interview.",
-        });
+      
+      // Get response from Mistral
+      const aiResponse = await askMistral(context);
+      
+      setConversation([{ role: 'ai', message: aiResponse }]);
+      
+      speakText(aiResponse);
+      
+      toast({
+        title: "Interview started",
+        description: "You can now speak to the AI interviewer.",
       });
+      
+      if (recognitionRef.current) {
+        recognitionRef.current.start();
+      }
+      
+      // Clean up audio stream
+      stream.getTracks().forEach(track => track.stop());
+    } catch (error) {
+      console.error('Error starting interview:', error);
+      toast({
+        variant: "destructive",
+        title: "Failed to start interview",
+        description: "Please check your microphone access and Ollama connection.",
+      });
+    }
   };
 
   const handleStopInterview = () => {
@@ -351,6 +348,7 @@ Provide a brief, professional response and ask the next relevant interview quest
             onClick={handleStartInterview} 
             className="px-6 gap-2"
             size="lg"
+            disabled={!isOllamaConnected}
           >
             <Play className="w-4 h-4" />
             Start Interview
@@ -367,6 +365,12 @@ Provide a brief, professional response and ask the next relevant interview quest
           </Button>
         )}
       </div>
+      
+      {!isOllamaConnected && (
+        <div className="flex items-center justify-center p-2 bg-red-950/30 border border-red-500/30 rounded-md text-sm text-red-400">
+          <p>Ollama connection failed. Make sure it's running with the Mistral model.</p>
+        </div>
+      )}
       
       {isInterviewing && (
         <div className="flex items-center justify-center gap-2 text-sm">
