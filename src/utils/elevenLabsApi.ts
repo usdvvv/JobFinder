@@ -1,7 +1,11 @@
-
 import { useConversation } from '@11labs/react';
 import { toast } from "@/components/ui/use-toast";
-import type { Language } from '@11labs/client/dist/utils/connection';
+
+// Define Language type since we can't import it correctly
+type Language = 'en' | 'es' | 'fr' | 'de' | 'it' | 'pt' | 'pl' | 'hi' | 'ar' | 'ja' | 'zh' | 'nl';
+
+// ElevenLabs API key
+const ELEVENLABS_API_KEY = "sk_6e665da7f8815ceb8a0e9dcb3f728a60d1f4999d0e265060";
 
 // Store active conversation instances
 let activeConversations: Record<string, any> = {};
@@ -14,7 +18,7 @@ interface StartConversationOptions {
         prompt?: string;
       };
       firstMessage?: string;
-      language?: Language;  // Using the imported Language type
+      language?: Language;
     };
     tts?: {
       voiceId?: string;
@@ -27,6 +31,7 @@ export const startElevenLabsConversation = async (
 ): Promise<string | null> => {
   try {
     const conversation = useConversation({
+      apiKey: ELEVENLABS_API_KEY, // Add API key here
       onConnect: () => {
         console.log('ElevenLabs conversation connected');
       },
@@ -106,8 +111,8 @@ export const isElevenLabsSpeaking = (conversationId: string): boolean => {
   return activeConversations[conversationId].isSpeaking;
 };
 
-// Agent IDs for different use cases (these would be replaced with actual ElevenLabs agent IDs)
+// Agent IDs for different use cases
 export const ELEVENLABS_AGENTS = {
-  INTERVIEWER: "interview-agent-id", // Replace with actual agent ID
-  THERAPIST: "therapist-agent-id"    // Replace with actual agent ID
+  INTERVIEWER: "n1pNc0aPoEIZdxIEhzRo", // Your actual interviewer agent ID
+  THERAPIST: "therapist-agent-id"      // Replace with actual agent ID when available
 };
