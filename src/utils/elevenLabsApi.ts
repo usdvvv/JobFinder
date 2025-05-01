@@ -1,3 +1,4 @@
+
 import { useConversation } from '@11labs/react';
 import { toast } from "@/components/ui/use-toast";
 
@@ -31,7 +32,7 @@ export const startElevenLabsConversation = async (
 ): Promise<string | null> => {
   try {
     const conversation = useConversation({
-      apiKey: ELEVENLABS_API_KEY, // Add API key here
+      apiKey: ELEVENLABS_API_KEY,
       onConnect: () => {
         console.log('ElevenLabs conversation connected');
       },
@@ -114,5 +115,5 @@ export const isElevenLabsSpeaking = (conversationId: string): boolean => {
 // Agent IDs for different use cases
 export const ELEVENLABS_AGENTS = {
   INTERVIEWER: "n1pNc0aPoEIZdxIEhzRo", // Your actual interviewer agent ID
-  THERAPIST: "therapist-agent-id"      // Replace with actual agent ID when available
+  THERAPIST: "tjrw9cS30IKwLlIlTYOO"    // Your actual therapist agent ID
 };
