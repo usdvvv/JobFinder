@@ -1,17 +1,17 @@
 
 import React, { ReactNode } from 'react';
-import { ConversationProvider } from '@11labs/react';
+import { useElevenLabsConversation } from '@/hooks/useElevenLabsConversation';
 
 interface Props {
   children: ReactNode;
 }
 
 const ElevenLabsApiProvider = ({ children }: Props) => {
-  return (
-    <ConversationProvider apiKey="sk_6e665da7f8815ceb8a0e9dcb3f728a60d1f4999d0e265060">
-      {children}
-    </ConversationProvider>
-  );
+  // Initialize the ElevenLabs conversation with the API key
+  const { isReady } = useElevenLabsConversation("sk_6e665da7f8815ceb8a0e9dcb3f728a60d1f4999d0e265060");
+  
+  // Simply render children - we're using the conversation through the global variable
+  return <>{children}</>;
 };
 
 export default ElevenLabsApiProvider;

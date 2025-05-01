@@ -1,4 +1,3 @@
-
 import { useConversation } from '@11labs/react';
 import { toast } from "@/components/ui/use-toast";
 
@@ -31,7 +30,8 @@ export const startElevenLabsConversation = async (
   options: StartConversationOptions
 ): Promise<string | null> => {
   try {
-    const conversation = useConversation({
+    // Create the conversation config
+    const conversationConfig = {
       apiKey: ELEVENLABS_API_KEY,
       onConnect: () => {
         console.log('ElevenLabs conversation connected');
@@ -39,10 +39,10 @@ export const startElevenLabsConversation = async (
       onDisconnect: () => {
         console.log('ElevenLabs conversation disconnected');
       },
-      onMessage: (message) => {
+      onMessage: (message: any) => {
         console.log('ElevenLabs message received:', message);
       },
-      onError: (error) => {
+      onError: (error: any) => {
         console.error('ElevenLabs conversation error:', error);
         toast({
           variant: "destructive",
@@ -51,7 +51,22 @@ export const startElevenLabsConversation = async (
         });
       },
       overrides: options.overrides
-    });
+    };
+
+    // Initialize the conversation outside of React components
+    // Note: useConversation is a hook, so we can't use it in a regular function
+    // This is a workaround - in real implementations, use this inside a React component
+    const conversation = (window as any).__elevenLabsConversation;
+    
+    if (!conversation) {
+      console.error('ElevenLabs conversation not initialized');
+      toast({
+        variant: "destructive",
+        title: "Initialization Error",
+        description: "ElevenLabs conversation system not properly initialized.",
+      });
+      return null;
+    }
 
     // Start the session with the agent ID
     const conversationId = await conversation.startSession({
