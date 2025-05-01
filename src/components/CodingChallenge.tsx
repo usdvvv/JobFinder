@@ -456,14 +456,16 @@ const CodingChallenge = ({
                   </div>
                   
                   {showSolution && (
-                    <ScrollArea className="border rounded-md p-3 max-h-[300px]">
-                      <div>
-                        <h4 className="text-sm font-medium mb-2">Solution ({programmingLanguages.find(lang => lang.value === selectedLanguage)?.label}):</h4>
-                        <pre className="p-3 bg-muted rounded text-xs whitespace-pre-wrap">
-                          {solution}
-                        </pre>
-                      </div>
-                    </ScrollArea>
+                    <div className="border rounded-md p-3 h-[200px] overflow-hidden">
+                      <ScrollArea className="h-full w-full">
+                        <div className="p-2">
+                          <h4 className="text-sm font-medium mb-2">Solution ({programmingLanguages.find(lang => lang.value === selectedLanguage)?.label}):</h4>
+                          <pre className="p-3 bg-muted rounded text-xs whitespace-pre-wrap">
+                            {solution}
+                          </pre>
+                        </div>
+                      </ScrollArea>
+                    </div>
                   )}
                 </div>
               </TabsContent>
