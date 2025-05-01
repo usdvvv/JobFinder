@@ -1,5 +1,7 @@
+
 import { useConversation } from '@11labs/react';
 import { toast } from "@/components/ui/use-toast";
+import type { Language } from '@11labs/client/dist/utils/connection';
 
 // Store active conversation instances
 let activeConversations: Record<string, any> = {};
@@ -12,7 +14,7 @@ interface StartConversationOptions {
         prompt?: string;
       };
       firstMessage?: string;
-      language?: string;  // Using string type to match the package's expected type
+      language?: Language;  // Using the imported Language type
     };
     tts?: {
       voiceId?: string;
