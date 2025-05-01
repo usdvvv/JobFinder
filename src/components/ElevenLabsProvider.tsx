@@ -1,5 +1,5 @@
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { useElevenLabsConversation } from '@/hooks/useElevenLabsConversation';
 
 interface Props {
