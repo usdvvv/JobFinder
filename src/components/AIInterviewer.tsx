@@ -220,7 +220,7 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
         if (!success) {
           setShowFallbackButton(true);
           toast({
-            variant: "warning",
+            variant: "destructive",  // Changed from "warning" to "destructive"
             title: "ElevenLabs Connection Issue",
             description: "Click 'Try Alternative Interviewer' to use the fallback system.",
           });
@@ -229,7 +229,7 @@ const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-le
         // Show the fallback button if ElevenLabs isn't available
         setShowFallbackButton(true);
         toast({
-          variant: "warning",
+          variant: "default",  // Changed from "warning" to "default"
           title: "ElevenLabs Not Available",
           description: "Click 'Try Alternative Interviewer' to use the fallback system.",
         });
