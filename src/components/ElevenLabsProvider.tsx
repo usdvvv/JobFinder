@@ -17,6 +17,10 @@ const ElevenLabsApiProvider = ({ children }: Props) => {
     if (isReady && !isInitialized) {
       setIsInitialized(true);
       console.log("ElevenLabs conversation system initialized successfully");
+      toast({
+        title: "ElevenLabs Ready",
+        description: "Voice AI system initialized successfully",
+      });
     }
   }, [isReady, isInitialized]);
 

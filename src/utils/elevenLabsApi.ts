@@ -1,4 +1,4 @@
-import { useConversation } from '@11labs/react';
+
 import { toast } from "@/components/ui/use-toast";
 
 // Define Language type since we can't import it correctly
@@ -37,8 +37,8 @@ export const startElevenLabsConversation = async (
       console.error('ElevenLabs conversation not initialized');
       toast({
         variant: "destructive",
-        title: "Initialization Error",
-        description: "ElevenLabs conversation system not properly initialized. Please refresh the page.",
+        title: "ElevenLabs Initialization Error",
+        description: "Voice AI system not properly initialized.",
       });
       return null;
     }
@@ -69,7 +69,7 @@ export const startElevenLabsConversation = async (
     toast({
       variant: "destructive",
       title: "ElevenLabs Error",
-      description: error instanceof Error ? error.message : "Failed to start conversation. Please check your API key.",
+      description: error instanceof Error ? error.message : "Failed to start conversation.",
     });
     return null;
   }
@@ -80,6 +80,7 @@ export const endElevenLabsConversation = async (conversationId: string): Promise
     if (activeConversations[conversationId]) {
       await activeConversations[conversationId].endSession();
       delete activeConversations[conversationId];
+      console.log('ElevenLabs conversation ended:', conversationId);
       return true;
     }
     return false;
@@ -93,6 +94,7 @@ export const setElevenLabsVolume = async (conversationId: string, volume: number
   try {
     if (activeConversations[conversationId]) {
       await activeConversations[conversationId].setVolume({ volume });
+      console.log(`ElevenLabs volume set to ${volume}`);
       return true;
     }
     return false;
@@ -114,6 +116,6 @@ export const isElevenLabsSpeaking = (conversationId: string): boolean => {
 
 // Agent IDs for different use cases
 export const ELEVENLABS_AGENTS = {
-  INTERVIEWER: "n1pNc0aPoEIZdxIEhzRo", // Your actual interviewer agent ID
-  THERAPIST: "tjrw9cS30IKwLlIlTYOO"    // Your actual therapist agent ID
+  INTERVIEWER: "n1pNc0aPoEIZdxIEhzRo", // Your interviewer agent ID
+  THERAPIST: "tjrw9cS30IKwLlIlTYOO"    // Your therapist agent ID
 };
