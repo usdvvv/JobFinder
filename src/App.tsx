@@ -21,6 +21,7 @@ import AITherapist from '@/pages/AITherapist';
 import Entertainment from '@/pages/Entertainment';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
+import PracticeCoding from '@/pages/PracticeCoding';
 import ElevenLabsApiProvider from '@/components/ElevenLabsProvider';
 
 // Company routes
@@ -51,6 +52,7 @@ function App() {
           <Route path="/resume-maker" element={<ResumeMaker />} />
           <Route path="/peer-chat" element={<PeerChatAI />} />
           <Route path="/interview" element={<InterviewPrep />} />
+          <Route path="/practice" element={<PracticeCoding />} />
           <Route path="/therapist" element={<AITherapist />} />
           <Route path="/entertainment" element={<Entertainment />} />
           <Route path="/about" element={<AboutUs />} />
