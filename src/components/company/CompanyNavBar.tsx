@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,8 @@ import {
   User,
   Puzzle,
   HeartPulse,
-  MessageSquare
+  MessageSquare,
+  SwitchCamera
 } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 import ThemeToggle from '@/components/ThemeToggle';
@@ -35,6 +37,10 @@ const CompanyNavBar = () => {
       description: "You have been successfully logged out.",
     });
     navigate('/');
+  };
+
+  const handleSwitchRole = () => {
+    navigate('/roles');
   };
 
   useEffect(() => {
@@ -92,6 +98,15 @@ const CompanyNavBar = () => {
                   Post Job
                 </Button>
               </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-2 bg-purple-600 hover:bg-purple-700 text-white border-none"
+                onClick={handleSwitchRole}
+              >
+                <SwitchCamera className="h-4 w-4 mr-2" />
+                Switch Role
+              </Button>
               <ThemeToggle />
               <Button 
                 variant="ghost" 
@@ -143,6 +158,15 @@ const CompanyNavBar = () => {
                 <PlusCircle className="h-5 w-5 mr-3" />
                 Post New Job
               </Link>
+            </div>
+            <div className="pt-2">
+              <button
+                className="w-full px-3 py-2 rounded-md text-base font-medium text-white bg-purple-600 hover:bg-purple-700 flex items-center"
+                onClick={handleSwitchRole}
+              >
+                <SwitchCamera className="h-5 w-5 mr-3" />
+                Switch Role
+              </button>
             </div>
             <div className="pt-2">
               <button 
