@@ -50,6 +50,7 @@ function App() {
           <Route path="/ai-job-search" element={<AIJobSearch />} />
           <Route path="/ai-assistant" element={<AILiveAssistant />} />
           <Route path="/resume-maker" element={<ResumeMaker />} />
+          <Route path="/resume" element={<ResumeMaker />} />
           <Route path="/peer-chat" element={<PeerChatAI />} />
           <Route path="/interview" element={<InterviewPrep />} />
           <Route path="/practice" element={<PracticeCoding />} />
