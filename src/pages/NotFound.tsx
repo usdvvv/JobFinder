@@ -2,7 +2,7 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Home, FileText, Code } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 const NotFound = () => {
   const location = useLocation();
@@ -34,31 +34,11 @@ const NotFound = () => {
           <div className="text-center relative z-10 animate-fade-in">
             <h1 className="text-6xl font-bold mb-6 text-gradient">404</h1>
             <p className="text-xl text-blue-200 mb-8">Oops! The page you're looking for doesn't exist.</p>
-            
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
-              <Button size="lg" asChild>
-                <Link to="/" className="flex items-center">
-                  <Home className="mr-2 h-4 w-4" />
-                  Return to Home
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link to="/resume-maker" className="flex items-center">
-                  <FileText className="mr-2 h-4 w-4" />
-                  Resume Maker
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link to="/practice" className="flex items-center">
-                  <Code className="mr-2 h-4 w-4" />
-                  Practice Coding
-                </Link>
-              </Button>
-            </div>
-            
-            <p className="text-sm text-blue-200/70">
-              Looking for something specific? Try navigating using the menu above.
-            </p>
+            <Button size="lg" asChild>
+              <Link to="/" className="flex items-center">
+                Return to Home
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

@@ -12,11 +12,6 @@ import AnimatedSection from '@/components/AnimatedSection';
 import WellnessCombinedOverview from "@/components/WellnessCombinedOverview";
 import { askMistral, checkOllamaConnection } from '@/utils/ollamaApi';
 import { useToast } from "@/components/ui/use-toast";
-import { 
-  startElevenLabsConversation, 
-  endElevenLabsConversation, 
-  ELEVENLABS_AGENTS 
-} from '@/utils/elevenLabsApi';
 
 interface ChatMessage {
   role: "assistant" | "user";
@@ -33,31 +28,16 @@ const CompanyAITherapist = () => {
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const [isOllamaConnected, setIsOllamaConnected] = useState(false);
-  const [isUsingElevenLabs, setIsUsingElevenLabs] = useState(false);
-  const [conversationId, setConversationId] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Check if ElevenLabs package is available
   useEffect(() => {
-    try {
-      // This is just to check if the package exists
-      // If it doesn't, it will throw an error and we'll use Ollama instead
-      require('@11labs/react');
-      setIsUsingElevenLabs(true);
-    } catch (error) {
-      setIsUsingElevenLabs(false);
-      console.log('ElevenLabs not available, using Ollama fallback');
-    }
-  }, []);
-
-  useEffect(() => {
-    // Check Ollama connection when component mounts (as fallback)
+    // Check Ollama connection when component mounts
     const checkConnection = async () => {
       const connected = await checkOllamaConnection();
       setIsOllamaConnected(connected);
       
-      if (!connected && !isUsingElevenLabs) {
+      if (!connected) {
         toast({
           variant: "destructive",
           title: "Ollama Connection Failed",
@@ -66,59 +46,8 @@ const CompanyAITherapist = () => {
       }
     };
     
-    if (!isUsingElevenLabs) {
-      checkConnection();
-    }
-  }, [toast, isUsingElevenLabs]);
-
-  // Start ElevenLabs conversation if enabled
-  useEffect(() => {
-    const initElevenLabs = async () => {
-      if (isUsingElevenLabs && !conversationId) {
-        try {
-          // Start ElevenLabs conversation
-          const context = `You are Dr. Emma Thompson, an AI therapist specializing in workplace wellness 
-and mental health support for company leaders and their teams. 
-You communicate in a professional, empathetic tone.
-Focus on workplace mental health, stress management, employee wellbeing, 
-burnout prevention, and creating healthy work environments. 
-Keep your responses concise (100-150 words).`;
-
-          const id = await startElevenLabsConversation({
-            agentId: ELEVENLABS_AGENTS.THERAPIST,
-            overrides: {
-              agent: {
-                prompt: {
-                  prompt: context
-                },
-                language: "en"
-              },
-              tts: {
-                voiceId: "EXAVITQu4vr4xnSDxMaL" // Sarah voice
-              }
-            }
-          });
-          
-          setConversationId(id);
-          
-          if (id) {
-            console.log("ElevenLabs conversation started with ID:", id);
-          }
-        } catch (error) {
-          console.error('Error starting ElevenLabs conversation:', error);
-        }
-      }
-    };
-    
-    initElevenLabs();
-    
-    return () => {
-      // Clean up conversation when component unmounts
-      if (conversationId) {
-        endElevenLabsConversation(conversationId);
-      }
-    };
-  }, [isUsingElevenLabs, conversationId]);
+    checkConnection();
+  }, [toast]);
 
   const handleSendMessage = async () => {
     if (message.trim() === "") return;
@@ -131,48 +60,27 @@ Keep your responses concise (100-150 words).`;
     setIsTyping(true);
     
     try {
-      if (isUsingElevenLabs && conversationId) {
-        // ElevenLabs handles the response automatically
-        // Just need to simulate the typing indicator
-        setTimeout(() => {
+      // Check if Ollama is connected
+      if (!isOllamaConnected) {
+        const connected = await checkOllamaConnection();
+        setIsOllamaConnected(connected);
+        
+        if (!connected) {
+          setChatMessages(prev => [...prev, { 
+            role: "assistant", 
+            content: "I'm having trouble connecting to my AI brain. Please make sure Ollama is running with the Mistral model. Run: 'ollama run mistral'" 
+          }]);
           setIsTyping(false);
-        }, 1500);
-      } else {
-        // Fallback to Ollama
-        await handleOllamaResponse();
+          return;
+        }
       }
-    } catch (error) {
-      console.error('Error getting AI response:', error);
-      setChatMessages(prev => [...prev, { 
-        role: "assistant", 
-        content: "I apologize, but I'm experiencing technical difficulties right now. Please try again in a moment." 
-      }]);
-      setIsTyping(false);
-    }
-  };
-  
-  const handleOllamaResponse = async () => {
-    // Check if Ollama is connected
-    if (!isOllamaConnected) {
-      const connected = await checkOllamaConnection();
-      setIsOllamaConnected(connected);
       
-      if (!connected) {
-        setChatMessages(prev => [...prev, { 
-          role: "assistant", 
-          content: "I'm having trouble connecting to my AI brain. Please make sure Ollama is running with the Mistral model. Run: 'ollama run mistral'" 
-        }]);
-        setIsTyping(false);
-        return;
-      }
-    }
-    
-    // Create context for the AI therapist
-    const conversationHistory = chatMessages.map(msg => 
-      `${msg.role === 'assistant' ? 'Dr. Emma' : 'Company Leader'}: ${msg.content}`
-    ).join('\n');
-    
-    const prompt = `You are Dr. Emma Thompson, an AI therapist specializing in workplace wellness and mental health support for company leaders and their teams. You communicate in a professional, empathetic tone.
+      // Create context for the AI therapist
+      const conversationHistory = chatMessages.map(msg => 
+        `${msg.role === 'assistant' ? 'Dr. Emma' : 'Company Leader'}: ${msg.content}`
+      ).join('\n');
+      
+      const prompt = `You are Dr. Emma Thompson, an AI therapist specializing in workplace wellness and mental health support for company leaders and their teams. You communicate in a professional, empathetic tone.
 
 Current conversation history:
 ${conversationHistory}
@@ -180,13 +88,22 @@ ${conversationHistory}
 Company Leader: ${message}
 
 Provide a helpful, empathetic response as Dr. Emma. Focus on workplace mental health, stress management, employee wellbeing, burnout prevention, and creating healthy work environments. Keep your response concise (100-150 words).`;
-    
-    // Get response from Ollama
-    const aiResponse = await askMistral(prompt);
-    
-    // Add AI response to chat
-    setChatMessages(prev => [...prev, { role: "assistant", content: aiResponse }]);
-    setIsTyping(false);
+      
+      // Get response from Ollama
+      const aiResponse = await askMistral(prompt);
+      
+      // Add AI response to chat
+      setChatMessages(prev => [...prev, { role: "assistant", content: aiResponse }]);
+      
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      setChatMessages(prev => [...prev, { 
+        role: "assistant", 
+        content: "I apologize, but I'm experiencing technical difficulties right now. Please try again in a moment." 
+      }]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -213,11 +130,6 @@ Provide a helpful, empathetic response as Dr. Emma. Focus on workplace mental he
             <p className="text-gray-300 mt-2">
               Confidential mental health support for your team's wellbeing
             </p>
-            {isUsingElevenLabs && (
-              <span className="inline-block mt-2 px-3 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">
-                ElevenLabs Voice AI Enabled
-              </span>
-            )}
           </div>
         </AnimatedSection>
 
@@ -283,17 +195,10 @@ Provide a helpful, empathetic response as Dr. Emma. Focus on workplace mental he
                     <AvatarFallback className="bg-red-900 text-red-200">ET</AvatarFallback>
                   </Avatar>
                   <div>
-                    <CardTitle className="text-white flex items-center">
-                      Dr. Emma Thompson
-                      {isUsingElevenLabs && (
-                        <span className="ml-2 px-2 py-0.5 bg-red-900/50 text-red-200 text-xs rounded-full">
-                          Voice AI
-                        </span>
-                      )}
-                    </CardTitle>
+                    <CardTitle className="text-white">Dr. Emma Thompson</CardTitle>
                     <CardDescription className="text-gray-300">
                       AI Therapist | Workplace Wellness Expert
-                      {!isUsingElevenLabs && !isOllamaConnected && <span className="ml-2 text-red-400">(Offline)</span>}
+                      {!isOllamaConnected && <span className="ml-2 text-red-400">(Offline)</span>}
                     </CardDescription>
                   </div>
                 </div>
@@ -335,25 +240,20 @@ Provide a helpful, empathetic response as Dr. Emma. Focus on workplace mental he
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    disabled={isTyping || (!isUsingElevenLabs && !isOllamaConnected)}
+                    disabled={isTyping || !isOllamaConnected}
                   />
                   <Button 
                     onClick={handleSendMessage} 
                     size="icon" 
                     className="bg-blue-600 hover:bg-blue-700 text-white"
-                    disabled={!message.trim() || isTyping || (!isUsingElevenLabs && !isOllamaConnected)}
+                    disabled={!message.trim() || isTyping || !isOllamaConnected}
                   >
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
-                {!isUsingElevenLabs && !isOllamaConnected && (
+                {!isOllamaConnected && (
                   <p className="text-red-400 text-xs mt-2">
-                    Cannot connect to speech system. Please ensure ElevenLabs is configured or Ollama is running.
-                  </p>
-                )}
-                {isUsingElevenLabs && (
-                  <p className="text-green-400 text-xs mt-2">
-                    Using ElevenLabs Voice AI for enhanced conversations
+                    Cannot connect to Ollama. Please make sure it's running with the Mistral model.
                   </p>
                 )}
               </CardFooter>

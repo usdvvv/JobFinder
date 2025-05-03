@@ -21,19 +21,11 @@ import {
   Video,
   Mic,
   MicOff,
-  VideoOff,
-  AlertCircle
+  VideoOff
 } from 'lucide-react';
 import NavBar from '@/components/NavBar';
 import AnimatedSection from '@/components/AnimatedSection';
 import WellnessUserOverview from "@/components/WellnessUserOverview";
-import { 
-  startElevenLabsConversation, 
-  endElevenLabsConversation, 
-  setElevenLabsVolume,
-  ELEVENLABS_AGENTS 
-} from '@/utils/elevenLabsApi';
-import { useToast } from "@/components/ui/use-toast";
 
 type Message = {
   id: string;
@@ -69,24 +61,7 @@ const AITherapist = () => {
     videoMuted: false
   });
   
-  const [isUsingElevenLabs, setIsUsingElevenLabs] = useState(false);
-  const [conversationId, setConversationId] = useState<string | null>(null);
-  const { toast } = useToast();
-  
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
-  // Check if ElevenLabs package is available
-  useEffect(() => {
-    try {
-      // This is just to check if the package exists
-      // If it doesn't, it will throw an error and we'll use the fallback
-      require('@11labs/react');
-      setIsUsingElevenLabs(true);
-    } catch (error) {
-      setIsUsingElevenLabs(false);
-      console.log('ElevenLabs not available, using fallback responses');
-    }
-  }, []);
   
   useEffect(() => {
     scrollToBottom();
@@ -96,7 +71,7 @@ const AITherapist = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleSend = async () => {
+  const handleSend = () => {
     if (!input.trim()) return;
 
     // Add user message
@@ -111,62 +86,6 @@ const AITherapist = () => {
     setInput('');
     setIsProcessing(true);
 
-    if (isUsingElevenLabs && !conversationId) {
-      // Start ElevenLabs conversation if not already started
-      await startTherapyConversation();
-    } else if (isUsingElevenLabs && conversationId) {
-      // ElevenLabs will handle the response automatically
-      // But we'll still need to show a processing state
-      setTimeout(() => {
-        setIsProcessing(false);
-      }, 1500);
-    } else {
-      // Use fallback response system
-      useFallbackResponse();
-    }
-  };
-  
-  const startTherapyConversation = async () => {
-    try {
-      // Start ElevenLabs conversation
-      const context = `You are Dr. Emma Thompson, an AI therapist specializing in career anxiety, 
-job search stress, and workplace mental health support. 
-You communicate in a professional, empathetic tone.
-Keep your responses concise (100-150 words).`;
-
-      const id = await startElevenLabsConversation({
-        agentId: ELEVENLABS_AGENTS.THERAPIST,
-        overrides: {
-          agent: {
-            prompt: {
-              prompt: context
-            },
-            language: "en"
-          },
-          tts: {
-            voiceId: "EXAVITQu4vr4xnSDxMaL" // Sarah voice
-          }
-        }
-      });
-      
-      setConversationId(id);
-      
-      if (id) {
-        toast({
-          title: "Therapy session started",
-          description: "You can now speak with the ElevenLabs AI therapist.",
-        });
-      } else {
-        // Fallback to traditional responses
-        useFallbackResponse();
-      }
-    } catch (error) {
-      console.error('Error starting ElevenLabs conversation:', error);
-      useFallbackResponse();
-    }
-  };
-  
-  const useFallbackResponse = () => {
     // Simulate AI thinking and responding
     setTimeout(() => {
       const randomResponse = therapistResponses[Math.floor(Math.random() * therapistResponses.length)];
@@ -190,37 +109,14 @@ Keep your responses concise (100-150 words).`;
     }
   };
 
-  const startVideoCall = async () => {
-    try {
-      // Request microphone and camera access
-      await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-      
-      // Start ElevenLabs conversation if available
-      if (isUsingElevenLabs && !conversationId) {
-        await startTherapyConversation();
-      }
-      
-      setVideoCall({
-        ...videoCall,
-        active: true
-      });
-    } catch (error) {
-      console.error('Error accessing media devices:', error);
-      toast({
-        variant: "destructive",
-        title: "Media Access Error",
-        description: "Please allow access to your camera and microphone.",
-      });
-    }
+  const startVideoCall = () => {
+    setVideoCall({
+      ...videoCall,
+      active: true
+    });
   };
 
-  const endVideoCall = async () => {
-    // End ElevenLabs conversation if active
-    if (conversationId) {
-      await endElevenLabsConversation(conversationId);
-      setConversationId(null);
-    }
-    
+  const endVideoCall = () => {
     setVideoCall({
       active: false,
       micMuted: false,
@@ -228,12 +124,7 @@ Keep your responses concise (100-150 words).`;
     });
   };
 
-  const toggleMic = async () => {
-    // Adjust ElevenLabs volume if using it
-    if (conversationId) {
-      await setElevenLabsVolume(conversationId, videoCall.micMuted ? 1.0 : 0.0);
-    }
-    
+  const toggleMic = () => {
     setVideoCall({
       ...videoCall,
       micMuted: !videoCall.micMuted
@@ -259,11 +150,6 @@ Keep your responses concise (100-150 words).`;
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
               Talk through your job search anxieties, career stress, and receive emotional support
             </p>
-            {isUsingElevenLabs && (
-              <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                ElevenLabs Voice AI Enabled
-              </span>
-            )}
           </AnimatedSection>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -282,12 +168,10 @@ Keep your responses concise (100-150 words).`;
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between text-sm">
                       <span>Response Quality</span>
-                      <span className="text-green-600 font-medium">
-                        {isUsingElevenLabs ? "Premium" : "Excellent"}
-                      </span>
+                      <span className="text-green-600 font-medium">Excellent</span>
                     </div>
                     <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                      <div className="h-full bg-green-500" style={{ width: isUsingElevenLabs ? '95%' : '90%' }}></div>
+                      <div className="h-full bg-green-500" style={{ width: '90%' }}></div>
                     </div>
                     
                     <div className="text-center space-y-2 pt-2">
@@ -391,11 +275,6 @@ Keep your responses concise (100-150 words).`;
                       <CardTitle className="text-lg flex items-center">
                         <Brain className="h-5 w-5 mr-2 text-primary" />
                         AI Career Therapist Chat
-                        {isUsingElevenLabs && (
-                          <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">
-                            ElevenLabs
-                          </span>
-                        )}
                       </CardTitle>
                       <CardDescription>
                         Share your thoughts and feelings about your job search and career journey
@@ -509,11 +388,6 @@ Keep your responses concise (100-150 words).`;
                       <CardTitle className="text-lg flex items-center">
                         <Video className="h-5 w-5 mr-2 text-primary" />
                         Video Therapy Session
-                        {isUsingElevenLabs && (
-                          <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">
-                            ElevenLabs Voice
-                          </span>
-                        )}
                       </CardTitle>
                       <CardDescription>
                         Have a face-to-face therapy session with our AI therapist
@@ -544,15 +418,6 @@ Keep your responses concise (100-150 words).`;
                                   <Brain className="h-12 w-12 text-primary" />
                                 </Avatar>
                                 <p className="text-white">AI Therapist</p>
-                                {isUsingElevenLabs ? (
-                                  <span className="inline-block mt-2 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                                    ElevenLabs Voice Connected
-                                  </span>
-                                ) : (
-                                  <span className="inline-block mt-2 px-2 py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full">
-                                    Standard Voice
-                                  </span>
-                                )}
                               </div>
                             </div>
                             
