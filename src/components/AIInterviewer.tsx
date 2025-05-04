@@ -7,8 +7,8 @@ import Interviewer3DAvatar from './Interviewer3DAvatar';
 import WellnessUserOverview from './WellnessUserOverview';
 import { useConversation } from '@11labs/react';
 
-// Define types for the conversation
-type Role = 'user' | 'assistant';
+// Import the correct Role type from the library
+import type { Role } from '@11labs/react';
 
 interface AIInterviewerProps {
   jobDescription?: string;
