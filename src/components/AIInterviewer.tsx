@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Play, MicIcon, StopCircle, Volume2, VolumeX } from 'lucide-react';
@@ -6,6 +5,20 @@ import { useToast } from "@/components/ui/use-toast";
 import Interviewer3DAvatar from './Interviewer3DAvatar';
 import WellnessUserOverview from './WellnessUserOverview';
 import { useConversation } from '@11labs/react';
+
+// Define types for the messages from Eleven Labs API
+interface ElevenLabsMessage {
+  type?: string;
+  item?: {
+    type?: string;
+    role?: string;
+    content?: Array<{
+      type: string;
+      text?: string;
+    }>;
+  };
+  delta?: string;
+}
 
 interface AIInterviewerProps {
   jobDescription?: string;
@@ -47,7 +60,7 @@ const AIInterviewer = ({
       setIsInterviewing(false);
       setIsSpeaking(false);
     },
-    onMessage: (message) => {
+    onMessage: (message: ElevenLabsMessage) => {
       console.log("Message from Eleven Labs:", message);
       
       // Handle different message types
