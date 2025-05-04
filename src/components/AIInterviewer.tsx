@@ -32,12 +32,18 @@ const AIInterviewer = ({
   const [isConnecting, setIsConnecting] = useState(false);
   const { toast } = useToast();
   const audioContextRef = useRef<AudioContext | null>(null);
+  const audioInitializedRef = useRef(false);
 
   // Initialize audio context on component mount
   useEffect(() => {
     // Create AudioContext only when needed to avoid autoplay restrictions
     if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      try {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        console.log("Audio context created:", audioContextRef.current.state);
+      } catch (error) {
+        console.error("Failed to create AudioContext:", error);
+      }
     }
     
     return () => {
@@ -47,6 +53,18 @@ const AIInterviewer = ({
       }
     };
   }, []);
+
+  // Ensure audio context is in running state when needed
+  useEffect(() => {
+    if (isInterviewing && audioContextRef.current && audioContextRef.current.state === 'suspended') {
+      audioContextRef.current.resume()
+        .then(() => {
+          console.log("AudioContext resumed successfully:", audioContextRef.current?.state);
+          audioInitializedRef.current = true;
+        })
+        .catch(error => console.error("Failed to resume AudioContext:", error));
+    }
+  }, [isInterviewing]);
 
   // Eleven Labs Conversation hook
   const conversationApi = useConversation({
@@ -63,7 +81,18 @@ const AIInterviewer = ({
       
       // Resume audio context if it was suspended (needed for Chrome's autoplay policy)
       if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
-        audioContextRef.current.resume().catch(console.error);
+        audioContextRef.current.resume()
+          .then(() => {
+            console.log("AudioContext resumed in onConnect:", audioContextRef.current?.state);
+            audioInitializedRef.current = true;
+            // Explicitly set the volume after connection
+            conversationApi.setVolume({ volume: isMuted ? 0 : 1 });
+          })
+          .catch(error => console.error("Failed to resume AudioContext in onConnect:", error));
+      } else if (audioContextRef.current) {
+        console.log("AudioContext already running in onConnect:", audioContextRef.current.state);
+        // Explicitly set the volume after connection
+        conversationApi.setVolume({ volume: isMuted ? 0 : 1 });
       }
     },
     onDisconnect: () => {
@@ -93,10 +122,12 @@ const AIInterviewer = ({
         // Handle when the AI is speaking
         else if (messageData.type === 'response.audio.delta') {
           setIsSpeaking(true);
+          console.log("AI is speaking...");
         } 
         // Handle when the AI stops speaking
         else if (messageData.type === 'response.audio.done') {
           setIsSpeaking(false);
+          console.log("AI stopped speaking");
         }
         // Handle transcript from user's audio
         else if (messageData.type === 'input_audio_transcript.delta') {
@@ -115,8 +146,7 @@ const AIInterviewer = ({
         }
       } catch (error) {
         // If parsing fails, handle the message as plain text
-        // Since Role is an enum or type from the library that doesn't match string literals directly,
-        // we need to check its actual value in a more compatible way
+        console.log("Failed to parse message as JSON, handling as plain text:", error);
         
         // Convert the Role to a string for safer comparison
         const sourceStr = String(props.source).toLowerCase();
@@ -158,8 +188,35 @@ Keep responses concise, professional, and encouraging.
 Evaluate the candidate's responses thoughtfully.`;
 
       // Resume audio context if it was suspended (needed for Chrome's autoplay policy)
-      if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
-        await audioContextRef.current.resume();
+      if (audioContextRef.current) {
+        if (audioContextRef.current.state === 'suspended') {
+          try {
+            await audioContextRef.current.resume();
+            console.log("AudioContext resumed in handleStartInterview:", audioContextRef.current.state);
+            audioInitializedRef.current = true;
+          } catch (error) {
+            console.error("Failed to resume AudioContext in handleStartInterview:", error);
+            // Try creating a new context as a fallback
+            try {
+              audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+              console.log("Created new AudioContext as fallback:", audioContextRef.current.state);
+              audioInitializedRef.current = true;
+            } catch (e) {
+              console.error("Failed to create new AudioContext:", e);
+            }
+          }
+        } else {
+          console.log("AudioContext already running in handleStartInterview:", audioContextRef.current.state);
+        }
+      } else {
+        // Create audio context if it doesn't exist yet
+        try {
+          audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+          console.log("Created AudioContext in handleStartInterview:", audioContextRef.current.state);
+          audioInitializedRef.current = true;
+        } catch (error) {
+          console.error("Failed to create AudioContext in handleStartInterview:", error);
+        }
       }
 
       // Start the conversation session with Eleven Labs
@@ -170,9 +227,19 @@ Evaluate the candidate's responses thoughtfully.`;
             prompt: {
               prompt: customPrompt
             }
+          },
+          // Explicitly set output audio parameters
+          tts: {
+            voiceId: "21m00Tcm4TlvDq8ikWAM" // Using a known working voice
           }
         }
       });
+      
+      // Set volume explicitly after starting the session
+      setTimeout(() => {
+        conversationApi.setVolume({ volume: isMuted ? 0 : 1 });
+        console.log("Volume set after session start:", isMuted ? 0 : 1);
+      }, 500);
       
       setIsInterviewing(true);
       
@@ -215,6 +282,7 @@ Evaluate the candidate's responses thoughtfully.`;
     
     // Set volume to 0 or 1 based on mute state
     conversationApi.setVolume({ volume: newMutedState ? 0 : 1 });
+    console.log("Volume toggled to:", newMutedState ? 0 : 1);
   };
 
   return (
