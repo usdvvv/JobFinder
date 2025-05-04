@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Play, MicIcon, StopCircle, Volume2, VolumeX } from 'lucide-react';
@@ -6,19 +7,8 @@ import Interviewer3DAvatar from './Interviewer3DAvatar';
 import WellnessUserOverview from './WellnessUserOverview';
 import { useConversation } from '@11labs/react';
 
-// Define types for the messages from Eleven Labs API
-interface ElevenLabsMessage {
-  type?: string;
-  item?: {
-    type?: string;
-    role?: string;
-    content?: Array<{
-      type: string;
-      text?: string;
-    }>;
-  };
-  delta?: string;
-}
+// Define types for the conversation
+type Role = 'user' | 'assistant';
 
 interface AIInterviewerProps {
   jobDescription?: string;
@@ -60,41 +50,54 @@ const AIInterviewer = ({
       setIsInterviewing(false);
       setIsSpeaking(false);
     },
-    onMessage: (message: ElevenLabsMessage) => {
-      console.log("Message from Eleven Labs:", message);
+    onMessage: (props: { message: string; source: Role }) => {
+      console.log("Message from Eleven Labs:", props);
       
-      // Handle different message types
-      if (message.type === 'conversation.item.created' && 
-          message.item?.type === 'message' && 
-          message.item?.role === 'assistant') {
+      // Parse the message to handle different message types
+      try {
+        // Try to parse the message as JSON
+        const messageData = JSON.parse(props.message);
         
-        // Extract message content
-        const content = message.item.content?.find(c => c.type === 'text')?.text || '';
-        if (content) {
-          setConversation(prev => [...prev, { role: 'ai', message: content }]);
+        // Handle different message types based on the structure
+        if (messageData.type === 'conversation.item.created' && 
+            messageData.item?.type === 'message' && 
+            messageData.item?.role === 'assistant') {
+          
+          // Extract message content
+          const content = messageData.item.content?.find((c: any) => c.type === 'text')?.text || '';
+          if (content) {
+            setConversation(prev => [...prev, { role: 'ai', message: content }]);
+          }
+        } 
+        // Handle when the AI is speaking
+        else if (messageData.type === 'response.audio.delta') {
+          setIsSpeaking(true);
+        } 
+        // Handle when the AI stops speaking
+        else if (messageData.type === 'response.audio.done') {
+          setIsSpeaking(false);
         }
-      } 
-      // Handle when the AI is speaking
-      else if (message.type === 'response.audio.delta') {
-        setIsSpeaking(true);
-      } 
-      // Handle when the AI stops speaking
-      else if (message.type === 'response.audio.done') {
-        setIsSpeaking(false);
-      }
-      // Handle transcript from user's audio
-      else if (message.type === 'input_audio_transcript.delta') {
-        setTranscript(message.delta || '');
-      }
-      // Handle when transcript is finalized
-      else if (message.type === 'conversation.item.created' && 
-               message.item?.type === 'message' && 
-               message.item?.role === 'user') {
-        
-        const content = message.item.content?.find(c => c.type === 'text')?.text || '';
-        if (content) {
-          setTranscript('');
-          setConversation(prev => [...prev, { role: 'user', message: content }]);
+        // Handle transcript from user's audio
+        else if (messageData.type === 'input_audio_transcript.delta') {
+          setTranscript(messageData.delta || '');
+        }
+        // Handle when transcript is finalized
+        else if (messageData.type === 'conversation.item.created' && 
+                messageData.item?.type === 'message' && 
+                messageData.item?.role === 'user') {
+          
+          const content = messageData.item.content?.find((c: any) => c.type === 'text')?.text || '';
+          if (content) {
+            setTranscript('');
+            setConversation(prev => [...prev, { role: 'user', message: content }]);
+          }
+        }
+      } catch (error) {
+        // If parsing fails, handle the message as plain text
+        if (props.source === 'assistant') {
+          setConversation(prev => [...prev, { role: 'ai', message: props.message }]);
+        } else if (props.source === 'user') {
+          setConversation(prev => [...prev, { role: 'user', message: props.message }]);
         }
       }
     },
