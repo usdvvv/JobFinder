@@ -103,6 +103,7 @@ const MockInterviews = () => {
   const [selectedIndustry, setSelectedIndustry] = useState('Tech');
   const [selectedDifficulty, setSelectedDifficulty] = useState('Mid-level');
   const [showInterview, setShowInterview] = useState(false);
+  const [elevenLabsAgentId] = useState('n1pNc0aPoEIZdxIEhzRo'); // Store the Eleven Labs agent ID
 
   return (
     <div className="space-y-6">
@@ -244,7 +245,7 @@ const MockInterviews = () => {
                 </Button>
               </CardTitle>
               <CardDescription>
-                Speak naturally with our AI interviewer and receive instant feedback
+                Speak naturally with our AI interviewer powered by Eleven Labs and receive instant feedback
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -252,6 +253,7 @@ const MockInterviews = () => {
                 jobDescription={jobDescription} 
                 industry={selectedIndustry}
                 difficulty={selectedDifficulty}
+                agentId={elevenLabsAgentId}
               />
             </CardContent>
           </Card>

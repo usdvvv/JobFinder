@@ -5,251 +5,152 @@ import { Play, MicIcon, StopCircle, Volume2, VolumeX } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import Interviewer3DAvatar from './Interviewer3DAvatar';
 import WellnessUserOverview from './WellnessUserOverview';
-import { askMistral, checkOllamaConnection } from '@/utils/ollamaApi';
-
-interface SpeechRecognitionEvent extends Event {
-  resultIndex: number;
-  results: {
-    [index: number]: {
-      [index: number]: {
-        transcript: string;
-        confidence: number;
-      };
-    };
-    length: number;
-  };
-}
-
-interface SpeechRecognition extends EventTarget {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  start(): void;
-  stop(): void;
-  abort(): void;
-  onresult: ((event: SpeechRecognitionEvent) => void) | null;
-  onend: ((event: Event) => void) | null;
-  onerror: ((event: Event) => void) | null;
-}
-
-declare global {
-  interface Window {
-    SpeechRecognition?: new () => SpeechRecognition;
-    webkitSpeechRecognition?: new () => SpeechRecognition;
-  }
-}
+import { useConversation } from '@11labs/react';
 
 interface AIInterviewerProps {
   jobDescription?: string;
   industry?: string;
   difficulty?: string;
+  agentId?: string;
 }
 
-const AIInterviewer = ({ jobDescription, industry = 'Tech', difficulty = 'Mid-level' }: AIInterviewerProps) => {
+const AIInterviewer = ({ 
+  jobDescription, 
+  industry = 'Tech', 
+  difficulty = 'Mid-level',
+  agentId = 'n1pNc0aPoEIZdxIEhzRo' // Default to the provided agent ID
+}: AIInterviewerProps) => {
   const [isInterviewing, setIsInterviewing] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [conversation, setConversation] = useState<{role: 'ai' | 'user', message: string}[]>([]);
   const [isMuted, setIsMuted] = useState(false);
-  const [isOllamaConnected, setIsOllamaConnected] = useState(false);
-  const { toast } = useToast();
   const [showWellnessData, setShowWellnessData] = useState(false);
-  
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const { toast } = useToast();
 
-  useEffect(() => {
-    audioRef.current = new Audio();
-    
-    // Check Ollama connection
-    const checkConnection = async () => {
-      const connected = await checkOllamaConnection();
-      setIsOllamaConnected(connected);
+  // Eleven Labs Conversation hook
+  const conversationApi = useConversation({
+    onConnect: () => {
+      console.log("Connected to Eleven Labs");
+      setIsConnecting(false);
       
-      if (!connected) {
-        toast({
-          variant: "destructive",
-          title: "Ollama Connection Failed",
-          description: "Please make sure Ollama is running locally with the Mistral model. Run: 'ollama run mistral'",
-        });
-      }
-    };
-    
-    checkConnection();
-    
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
-  }, [toast]);
-
-  useEffect(() => {
-    if (window.SpeechRecognition || window.webkitSpeechRecognition) {
-      const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognitionAPI();
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
+      // Add initial AI message to the conversation
+      const initialMessage = `Hello! I'm your AI interviewer for this ${difficulty} ${industry} position interview. ${
+        jobDescription ? "I've reviewed the job description you provided." : ""
+      } I'm here to ask you some relevant questions and help you practice. Let's get started!`;
       
-      recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
-        let transcriptText = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          transcriptText += event.results[i][0].transcript;
-        }
-        setTranscript(transcriptText);
-      };
-      
-      recognitionRef.current.onend = () => {
-        if (isInterviewing) {
-          recognitionRef.current?.start();
-        }
-      };
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Speech recognition not supported",
-        description: "Your browser doesn't support speech recognition. Please use Chrome.",
-      });
-    }
-    
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-    };
-  }, [toast]);
-
-  useEffect(() => {
-    if (isInterviewing && recognitionRef.current) {
-      recognitionRef.current.start();
-      setShowWellnessData(true);
-    } else if (recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
-  }, [isInterviewing]);
-
-  const speakText = (text: string) => {
-    if (isMuted || !text) return;
-    
-    setIsSpeaking(true);
-    
-    try {
-      window.speechSynthesis.cancel();
-      
-      const utterance = new SpeechSynthesisUtterance(text);
-      
-      const voices = window.speechSynthesis.getVoices();
-      
-      const preferredVoice = voices.find(voice => 
-        voice.name.includes('Male') || 
-        voice.name.includes('Daniel') || 
-        voice.name.includes('Google UK English Male')
-      );
-      
-      if (preferredVoice) {
-        utterance.voice = preferredVoice;
-      }
-      
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-      
-      utterance.onend = () => {
-        setIsSpeaking(false);
-      };
-      
-      utterance.onerror = () => {
-        setIsSpeaking(false);
-        toast({
-          variant: "destructive",
-          title: "Speech synthesis error",
-          description: "There was an error with text-to-speech.",
-        });
-      };
-      
-      window.speechSynthesis.speak(utterance);
-    } catch (error) {
-      console.error('TTS Error:', error);
+      setConversation([{ role: 'ai', message: initialMessage }]);
+    },
+    onDisconnect: () => {
+      console.log("Disconnected from Eleven Labs");
+      setIsInterviewing(false);
       setIsSpeaking(false);
+    },
+    onMessage: (message) => {
+      console.log("Message from Eleven Labs:", message);
+      
+      // Handle different message types
+      if (message.type === 'conversation.item.created' && 
+          message.item?.type === 'message' && 
+          message.item?.role === 'assistant') {
+        
+        // Extract message content
+        const content = message.item.content?.find(c => c.type === 'text')?.text || '';
+        if (content) {
+          setConversation(prev => [...prev, { role: 'ai', message: content }]);
+        }
+      } 
+      // Handle when the AI is speaking
+      else if (message.type === 'response.audio.delta') {
+        setIsSpeaking(true);
+      } 
+      // Handle when the AI stops speaking
+      else if (message.type === 'response.audio.done') {
+        setIsSpeaking(false);
+      }
+      // Handle transcript from user's audio
+      else if (message.type === 'input_audio_transcript.delta') {
+        setTranscript(message.delta || '');
+      }
+      // Handle when transcript is finalized
+      else if (message.type === 'conversation.item.created' && 
+               message.item?.type === 'message' && 
+               message.item?.role === 'user') {
+        
+        const content = message.item.content?.find(c => c.type === 'text')?.text || '';
+        if (content) {
+          setTranscript('');
+          setConversation(prev => [...prev, { role: 'user', message: content }]);
+        }
+      }
+    },
+    onError: (error) => {
+      console.error("Eleven Labs Error:", error);
       toast({
         variant: "destructive",
-        title: "Text-to-speech failed",
-        description: error instanceof Error ? error.message : "Unknown error occurred",
+        title: "Connection Error",
+        description: "There was an error connecting to the interview service.",
       });
+      setIsInterviewing(false);
+      setIsConnecting(false);
     }
-  };
+  });
 
   const handleStartInterview = async () => {
-    // Check Ollama connection before starting
     try {
-      const connected = await checkOllamaConnection();
-      setIsOllamaConnected(connected);
-      
-      if (!connected) {
-        toast({
-          variant: "destructive",
-          title: "Cannot connect to Ollama",
-          description: "Make sure Ollama is running locally. Run: 'ollama run mistral'",
-        });
-        return;
-      }
-      
       // Check for microphone access
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       
-      // If we got here, microphone access was granted
-      setIsInterviewing(true);
+      setIsConnecting(true);
       setShowWellnessData(true);
       
-      // Prepare prompt for Mistral
-      const context = `You are an AI interviewer for a ${industry} position. 
+      // Prepare custom prompt based on job description and industry
+      const customPrompt = `You are an AI interviewer for a ${industry} position. 
 This is a ${difficulty} interview. 
 ${jobDescription ? "The job description is: " + jobDescription : ""}
-Please provide a brief welcome message and ask the first interview question.
-Keep responses concise, professional, and encouraging.`;
+Ask relevant interview questions for this position.
+Keep responses concise, professional, and encouraging.
+Evaluate the candidate's responses thoughtfully.`;
+
+      // Start the conversation session with Eleven Labs
+      await conversationApi.startSession({ 
+        agentId,
+        overrides: {
+          agent: {
+            prompt: {
+              prompt: customPrompt
+            }
+          }
+        }
+      });
       
-      // Get response from Mistral
-      const aiResponse = await askMistral(context);
-      
-      setConversation([{ role: 'ai', message: aiResponse }]);
-      
-      speakText(aiResponse);
+      setIsInterviewing(true);
       
       toast({
         title: "Interview started",
         description: "You can now speak to the AI interviewer.",
       });
       
-      if (recognitionRef.current) {
-        recognitionRef.current.start();
-      }
-      
       // Clean up audio stream
       stream.getTracks().forEach(track => track.stop());
     } catch (error) {
       console.error('Error starting interview:', error);
+      setIsConnecting(false);
+      
       toast({
         variant: "destructive",
         title: "Failed to start interview",
-        description: "Please check your microphone access and Ollama connection.",
+        description: "Please check your microphone access and try again.",
       });
     }
   };
 
   const handleStopInterview = () => {
+    conversationApi.endSession();
     setIsInterviewing(false);
     setIsSpeaking(false);
     setShowWellnessData(false);
-    
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
-    
-    window.speechSynthesis.cancel();
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
     
     toast({
       title: "Interview ended",
@@ -257,45 +158,14 @@ Keep responses concise, professional, and encouraging.`;
     });
   };
 
-  useEffect(() => {
-    if (!isInterviewing || !transcript) return;
-    
-    const timer = setTimeout(async () => {
-      if (transcript.trim() && !isSpeaking) {
-        const userMessage = transcript;
-        setTranscript('');
-        
-        setConversation(prev => [...prev, { role: 'user', message: userMessage }]);
-        
-        const conversationHistory = conversation.map(entry => 
-          `${entry.role === 'ai' ? 'Interviewer' : 'Candidate'}: ${entry.message}`
-        ).join('\n');
-        
-        const prompt = `You are an AI interviewer for a ${industry} position conducting a ${difficulty} interview.
-        
-Previous conversation:
-${conversationHistory}
-
-Candidate: ${userMessage}
-
-Provide a brief, professional response and ask the next relevant interview question. Keep your response under 100 words.`;
-
-        const aiResponse = await askMistral(prompt);
-        
-        setConversation(prev => [...prev, { role: 'ai', message: aiResponse }]);
-        
-        speakText(aiResponse);
-      }
-    }, 1500);
-    
-    return () => clearTimeout(timer);
-  }, [transcript, isInterviewing, isSpeaking, conversation, industry, difficulty, jobDescription]);
-
   const toggleMute = () => {
-    setIsMuted(!isMuted);
-    if (isMuted) {
-      window.speechSynthesis.cancel();
-    }
+    if (!isInterviewing) return;
+    
+    const newMutedState = !isMuted;
+    setIsMuted(newMutedState);
+    
+    // Set volume to 0 or 1 based on mute state
+    conversationApi.setVolume({ volume: newMutedState ? 0 : 1 });
   };
 
   return (
@@ -348,10 +218,10 @@ Provide a brief, professional response and ask the next relevant interview quest
             onClick={handleStartInterview} 
             className="px-6 gap-2"
             size="lg"
-            disabled={!isOllamaConnected}
+            disabled={isConnecting}
           >
             <Play className="w-4 h-4" />
-            Start Interview
+            {isConnecting ? "Connecting..." : "Start Interview"}
           </Button>
         ) : (
           <Button 
@@ -365,12 +235,6 @@ Provide a brief, professional response and ask the next relevant interview quest
           </Button>
         )}
       </div>
-      
-      {!isOllamaConnected && (
-        <div className="flex items-center justify-center p-2 bg-red-950/30 border border-red-500/30 rounded-md text-sm text-red-400">
-          <p>Ollama connection failed. Make sure it's running with the Mistral model.</p>
-        </div>
-      )}
       
       {isInterviewing && (
         <div className="flex items-center justify-center gap-2 text-sm">
