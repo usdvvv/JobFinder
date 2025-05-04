@@ -31,6 +31,22 @@ const AIInterviewer = ({
   const [showWellnessData, setShowWellnessData] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const { toast } = useToast();
+  const audioContextRef = useRef<AudioContext | null>(null);
+
+  // Initialize audio context on component mount
+  useEffect(() => {
+    // Create AudioContext only when needed to avoid autoplay restrictions
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    
+    return () => {
+      // Cleanup audio context on unmount
+      if (audioContextRef.current) {
+        audioContextRef.current.close().catch(console.error);
+      }
+    };
+  }, []);
 
   // Eleven Labs Conversation hook
   const conversationApi = useConversation({
@@ -44,6 +60,11 @@ const AIInterviewer = ({
       } I'm here to ask you some relevant questions and help you practice. Let's get started!`;
       
       setConversation([{ role: 'ai', message: initialMessage }]);
+      
+      // Resume audio context if it was suspended (needed for Chrome's autoplay policy)
+      if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
+        audioContextRef.current.resume().catch(console.error);
+      }
     },
     onDisconnect: () => {
       console.log("Disconnected from Eleven Labs");
@@ -135,6 +156,11 @@ ${jobDescription ? "The job description is: " + jobDescription : ""}
 Ask relevant interview questions for this position.
 Keep responses concise, professional, and encouraging.
 Evaluate the candidate's responses thoughtfully.`;
+
+      // Resume audio context if it was suspended (needed for Chrome's autoplay policy)
+      if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
+        await audioContextRef.current.resume();
+      }
 
       // Start the conversation session with Eleven Labs
       await conversationApi.startSession({ 
