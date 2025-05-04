@@ -94,10 +94,22 @@ const AIInterviewer = ({
         }
       } catch (error) {
         // If parsing fails, handle the message as plain text
-        if (props.source === 'assistant' || String(props.source) === 'assistant') {
-          setConversation(prev => [...prev, { role: 'ai', message: props.message }]);
-        } else if (props.source === 'user' || String(props.source) === 'user') {
-          setConversation(prev => [...prev, { role: 'user', message: props.message }]);
+        // Use type comparison with appropriate Role values
+        // Here we need to check what values the Role type can actually have
+        if (typeof props.source === 'string') {
+          if (props.source === 'assistant') {
+            setConversation(prev => [...prev, { role: 'ai', message: props.message }]);
+          } else if (props.source === 'user') {
+            setConversation(prev => [...prev, { role: 'user', message: props.message }]);
+          }
+        } else {
+          // If it's not a string, convert to string for comparison
+          const sourceAsString = String(props.source);
+          if (sourceAsString === 'assistant') {
+            setConversation(prev => [...prev, { role: 'ai', message: props.message }]);
+          } else if (sourceAsString === 'user') {
+            setConversation(prev => [...prev, { role: 'user', message: props.message }]);
+          }
         }
       }
     },
