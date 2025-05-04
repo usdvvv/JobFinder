@@ -94,22 +94,17 @@ const AIInterviewer = ({
         }
       } catch (error) {
         // If parsing fails, handle the message as plain text
-        // Use type comparison with appropriate Role values
-        // Here we need to check what values the Role type can actually have
-        if (typeof props.source === 'string') {
-          if (props.source === 'assistant') {
-            setConversation(prev => [...prev, { role: 'ai', message: props.message }]);
-          } else if (props.source === 'user') {
-            setConversation(prev => [...prev, { role: 'user', message: props.message }]);
-          }
-        } else {
-          // If it's not a string, convert to string for comparison
-          const sourceAsString = String(props.source);
-          if (sourceAsString === 'assistant') {
-            setConversation(prev => [...prev, { role: 'ai', message: props.message }]);
-          } else if (sourceAsString === 'user') {
-            setConversation(prev => [...prev, { role: 'user', message: props.message }]);
-          }
+        // Since Role is an enum or type from the library that doesn't match string literals directly,
+        // we need to check its actual value in a more compatible way
+        
+        // Convert the Role to a string for safer comparison
+        const sourceStr = String(props.source).toLowerCase();
+        
+        // Now compare with lowercase string values
+        if (sourceStr.includes('assistant')) {
+          setConversation(prev => [...prev, { role: 'ai', message: props.message }]);
+        } else if (sourceStr.includes('user')) {
+          setConversation(prev => [...prev, { role: 'user', message: props.message }]);
         }
       }
     },
