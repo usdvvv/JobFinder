@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { MicIcon } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
@@ -28,6 +28,14 @@ const AIInterviewer = ({
   const { toast } = useToast();
 
   console.log("AIInterviewer initialized with agentId:", agentId);
+  
+  useEffect(() => {
+    // Check if localStorage is available (browser environment)
+    if (typeof window !== 'undefined') {
+      const apiKey = window.localStorage.getItem('elevenlabs_api_key');
+      console.log("ElevenLabs API key status:", apiKey ? "Set" : "Not set");
+    }
+  }, []);
 
   // Prepare custom prompt based on job description and industry
   const customPrompt = `You are an AI interviewer for a ${industry} position. 

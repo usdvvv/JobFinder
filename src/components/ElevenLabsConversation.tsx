@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useConversation } from '@11labs/react';
 import { Button } from "@/components/ui/button";
-import { Play, StopCircle, Volume2, VolumeX } from 'lucide-react';
+import { Play, StopCircle, Volume2, VolumeX, MicIcon } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import type { Role } from '@11labs/react';
 
@@ -26,6 +26,8 @@ const ElevenLabsConversation = ({
 }: ElevenLabsConversationProps) => {
   const [isMuted, setIsMuted] = useState(false);
   const [isActive, setIsActive] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
+  const [micPermission, setMicPermission] = useState<boolean | null>(null);
   const { toast } = useToast();
   
   console.log("ElevenLabsConversation initialized with agentId:", agentId);
@@ -35,9 +37,15 @@ const ElevenLabsConversation = ({
     onConnect: () => {
       console.log("Connected to Eleven Labs");
       setIsActive(true);
+      setIsStarting(false);
       if (onStatusChange) onStatusChange(true, false);
       
-      // Set volume after connection is established
+      toast({
+        title: "Connected",
+        description: "You can now speak with the AI interviewer.",
+      });
+      
+      // Set volume after connection is established - important!
       setTimeout(() => {
         conversation.setVolume({ volume: isMuted ? 0 : 1 });
         console.log("Initial volume set:", isMuted ? 0 : 1);
@@ -46,7 +54,15 @@ const ElevenLabsConversation = ({
     onDisconnect: () => {
       console.log("Disconnected from Eleven Labs");
       setIsActive(false);
+      setIsStarting(false);
       if (onStatusChange) onStatusChange(false, false);
+      
+      if (isActive) {
+        toast({
+          title: "Disconnected",
+          description: "The interview has ended.",
+        });
+      }
     },
     onMessage: (props: { message: string; source: Role }) => {
       console.log("Message from Eleven Labs:", props);
@@ -107,14 +123,45 @@ const ElevenLabsConversation = ({
         description: "There was an error connecting to the interview service.",
       });
       setIsActive(false);
+      setIsStarting(false);
       if (onStatusChange) onStatusChange(false, false);
     }
   });
+
+  // Check for microphone permission when component mounts
+  useEffect(() => {
+    async function checkMicPermission() {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const hasMicrophone = devices.some(device => device.kind === 'audioinput');
+        
+        if (hasMicrophone) {
+          try {
+            await navigator.mediaDevices.getUserMedia({ audio: true });
+            setMicPermission(true);
+            console.log("Microphone permission granted");
+          } catch (error) {
+            setMicPermission(false);
+            console.error("Microphone permission denied:", error);
+          }
+        } else {
+          setMicPermission(false);
+          console.error("No microphone found");
+        }
+      } catch (error) {
+        console.error("Error checking microphone:", error);
+        setMicPermission(false);
+      }
+    }
+    
+    checkMicPermission();
+  }, []);
 
   // Clean up on unmount
   useEffect(() => {
     return () => {
       if (isActive) {
+        console.log("Component unmounting, ending conversation");
         conversation.endSession().catch(console.error);
       }
     };
@@ -123,8 +170,10 @@ const ElevenLabsConversation = ({
   // Start the conversation
   const startConversation = useCallback(async () => {
     try {
+      setIsStarting(true);
       // Request microphone permission first
       await navigator.mediaDevices.getUserMedia({ audio: true });
+      setMicPermission(true);
       
       console.log("Starting conversation with agent ID:", agentId);
       console.log("Initial prompt:", initialPrompt);
@@ -145,23 +194,32 @@ const ElevenLabsConversation = ({
         } : undefined
       });
       
-      toast({
-        title: "Connected",
-        description: "You can now speak with the AI.",
-      });
+      console.log("Conversation started successfully");
     } catch (error) {
       console.error("Failed to start conversation:", error);
-      toast({
-        variant: "destructive",
-        title: "Connection Failed",
-        description: "Please check your microphone and try again.",
-      });
+      setIsStarting(false);
+      
+      // Show appropriate error message based on error type
+      if ((error as Error).name === 'NotAllowedError') {
+        toast({
+          variant: "destructive",
+          title: "Microphone Access Denied",
+          description: "Please allow microphone access to use the interview feature.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Connection Failed",
+          description: "Please check your microphone and try again.",
+        });
+      }
     }
   }, [conversation, agentId, initialPrompt, toast]);
 
   // Stop the conversation
   const stopConversation = useCallback(async () => {
     try {
+      console.log("Stopping conversation");
       await conversation.endSession();
       toast({
         title: "Disconnected",
@@ -190,9 +248,19 @@ const ElevenLabsConversation = ({
           <Button 
             onClick={startConversation} 
             className="px-4 gap-2"
+            disabled={isStarting || micPermission === false}
           >
-            <Play className="w-4 h-4" />
-            Start Conversation
+            {isStarting ? (
+              <>
+                <span className="animate-spin mr-1">⏳</span>
+                Connecting...
+              </>
+            ) : (
+              <>
+                <Play className="w-4 h-4" />
+                Start Conversation
+              </>
+            )}
           </Button>
         ) : (
           <Button 
@@ -218,6 +286,12 @@ const ElevenLabsConversation = ({
       </div>
       
       <div className="text-sm text-muted-foreground">
+        {micPermission === false && (
+          <div className="text-destructive flex items-center gap-1 mb-2">
+            <MicIcon className="w-3 h-3" />
+            <span>Microphone access required</span>
+          </div>
+        )}
         {isActive ? "Connection active" : "Not connected"}
       </div>
     </div>
