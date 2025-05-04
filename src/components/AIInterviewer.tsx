@@ -27,6 +27,8 @@ const AIInterviewer = ({
   const [showWellnessData, setShowWellnessData] = useState(false);
   const { toast } = useToast();
 
+  console.log("AIInterviewer initialized with agentId:", agentId);
+
   // Prepare custom prompt based on job description and industry
   const customPrompt = `You are an AI interviewer for a ${industry} position. 
 This is a ${difficulty} interview. 
@@ -37,6 +39,7 @@ Evaluate the candidate's responses thoughtfully.`;
 
   // Handle messages from ElevenLabsConversation
   const handleMessage = (role: 'ai' | 'user', message: string) => {
+    console.log(`Received ${role} message:`, message);
     if (role === 'user') {
       // Clear the transcript when we receive final user message
       setTranscript('');
@@ -49,6 +52,7 @@ Evaluate the candidate's responses thoughtfully.`;
 
   // Handle conversation status changes
   const handleStatusChange = (isActive: boolean, isTalking: boolean) => {
+    console.log(`Conversation status: active=${isActive}, talking=${isTalking}`);
     setIsInterviewing(isActive);
     setIsSpeaking(isTalking);
     

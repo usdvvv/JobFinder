@@ -6,6 +6,11 @@ import { Play, StopCircle, Volume2, VolumeX } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import type { Role } from '@11labs/react';
 
+// Set the Eleven Labs API key globally
+if (typeof window !== 'undefined') {
+  window.localStorage.setItem('elevenlabs_api_key', 'sk_26512dca0f90c9ed2b98f24f1424dab7fef26b8a56fdd969');
+}
+
 interface ElevenLabsConversationProps {
   agentId: string;
   initialPrompt?: string;
@@ -22,6 +27,8 @@ const ElevenLabsConversation = ({
   const [isMuted, setIsMuted] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const { toast } = useToast();
+  
+  console.log("ElevenLabsConversation initialized with agentId:", agentId);
 
   // Initialize the conversation with Eleven Labs
   const conversation = useConversation({
