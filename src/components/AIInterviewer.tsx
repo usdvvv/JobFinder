@@ -94,9 +94,9 @@ const AIInterviewer = ({
         }
       } catch (error) {
         // If parsing fails, handle the message as plain text
-        if (props.source === 'assistant') {
+        if (props.source === 'assistant' || String(props.source) === 'assistant') {
           setConversation(prev => [...prev, { role: 'ai', message: props.message }]);
-        } else if (props.source === 'user') {
+        } else if (props.source === 'user' || String(props.source) === 'user') {
           setConversation(prev => [...prev, { role: 'user', message: props.message }]);
         }
       }
