@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +11,112 @@ import CodingLeaderboard from '@/components/CodingLeaderboard';
 import CodingChallenge from '@/components/CodingChallenge';
 import { Textarea } from "@/components/ui/textarea";
 import AIInterviewer from '@/components/AIInterviewer';
+import PracticeQuestion from '@/components/PracticeQuestion';
+
+// Practice questions data
+const practiceQuestions = [
+  {
+    id: 1,
+    question: "Tell me about yourself.",
+    description: "The most common opening question in interviews. How would you introduce yourself professionally?",
+    suggestedAnswer: "I'm a [your role] with [X years] of experience specializing in [key skills]. I've worked at [notable companies] where I [key accomplishments]. I'm particularly skilled at [relevant strengths] and am passionate about [industry/technology/approach]. I'm looking for opportunities to [your goals] which is why I'm excited about this position.",
+    tips: [
+      "Keep your answer concise (60-90 seconds)",
+      "Focus on professional background, not personal details",
+      "Highlight achievements relevant to the job you're applying for",
+      "End with why you're interested in this specific role"
+    ],
+    category: "general"
+  },
+  {
+    id: 2,
+    question: "What are your greatest strengths?",
+    description: "Focus on qualities relevant to the job and provide specific examples.",
+    suggestedAnswer: "My greatest strengths include [strength 1], [strength 2], and [strength 3]. For example, my [strength 1] helped me [specific accomplishment with metrics if possible]. Similarly, my [strength 2] was instrumental when I [another specific example]. I believe these strengths make me particularly well-suited for this role because [connect to job requirements].",
+    tips: [
+      "Choose strengths that align with the job description",
+      "Provide concrete examples for each strength",
+      "Include both technical and soft skills when relevant",
+      "Be honest but strategic - focus on strengths relevant to the position"
+    ],
+    category: "general"
+  },
+  {
+    id: 3,
+    question: "Why should we hire you?",
+    description: "Highlight your unique value proposition and how you can solve the company's problems.",
+    suggestedAnswer: "Based on the job description, you need someone who can [key requirement 1], [key requirement 2], and [key requirement 3]. My experience at [previous company] demonstrates my ability to excel in these areas. For example, I [specific accomplishment relevant to their needs]. Additionally, my [unique skill or perspective] would bring fresh insights to your team. I'm confident I can help your company [achieve specific goal] while also [additional benefit you'd provide].",
+    tips: [
+      "Research the company thoroughly before answering",
+      "Address specific requirements from the job description",
+      "Differentiate yourself from other candidates",
+      "Focus on the value you'll bring, not just what you want from them"
+    ],
+    category: "general"
+  },
+  {
+    id: 4,
+    question: "Where do you see yourself in 5 Years?",
+    description: "Show ambition while aligning your goals with the company's growth trajectory.",
+    suggestedAnswer: "In five years, I hope to have grown into a [target role] where I can leverage my [relevant skills] to [contribution to company]. I'm excited about developing expertise in [relevant area] and potentially leading projects or teams focused on [specific area aligned with company goals]. I'm drawn to your company specifically because [company attribute] aligns with my long-term goals of [professional aspiration].",
+    tips: [
+      "Show ambition without implying you'll quickly leave this role",
+      "Research the typical career path for this position",
+      "Connect your goals with the company's mission and growth",
+      "Focus on skill development and increasing responsibilities"
+    ],
+    category: "general"
+  }
+];
+
+// Industry-specific questions
+const industryQuestions = {
+  "Software Engineering": [
+    {
+      id: 101,
+      question: "Explain the concept of object-oriented programming.",
+      description: "Demonstrate your understanding of fundamental programming concepts.",
+      suggestedAnswer: "Object-oriented programming is a programming paradigm based on the concept of 'objects,' which can contain data and code. The data is in the form of attributes or properties, and the code is in the form of methods. Key principles include encapsulation (bundling data and methods), inheritance (creating new classes from existing ones), polymorphism (allowing objects to take different forms), and abstraction (hiding complex implementation details). For example, in a real-world application I worked on, we used inheritance to [specific example].",
+      tips: [
+        "Cover the four main principles: encapsulation, inheritance, polymorphism, and abstraction",
+        "Provide a real-world example of how you've applied OOP concepts",
+        "Compare OOP with other paradigms if relevant",
+        "Discuss advantages and potential disadvantages of OOP"
+      ],
+      category: "Software Engineering" 
+    }
+  ],
+  "Data Science": [
+    {
+      id: 201,
+      question: "How would you handle missing data in a dataset?",
+      description: "Demonstrate your approach to data cleaning and preprocessing.",
+      suggestedAnswer: "When handling missing data, I first analyze the pattern and extent of missingness to understand if it's missing completely at random (MCAR), missing at random (MAR), or missing not at random (MNAR). For small amounts of random missing data, I might use deletion methods like listwise or pairwise deletion. For larger amounts, I'd consider imputation techniques such as mean/median/mode imputation for simple cases, or more sophisticated approaches like KNN imputation, regression imputation, or multiple imputation for complex datasets. In time series data, I'd use methods like forward fill or interpolation. I always validate my approach by comparing the distribution of the data before and after handling missing values to ensure I haven't introduced bias.",
+      tips: [
+        "Show a systematic approach to analyzing missing data",
+        "Mention multiple techniques and when each is appropriate",
+        "Emphasize the importance of understanding why data is missing",
+        "Discuss how you validate your chosen method"
+      ],
+      category: "Data Science" 
+    }
+  ],
+  "Product Management": [
+    {
+      id: 301,
+      question: "How do you prioritize features for a product roadmap?",
+      description: "Discuss your product prioritization frameworks and decision-making process.",
+      suggestedAnswer: "I approach feature prioritization systematically using frameworks like RICE (Reach, Impact, Confidence, Effort) or the MoSCoW method (Must-haves, Should-haves, Could-haves, Won't-haves). First, I gather inputs from multiple sources: customer feedback, usage analytics, business objectives, and technical considerations. Then I evaluate each feature across dimensions like business value, user value, implementation effort, and risk. For example, at [previous company], we used a weighted scoring system where we assigned points to features based on these criteria, heavily weighting customer pain points and revenue potential. I also believe in continuous reassessment of priorities as market conditions and user needs evolve.",
+      tips: [
+        "Name specific prioritization frameworks you've used",
+        "Emphasize data-driven decision making",
+        "Include stakeholder management in your answer",
+        "Provide a specific example from your experience"
+      ],
+      category: "Product Management" 
+    }
+  ]
+};
 
 const InterviewPrep = () => {
   const [showCodingChallenge, setShowCodingChallenge] = useState(false);
@@ -264,131 +371,140 @@ const MockInterviews = () => {
 };
 
 const PracticeQuestions = () => {
+  const [activeQuestion, setActiveQuestion] = useState(practiceQuestions[0]);
+  const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState('general');
+  const [showingQuestion, setShowingQuestion] = useState(false);
+  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+  
+  // Get questions based on selected category
+  const getQuestions = () => {
+    if (selectedCategory === 'industry' && selectedIndustry) {
+      return industryQuestions[selectedIndustry as keyof typeof industryQuestions] || [];
+    }
+    return practiceQuestions;
+  };
+  
+  const currentQuestions = getQuestions();
+  
+  const handleNextQuestion = () => {
+    if (activeQuestionIndex < currentQuestions.length - 1) {
+      setActiveQuestionIndex(prev => prev + 1);
+      setActiveQuestion(currentQuestions[activeQuestionIndex + 1]);
+    }
+  };
+  
+  const handlePrevQuestion = () => {
+    if (activeQuestionIndex > 0) {
+      setActiveQuestionIndex(prev => prev - 1);
+      setActiveQuestion(currentQuestions[activeQuestionIndex - 1]);
+    }
+  };
+  
+  const handleSelectQuestion = (question: any) => {
+    setActiveQuestion(question);
+    setActiveQuestionIndex(currentQuestions.findIndex(q => q.id === question.id));
+    setShowingQuestion(true);
+  };
+
+  const handleSelectIndustry = (industry: string) => {
+    setSelectedIndustry(industry);
+    setSelectedCategory('industry');
+    
+    // Reset to first question in this industry
+    const industryQs = industryQuestions[industry as keyof typeof industryQuestions] || [];
+    if (industryQs.length > 0) {
+      setActiveQuestion(industryQs[0]);
+      setActiveQuestionIndex(0);
+      setShowingQuestion(true);
+    } else {
+      setShowingQuestion(false);
+    }
+  };
+  
+  const handleBackToList = () => {
+    setShowingQuestion(false);
+  };
+
   return (
     <AnimatedSection animation="fade-in">
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Common Interview Questions</CardTitle>
-            <CardDescription>
-              Practice answering questions frequently asked in interviews for your field
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-4 rounded-md border border-border hover:border-primary/50 hover:shadow-sm transition-all cursor-pointer">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-medium">Tell me about yourself.</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    The most common opening question in interviews. How would you introduce yourself professionally?
-                  </p>
-                </div>
-                <Button variant="ghost" size="icon">
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
+        {showingQuestion ? (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-medium">{selectedCategory === 'industry' ? selectedIndustry : 'Common'} Interview Questions</h2>
+              <Button variant="outline" onClick={handleBackToList}>
+                Back to Questions
+              </Button>
             </div>
+            <PracticeQuestion
+              question={activeQuestion.question}
+              description={activeQuestion.description}
+              suggestedAnswer={activeQuestion.suggestedAnswer}
+              tips={activeQuestion.tips}
+              onNext={handleNextQuestion}
+              onPrevious={handlePrevQuestion}
+              hasNext={activeQuestionIndex < currentQuestions.length - 1}
+              hasPrevious={activeQuestionIndex > 0}
+            />
+          </div>
+        ) : (
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle>Common Interview Questions</CardTitle>
+                <CardDescription>
+                  Practice answering questions frequently asked in interviews for your field
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {practiceQuestions.map((question) => (
+                  <div 
+                    key={question.id}
+                    className="p-4 rounded-md border border-border hover:border-primary/50 hover:shadow-sm transition-all cursor-pointer"
+                    onClick={() => handleSelectQuestion(question)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-medium">{question.question}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {question.description}
+                        </p>
+                      </div>
+                      <Button variant="ghost" size="icon" onClick={() => handleSelectQuestion(question)}>
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
             
-            <div className="p-4 rounded-md border border-border hover:border-primary/50 hover:shadow-sm transition-all cursor-pointer">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-medium">What are your greatest strengths?</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Focus on qualities relevant to the job and provide specific examples.
-                  </p>
+            <Card>
+              <CardHeader>
+                <CardTitle>Industry-Specific Questions</CardTitle>
+                <CardDescription>
+                  Practice with questions tailored to your specific field and role
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {Object.keys(industryQuestions).map((industry) => (
+                    <Button 
+                      key={industry}
+                      variant="outline" 
+                      className="h-auto py-6 flex flex-col space-y-2"
+                      onClick={() => handleSelectIndustry(industry)}
+                    >
+                      <FileText className="h-8 w-8 mb-1" />
+                      <span>{industry}</span>
+                    </Button>
+                  ))}
                 </div>
-                <Button variant="ghost" size="icon">
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            
-            <div className="p-4 rounded-md border border-border hover:border-primary/50 hover:shadow-sm transition-all cursor-pointer">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-medium">Why should we hire you?</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Highlight your unique value proposition and how you can solve the company's problems.
-                  </p>
-                </div>
-                <Button variant="ghost" size="icon">
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            
-            <div className="p-4 rounded-md border border-border hover:border-primary/50 hover:shadow-sm transition-all cursor-pointer">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-medium">Where do you see yourself in 5 Years?</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Show ambition while aligning your goals with the company's growth trajectory.
-                  </p>
-                </div>
-                <Button variant="ghost" size="icon">
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button className="w-full">
-              View All Practice Questions
-            </Button>
-          </CardFooter>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Industry-Specific Questions</CardTitle>
-            <CardDescription>
-              Practice with questions tailored to your specific field and role
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              <Button variant="outline" className="h-auto py-6 flex flex-col space-y-2">
-                <FileText className="h-8 w-8 mb-1" />
-                <span>Software Engineering</span>
-              </Button>
-              
-              <Button variant="outline" className="h-auto py-6 flex flex-col space-y-2">
-                <FileText className="h-8 w-8 mb-1" />
-                <span>Data Science</span>
-              </Button>
-              
-              <Button variant="outline" className="h-auto py-6 flex flex-col space-y-2">
-                <FileText className="h-8 w-8 mb-1" />
-                <span>Product Management</span>
-              </Button>
-              
-              <Button variant="outline" className="h-auto py-6 flex flex-col space-y-2">
-                <FileText className="h-8 w-8 mb-1" />
-                <span>Marketing</span>
-              </Button>
-              
-              <Button variant="outline" className="h-auto py-6 flex flex-col space-y-2">
-                <FileText className="h-8 w-8 mb-1" />
-                <span>Sales</span>
-              </Button>
-              
-              <Button variant="outline" className="h-auto py-6 flex flex-col space-y-2">
-                <FileText className="h-8 w-8 mb-1" />
-                <span>Design</span>
-              </Button>
-              
-              <Button variant="outline" className="h-auto py-6 flex flex-col space-y-2">
-                <FileText className="h-8 w-8 mb-1" />
-                <span>Finance</span>
-              </Button>
-              
-              <Button variant="outline" className="h-auto py-6 flex flex-col space-y-2">
-                <FileText className="h-8 w-8 mb-1" />
-                <span>Healthcare</span>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </>
+        )}
       </div>
     </AnimatedSection>
   );
