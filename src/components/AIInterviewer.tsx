@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import Interviewer3DAvatar from './Interviewer3DAvatar';
-import { HeartPulse, Thermometer, Bed, Clock } from 'lucide-react';
-import { Card, CardContent } from "@/components/ui/card";
+import { HeartPulse, Thermometer, Bed, Clock, RectangleHorizontal } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface AIInterviewerProps {
   jobDescription?: string;
@@ -19,19 +19,12 @@ const AIInterviewer = ({
 }: AIInterviewerProps) => {
   const [isInterviewing, setIsInterviewing] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [conversation, setConversation] = useState<{role: 'ai' | 'user', message: string}[]>([]);
   const [showWellnessData, setShowWellnessData] = useState(true);
   const { toast } = useToast();
 
   const startInterview = () => {
     setIsInterviewing(true);
     setShowWellnessData(true);
-    
-    // Add initial AI message
-    setConversation([{
-      role: 'ai',
-      message: `Welcome to your ${difficulty} ${industry} interview. I'll be asking you some questions related to this field. Let's begin when you're ready.`
-    }]);
     
     toast({
       title: "Interview Started",
@@ -56,6 +49,16 @@ const AIInterviewer = ({
     sleepHours: 4,
     mood: 'Stressed'
   };
+
+  const interviewTips = [
+    "Research the company thoroughly before the interview",
+    "Prepare answers for common questions in the industry",
+    "Use the STAR method (Situation, Task, Action, Result) for behavioral questions",
+    "Maintain good eye contact and positive body language",
+    "Have questions prepared to ask the interviewer",
+    "Practice technical questions relevant to the role",
+    "Follow up with a thank you email after the interview"
+  ];
 
   return (
     <div className="relative w-full space-y-6">
@@ -101,23 +104,20 @@ const AIInterviewer = ({
         </Card>
       )}
       
-      <div className="rounded-lg border p-4 space-y-4 h-60 overflow-y-auto">
-        {conversation.map((entry, index) => (
-          <div 
-            key={index} 
-            className={`p-3 rounded-lg ${entry.role === 'ai' 
-              ? 'bg-primary/10 border border-primary/20' 
-              : 'bg-muted ml-8'}`}
-          >
-            <p className="text-sm">{entry.message}</p>
-          </div>
-        ))}
-        {conversation.length === 0 && (
-          <div className="h-full flex items-center justify-center text-muted-foreground">
-            <p>Your interview transcript will appear here</p>
-          </div>
-        )}
-      </div>
+      <Card className="border rounded-lg shadow">
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-lg font-medium">
+            <RectangleHorizontal className="h-5 w-5 text-primary" /> Interview Tips
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="list-disc pl-5 space-y-1.5">
+            {interviewTips.map((tip, index) => (
+              <li key={index} className="text-sm text-muted-foreground">{tip}</li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
       
       <div className="flex justify-center">
         {!isInterviewing ? (
