@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import Interviewer3DAvatar from './Interviewer3DAvatar';
@@ -21,6 +20,46 @@ const AIInterviewer = ({
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [showWellnessData, setShowWellnessData] = useState(true);
   const { toast } = useToast();
+  
+  // Dynamic wellness data state
+  const [heartRate, setHeartRate] = useState(120);
+  const [stressLevel, setStressLevel] = useState('High');
+  const [sleepHours, setSleepHours] = useState(4);
+  const [mood, setMood] = useState('Stressed');
+
+  // Effect to simulate changing heart rate
+  useEffect(() => {
+    if (!isInterviewing) return;
+
+    const interval = setInterval(() => {
+      // Random fluctuation between -3 and +3
+      const fluctuation = Math.floor(Math.random() * 7) - 3;
+      setHeartRate(prevRate => {
+        const newRate = prevRate + fluctuation;
+        // Keep heart rate between 115-125
+        return newRate < 115 ? 115 : newRate > 125 ? 125 : newRate;
+      });
+
+      // Occasionally update stress level
+      if (Math.random() > 0.85) {
+        const stressOptions = ['High', 'Very High', 'Moderate-High'];
+        setStressLevel(stressOptions[Math.floor(Math.random() * stressOptions.length)]);
+      }
+
+      // Occasionally update mood
+      if (Math.random() > 0.9) {
+        const moodOptions = ['Stressed', 'Anxious', 'Nervous'];
+        setMood(moodOptions[Math.floor(Math.random() * moodOptions.length)]);
+      }
+
+      // Very rarely fluctuate sleep hours
+      if (Math.random() > 0.95) {
+        setSleepHours(prev => Math.random() > 0.5 ? 3.5 : 4);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [isInterviewing]);
 
   const startInterview = () => {
     setIsInterviewing(true);
@@ -41,14 +80,6 @@ const AIInterviewer = ({
       description: "Your interview session has been completed.",
     });
   };
-  
-  // Fixed wellness data as requested
-  const wellnessData = {
-    heartRate: 120,
-    stressLevel: 'High',
-    sleepHours: 4,
-    mood: 'Stressed'
-  };
 
   const interviewTips = [
     "Research the company thoroughly before the interview",
@@ -66,7 +97,7 @@ const AIInterviewer = ({
         <Interviewer3DAvatar 
           speaking={isSpeaking} 
           size={320} 
-          showWellnessData={showWellnessData} 
+          showWellnessData={false} 
         />
       </div>
       
@@ -77,26 +108,26 @@ const AIInterviewer = ({
               <div>
                 <div className="text-xs text-gray-300">Heart Rate</div>
                 <div className="font-bold text-2xl text-white flex items-center gap-2">
-                  {wellnessData.heartRate} <HeartPulse className="h-4 w-4 text-red-400 animate-pulse" />
+                  {heartRate} <HeartPulse className="h-4 w-4 text-red-400 animate-pulse" />
                 </div>
               </div>
               <div>
                 <div className="text-xs text-gray-300">Stress Level</div>
                 <div className="font-medium text-white flex items-center gap-2">
                   <Thermometer className="h-4 w-4 text-red-500" />
-                  {wellnessData.stressLevel}
+                  {stressLevel}
                 </div>
               </div>
               <div>
                 <div className="text-xs text-gray-300">Average Sleep</div>
                 <div className="text-white font-semibold flex items-center gap-1">
-                  {wellnessData.sleepHours} hrs <Bed className="h-4 w-4 text-blue-400" />
+                  {sleepHours} hrs <Bed className="h-4 w-4 text-blue-400" />
                 </div>
               </div>
               <div>
                 <div className="text-xs text-gray-300">Current Mood</div>
                 <div className="text-white font-semibold flex items-center gap-1">
-                  {wellnessData.mood} <Clock className="h-4 w-4 text-yellow-400" />
+                  {mood} <Clock className="h-4 w-4 text-yellow-400" />
                 </div>
               </div>
             </div>
