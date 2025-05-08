@@ -2,56 +2,9 @@
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { Video, Mic, MicOff, Clock, HeartPulse, CameraOff } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import React from 'react';
 import * as THREE from 'three';
-
-function Model({ speaking }: { speaking: boolean }) {
-  const { scene } = useGLTF('/white_mesh.glb');
-  const [hovered, setHovered] = useState(false);
-  const modelRef = useRef<THREE.Object3D>(null);
-  
-  useEffect(() => {
-    if (scene) {
-      scene.traverse((child: any) => {
-        if (child.isMesh) {
-          child.material.color.set(speaking ? '#60a5fa' : '#3b82f6');
-          child.material.emissive.set(hovered ? '#1d4ed8' : '#000000');
-          child.material.emissiveIntensity = hovered ? 0.5 : 0;
-          child.material.metalness = 0.5;
-          child.material.roughness = 0.5;
-        }
-      });
-    }
-  }, [speaking, hovered, scene]);
-
-  useEffect(() => {
-    let animationFrame: number;
-    const animate = () => {
-      if (modelRef.current && speaking) {
-        const time = Date.now() * 0.005;
-        const scale = 1 + Math.sin(time) * 0.05;
-        modelRef.current.scale.set(2 * scale, 2, 2);
-      }
-      animationFrame = requestAnimationFrame(animate);
-    };
-    
-    animate();
-    return () => cancelAnimationFrame(animationFrame);
-  }, [speaking]);
-
-  return (
-    <primitive 
-      ref={modelRef}
-      object={scene} 
-      scale={2}
-      position={[0, -2, 0]} 
-      rotation={[0, speaking ? Math.sin(Date.now() * 0.001) * 0.1 : 0, 0]}
-      onPointerOver={() => setHovered(true)}
-      onPointerOut={() => setHovered(false)}
-    />
-  );
-}
 
 function ModelFallback() {
   return (
@@ -62,10 +15,54 @@ function ModelFallback() {
   );
 }
 
-interface Interviewer3DAvatarProps {
-  speaking?: boolean;
-  size?: number;
-  showWellnessData?: boolean;
+function Model({ speaking }: { speaking: boolean }) {
+  const [hovered, setHovered] = useState(false);
+  const modelRef = useRef<THREE.Object3D>(null);
+  const meshRef = useRef<THREE.Mesh>(null);
+  
+  useEffect(() => {
+    let animationFrame: number;
+    const animate = () => {
+      if (modelRef.current && speaking) {
+        const time = Date.now() * 0.005;
+        const scale = 1 + Math.sin(time) * 0.05;
+        modelRef.current.scale.set(2 * scale, 2, 2);
+      }
+      
+      if (meshRef.current) {
+        if (speaking) {
+          const time = Date.now() * 0.005;
+          const scale = 1 + Math.sin(time) * 0.05;
+          meshRef.current.scale.set(scale, scale, scale);
+        }
+        meshRef.current.material.color.set(speaking ? '#60a5fa' : '#3b82f6');
+        (meshRef.current.material as THREE.MeshStandardMaterial).emissive.set(hovered ? '#1d4ed8' : '#000000');
+        (meshRef.current.material as THREE.MeshStandardMaterial).emissiveIntensity = hovered ? 0.5 : 0;
+      }
+      
+      animationFrame = requestAnimationFrame(animate);
+    };
+    
+    animate();
+    return () => cancelAnimationFrame(animationFrame);
+  }, [speaking, hovered]);
+
+  return (
+    <mesh
+      ref={meshRef}
+      position={[0, 0, 0]}
+      rotation={[0, speaking ? Math.sin(Date.now() * 0.001) * 0.1 : 0, 0]}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+    >
+      <sphereGeometry args={[1, 32, 32]} />
+      <meshStandardMaterial 
+        color="#3b82f6" 
+        metalness={0.5} 
+        roughness={0.5} 
+      />
+    </mesh>
+  );
 }
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
@@ -75,6 +72,7 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
   }
 
   static getDerivedStateFromError(error: any) {
+    console.error("3D Rendering Error:", error);
     return { hasError: true };
   }
 
@@ -102,6 +100,12 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
 
     return this.props.children;
   }
+}
+
+interface Interviewer3DAvatarProps {
+  speaking?: boolean;
+  size?: number;
+  showWellnessData?: boolean;
 }
 
 const Interviewer3DAvatar = ({ 

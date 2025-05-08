@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -210,7 +209,6 @@ const MockInterviews = () => {
   const [selectedIndustry, setSelectedIndustry] = useState('Tech');
   const [selectedDifficulty, setSelectedDifficulty] = useState('Mid-level');
   const [showInterview, setShowInterview] = useState(false);
-  const [elevenLabsAgentId] = useState('n1pNc0aPoEIZdxIEhzRo'); // Store the Eleven Labs agent ID
 
   return (
     <div className="space-y-6">
@@ -360,7 +358,6 @@ const MockInterviews = () => {
                 jobDescription={jobDescription} 
                 industry={selectedIndustry}
                 difficulty={selectedDifficulty}
-                agentId={elevenLabsAgentId}
               />
             </CardContent>
           </Card>
