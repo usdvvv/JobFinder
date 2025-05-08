@@ -14,6 +14,9 @@ function ModelFallback() {
   );
 }
 
+// Preload the model to ensure it's available
+useGLTF.preload('/white_mesh.glb');
+
 function InterviewerModel({ speaking }: { speaking: boolean }) {
   const [hovered, setHovered] = useState(false);
   const { scene } = useGLTF('/white_mesh.glb');
@@ -56,13 +59,16 @@ function InterviewerModel({ speaking }: { speaking: boolean }) {
     return () => cancelAnimationFrame(animationFrame);
   }, [speaking]);
 
+  // Log to debug if the model is loading
+  console.log("3D Model loading:", scene ? "Success" : "Failed");
+
   return (
     <group 
       ref={modelRef}
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
-      scale={[1, 1, 1]} // Adjust scale if needed
-      position={[0, 0, 0]} // Adjust position if needed
+      scale={[1, 1, 1]} 
+      position={[0, 0, 0]}
     >
       <primitive object={scene.clone()} />
     </group>
@@ -200,6 +206,7 @@ const Interviewer3DAvatar = ({
             <Canvas
               camera={{ position: [0, 0, 3.5], fov: 45 }}
               style={{ background: 'transparent' }}
+              gl={{ preserveDrawingBuffer: true }}
             >
               <ambientLight intensity={0.5} />
               <directionalLight position={[5, 5, 5]} intensity={1} />
