@@ -1,3 +1,4 @@
+
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { Video, Mic, MicOff, Clock, HeartPulse, CameraOff } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
@@ -25,16 +26,20 @@ function InterviewerModel({ speaking }: { speaking: boolean }) {
   useEffect(() => {
     if (!scene) return;
     
-    // Apply materials to the model
+    // Apply materials to the model with brighter colors and better lighting properties
     scene.traverse((node) => {
       if (node instanceof THREE.Mesh) {
         node.material = new THREE.MeshStandardMaterial({
           color: speaking ? "#60a5fa" : "#3b82f6",
-          metalness: 0.6,
-          roughness: 0.4,
+          metalness: 0.2,          // Reduced metalness for more diffuse appearance
+          roughness: 0.6,          // Increased roughness for better light diffusion
           emissive: hovered ? "#1d4ed8" : "#000000",
           emissiveIntensity: hovered ? 0.5 : 0,
         });
+        
+        // Enable shadows for better depth perception
+        node.castShadow = true;
+        node.receiveShadow = true;
       }
     });
   }, [scene, speaking, hovered]);
@@ -206,17 +211,33 @@ const Interviewer3DAvatar = ({
             <Canvas
               camera={{ position: [0, 0, 3.5], fov: 45 }}
               style={{ background: 'transparent' }}
-              gl={{ preserveDrawingBuffer: true }}
+              gl={{ 
+                preserveDrawingBuffer: true,
+                antialias: true, // Enable antialiasing for smoother edges
+                alpha: true      // Enable transparency
+              }}
+              shadows // Enable shadows in the scene
             >
-              <ambientLight intensity={0.5} />
-              <directionalLight position={[5, 5, 5]} intensity={1} />
+              {/* Enhanced lighting setup for better visibility */}
+              <ambientLight intensity={0.8} color="#ffffff" />
+              <directionalLight 
+                position={[5, 5, 5]} 
+                intensity={1.5} 
+                castShadow
+                shadow-mapSize-width={1024}
+                shadow-mapSize-height={1024}
+              />
               <spotLight 
                 position={[0, 5, 5]} 
                 angle={0.4} 
                 penumbra={1} 
                 intensity={1.5} 
                 castShadow
+                color="#f0f0ff"
               />
+              {/* Add a front light to illuminate the face better */}
+              <pointLight position={[0, 0, 5]} intensity={0.8} color="#ffffff" />
+              
               <Suspense fallback={<ModelFallback />}>
                 <InterviewerModel speaking={speaking} />
               </Suspense>
