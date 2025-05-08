@@ -16,7 +16,25 @@ function ModelFallback() {
 
 function InterviewerModel({ speaking }: { speaking: boolean }) {
   const [hovered, setHovered] = useState(false);
+  const { scene } = useGLTF('/white_mesh.glb');
   const modelRef = useRef<THREE.Group>(null);
+  
+  useEffect(() => {
+    if (!scene) return;
+    
+    // Apply materials to the model
+    scene.traverse((node) => {
+      if (node instanceof THREE.Mesh) {
+        node.material = new THREE.MeshStandardMaterial({
+          color: speaking ? "#60a5fa" : "#3b82f6",
+          metalness: 0.6,
+          roughness: 0.4,
+          emissive: hovered ? "#1d4ed8" : "#000000",
+          emissiveIntensity: hovered ? 0.5 : 0,
+        });
+      }
+    });
+  }, [scene, speaking, hovered]);
   
   useEffect(() => {
     let animationFrame: number;
@@ -38,58 +56,15 @@ function InterviewerModel({ speaking }: { speaking: boolean }) {
     return () => cancelAnimationFrame(animationFrame);
   }, [speaking]);
 
-  // Create a more sophisticated model than just a sphere
   return (
-    <group ref={modelRef} 
+    <group 
+      ref={modelRef}
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
+      scale={[1, 1, 1]} // Adjust scale if needed
+      position={[0, 0, 0]} // Adjust position if needed
     >
-      {/* Base shape */}
-      <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[1, 32, 32]} />
-        <meshStandardMaterial 
-          color={speaking ? "#60a5fa" : "#3b82f6"}
-          metalness={0.6} 
-          roughness={0.4} 
-          emissive={hovered ? "#1d4ed8" : "#000000"}
-          emissiveIntensity={hovered ? 0.5 : 0}
-        />
-      </mesh>
-      
-      {/* Face features */}
-      <mesh position={[0.35, 0.25, 0.85]} scale={0.12}>
-        <sphereGeometry args={[1, 16, 16]} />
-        <meshStandardMaterial color="#000000" />
-      </mesh>
-      
-      <mesh position={[-0.35, 0.25, 0.85]} scale={0.12}>
-        <sphereGeometry args={[1, 16, 16]} />
-        <meshStandardMaterial color="#000000" />
-      </mesh>
-      
-      {/* Mouth - changes when speaking */}
-      {speaking ? (
-        <mesh position={[0, -0.2, 0.85]} scale={[0.5, 0.2, 0.2]}>
-          <sphereGeometry args={[0.5, 16, 16]} />
-          <meshStandardMaterial color="#000000" />
-        </mesh>
-      ) : (
-        <mesh position={[0, -0.2, 0.85]} scale={[0.4, 0.1, 0.1]}>
-          <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color="#000000" />
-        </mesh>
-      )}
-      
-      {/* Decorative elements */}
-      <mesh position={[0, 0, 0]} scale={1.2} rotation={[0, Math.PI/4, 0]}>
-        <torusGeometry args={[1, 0.05, 16, 100]} />
-        <meshStandardMaterial color="#2563eb" transparent opacity={0.7} />
-      </mesh>
-      
-      <mesh position={[0, 0, 0]} scale={1.3} rotation={[Math.PI/2, 0, 0]}>
-        <torusGeometry args={[1, 0.05, 16, 100]} />
-        <meshStandardMaterial color="#2563eb" transparent opacity={0.5} />
-      </mesh>
+      <primitive object={scene.clone()} />
     </group>
   );
 }
