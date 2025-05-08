@@ -287,53 +287,31 @@ const MockInterviews = () => {
           </AnimatedSection>
           
           <AnimatedSection animation="slide-up" delay={200}>
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Upload Resume for Personalized Questions</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
-                    <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Upload your resume for tailored questions
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Supports PDF, DOCX, TXT (Max 5MB)
-                    </p>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Previous Interview Sessions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between p-3 rounded-md bg-muted/50 hover:bg-muted cursor-pointer">
+                  <div className="flex items-center">
+                    <Video className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <span className="text-sm">Frontend Developer Interview</span>
                   </div>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline" className="w-full">Upload Resume</Button>
-                </CardFooter>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Previous Interview Sessions</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between p-3 rounded-md bg-muted/50 hover:bg-muted cursor-pointer">
-                    <div className="flex items-center">
-                      <Video className="h-4 w-4 mr-2 text-muted-foreground" />
-                      <span className="text-sm">Frontend Developer Interview</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">3 days ago</span>
+                  <span className="text-xs text-muted-foreground">3 days ago</span>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 rounded-md bg-muted/50 hover:bg-muted cursor-pointer">
+                  <div className="flex items-center">
+                    <Video className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <span className="text-sm">Product Manager Interview</span>
                   </div>
-                  
-                  <div className="flex items-center justify-between p-3 rounded-md bg-muted/50 hover:bg-muted cursor-pointer">
-                    <div className="flex items-center">
-                      <Video className="h-4 w-4 mr-2 text-muted-foreground" />
-                      <span className="text-sm">Product Manager Interview</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">1 week ago</span>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline" className="w-full">View All Sessions</Button>
-                </CardFooter>
-              </Card>
-            </div>
+                  <span className="text-xs text-muted-foreground">1 week ago</span>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" className="w-full">View All Sessions</Button>
+              </CardFooter>
+            </Card>
           </AnimatedSection>
         </>
       ) : (

@@ -1,9 +1,8 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import Interviewer3DAvatar from './Interviewer3DAvatar';
-import { HeartPulse, Thermometer, Bed, Clock, RectangleHorizontal, Upload } from 'lucide-react';
+import { HeartPulse, Thermometer, Bed, Clock, RectangleHorizontal } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface AIInterviewerProps {
@@ -20,8 +19,6 @@ const AIInterviewer = ({
   const [isInterviewing, setIsInterviewing] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [showWellnessData, setShowWellnessData] = useState(true);
-  const [resume, setResume] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   
   // Dynamic wellness data state
@@ -65,21 +62,12 @@ const AIInterviewer = ({
   }, [isInterviewing]);
 
   const startInterview = () => {
-    if (!resume) {
-      toast({
-        title: "Resume Required",
-        description: "Please upload your resume before starting the interview.",
-        variant: "destructive"
-      });
-      return;
-    }
-
     setIsInterviewing(true);
     setShowWellnessData(true);
     
     toast({
       title: "Interview Started",
-      description: `Resume "${resume.name}" has been analyzed. Your wellness data is now being monitored during the interview.`,
+      description: "Your wellness data is now being monitored during the interview.",
     });
   };
   
@@ -91,22 +79,6 @@ const AIInterviewer = ({
       title: "Interview Ended",
       description: "Your interview session has been completed.",
     });
-  };
-
-  const handleResumeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      setResume(file);
-      toast({
-        title: "Resume Uploaded",
-        description: `Successfully uploaded "${file.name}"`,
-      });
-    }
-  };
-
-  const handleUploadButtonClick = () => {
-    fileInputRef.current?.click();
   };
 
   const interviewTips = [
@@ -175,34 +147,6 @@ const AIInterviewer = ({
               <li key={index} className="text-sm text-muted-foreground">{tip}</li>
             ))}
           </ul>
-        </CardContent>
-      </Card>
-
-      {/* Resume Upload Section */}
-      <Card className="border rounded-lg shadow">
-        <CardContent className="py-4">
-          <div className="flex items-center gap-3">
-            <Button 
-              variant="outline" 
-              onClick={handleUploadButtonClick}
-              className="flex items-center gap-2"
-            >
-              <Upload className="h-4 w-4" />
-              {resume ? "Change Resume" : "Upload Resume"}
-            </Button>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleResumeUpload}
-              className="hidden"
-              accept=".pdf,.docx,.doc"
-            />
-            {resume && (
-              <span className="text-sm text-muted-foreground">
-                {resume.name}
-              </span>
-            )}
-          </div>
         </CardContent>
       </Card>
       
