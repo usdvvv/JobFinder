@@ -1,8 +1,7 @@
-
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { Video, Mic, MicOff, Clock, HeartPulse, CameraOff } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, useGLTF } from '@react-three/drei';
 import React from 'react';
 import * as THREE from 'three';
 
@@ -15,34 +14,21 @@ function ModelFallback() {
   );
 }
 
-function Model({ speaking }: { speaking: boolean }) {
+function InterviewerModel({ speaking }: { speaking: boolean }) {
   const [hovered, setHovered] = useState(false);
-  const modelRef = useRef<THREE.Object3D>(null);
-  const meshRef = useRef<THREE.Mesh>(null);
+  const modelRef = useRef<THREE.Group>(null);
   
   useEffect(() => {
     let animationFrame: number;
     const animate = () => {
       if (modelRef.current && speaking) {
-        const time = Date.now() * 0.005;
-        const scale = 1 + Math.sin(time) * 0.05;
-        modelRef.current.scale.set(2 * scale, 2, 2);
-      }
-      
-      if (meshRef.current) {
-        if (speaking) {
-          const time = Date.now() * 0.005;
-          const scale = 1 + Math.sin(time) * 0.05;
-          meshRef.current.scale.set(scale, scale, scale);
-        }
+        // Gentle pulsing animation when speaking
+        const time = Date.now() * 0.001;
+        const scale = 1 + Math.sin(time * 2) * 0.05;
+        modelRef.current.scale.set(scale, scale, scale);
         
-        // Fix the TypeScript error by ensuring we're accessing a MeshStandardMaterial
-        const material = meshRef.current.material;
-        if (material instanceof THREE.MeshStandardMaterial) {
-          material.color.set(speaking ? '#60a5fa' : '#3b82f6');
-          material.emissive.set(hovered ? '#1d4ed8' : '#000000');
-          material.emissiveIntensity = hovered ? 0.5 : 0;
-        }
+        // Slight rotation when speaking
+        modelRef.current.rotation.y = Math.sin(time) * 0.1;
       }
       
       animationFrame = requestAnimationFrame(animate);
@@ -50,23 +36,61 @@ function Model({ speaking }: { speaking: boolean }) {
     
     animate();
     return () => cancelAnimationFrame(animationFrame);
-  }, [speaking, hovered]);
+  }, [speaking]);
 
+  // Create a more sophisticated model than just a sphere
   return (
-    <mesh
-      ref={meshRef}
-      position={[0, 0, 0]}
-      rotation={[0, speaking ? Math.sin(Date.now() * 0.001) * 0.1 : 0, 0]}
+    <group ref={modelRef} 
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
     >
-      <sphereGeometry args={[1, 32, 32]} />
-      <meshStandardMaterial 
-        color="#3b82f6" 
-        metalness={0.5} 
-        roughness={0.5} 
-      />
-    </mesh>
+      {/* Base shape */}
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshStandardMaterial 
+          color={speaking ? "#60a5fa" : "#3b82f6"}
+          metalness={0.6} 
+          roughness={0.4} 
+          emissive={hovered ? "#1d4ed8" : "#000000"}
+          emissiveIntensity={hovered ? 0.5 : 0}
+        />
+      </mesh>
+      
+      {/* Face features */}
+      <mesh position={[0.35, 0.25, 0.85]} scale={0.12}>
+        <sphereGeometry args={[1, 16, 16]} />
+        <meshStandardMaterial color="#000000" />
+      </mesh>
+      
+      <mesh position={[-0.35, 0.25, 0.85]} scale={0.12}>
+        <sphereGeometry args={[1, 16, 16]} />
+        <meshStandardMaterial color="#000000" />
+      </mesh>
+      
+      {/* Mouth - changes when speaking */}
+      {speaking ? (
+        <mesh position={[0, -0.2, 0.85]} scale={[0.5, 0.2, 0.2]}>
+          <sphereGeometry args={[0.5, 16, 16]} />
+          <meshStandardMaterial color="#000000" />
+        </mesh>
+      ) : (
+        <mesh position={[0, -0.2, 0.85]} scale={[0.4, 0.1, 0.1]}>
+          <boxGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial color="#000000" />
+        </mesh>
+      )}
+      
+      {/* Decorative elements */}
+      <mesh position={[0, 0, 0]} scale={1.2} rotation={[0, Math.PI/4, 0]}>
+        <torusGeometry args={[1, 0.05, 16, 100]} />
+        <meshStandardMaterial color="#2563eb" transparent opacity={0.7} />
+      </mesh>
+      
+      <mesh position={[0, 0, 0]} scale={1.3} rotation={[Math.PI/2, 0, 0]}>
+        <torusGeometry args={[1, 0.05, 16, 100]} />
+        <meshStandardMaterial color="#2563eb" transparent opacity={0.5} />
+      </mesh>
+    </group>
   );
 }
 
@@ -199,7 +223,7 @@ const Interviewer3DAvatar = ({
         <div className="w-full h-full">
           <ErrorBoundary>
             <Canvas
-              camera={{ position: [0, 0, 8], fov: 45 }}
+              camera={{ position: [0, 0, 3.5], fov: 45 }}
               style={{ background: 'transparent' }}
             >
               <ambientLight intensity={0.5} />
@@ -212,7 +236,7 @@ const Interviewer3DAvatar = ({
                 castShadow
               />
               <Suspense fallback={<ModelFallback />}>
-                <Model speaking={speaking} />
+                <InterviewerModel speaking={speaking} />
               </Suspense>
               <OrbitControls 
                 enableZoom={false}
