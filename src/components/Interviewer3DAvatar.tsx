@@ -35,9 +35,14 @@ function Model({ speaking }: { speaking: boolean }) {
           const scale = 1 + Math.sin(time) * 0.05;
           meshRef.current.scale.set(scale, scale, scale);
         }
-        meshRef.current.material.color.set(speaking ? '#60a5fa' : '#3b82f6');
-        (meshRef.current.material as THREE.MeshStandardMaterial).emissive.set(hovered ? '#1d4ed8' : '#000000');
-        (meshRef.current.material as THREE.MeshStandardMaterial).emissiveIntensity = hovered ? 0.5 : 0;
+        
+        // Fix the TypeScript error by ensuring we're accessing a MeshStandardMaterial
+        const material = meshRef.current.material;
+        if (material instanceof THREE.MeshStandardMaterial) {
+          material.color.set(speaking ? '#60a5fa' : '#3b82f6');
+          material.emissive.set(hovered ? '#1d4ed8' : '#000000');
+          material.emissiveIntensity = hovered ? 0.5 : 0;
+        }
       }
       
       animationFrame = requestAnimationFrame(animate);
