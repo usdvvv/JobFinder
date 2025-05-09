@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import NavBar from '@/components/NavBar';
 import AnimatedSection from '@/components/AnimatedSection';
+import VideoChat from '@/components/VideoChat';
 
 // Message type for chat
 type Message = {
@@ -55,6 +56,7 @@ const AILiveAssistant = () => {
     }
   ]);
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [isVideoCallActive, setIsVideoCallActive] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
@@ -115,6 +117,14 @@ const AILiveAssistant = () => {
       e.preventDefault();
       handleSend();
     }
+  };
+
+  const startVideoCall = () => {
+    setIsVideoCallActive(true);
+  };
+
+  const endVideoCall = () => {
+    setIsVideoCallActive(false);
   };
 
   return (
@@ -304,20 +314,33 @@ const AILiveAssistant = () => {
                 
                 <TabsContent value="video" className="mt-4">
                   <Card className="h-[calc(80vh-250px)] flex flex-col">
-                    <CardContent className="flex-1 flex items-center justify-center">
-                      <div className="text-center space-y-4">
-                        <div className="mx-auto bg-primary/10 p-6 rounded-full">
-                          <Video className="h-12 w-12 text-primary" />
-                        </div>
-                        <h2 className="text-xl font-semibold">Video Assistant</h2>
-                        <p className="text-muted-foreground max-w-md">
-                          Connect with your AI career assistant through video for a more interactive experience
-                        </p>
-                        <Button className="mt-4" size="lg">
-                          Start Video Call
-                        </Button>
-                      </div>
-                    </CardContent>
+                    {isVideoCallActive ? (
+                      <CardContent className="flex-1 p-4">
+                        <VideoChat onClose={endVideoCall} />
+                      </CardContent>
+                    ) : (
+                      <>
+                        <CardContent className="flex-1 flex items-center justify-center">
+                          <div className="text-center space-y-4">
+                            <div className="mx-auto bg-primary/10 p-6 rounded-full">
+                              <Video className="h-12 w-12 text-primary" />
+                            </div>
+                            <h2 className="text-xl font-semibold">Video Assistant</h2>
+                            <p className="text-muted-foreground max-w-md">
+                              Connect with your AI career assistant through video for a more interactive experience.
+                              Both cameras start off to protect your privacy.
+                            </p>
+                            <Button 
+                              className="mt-4" 
+                              size="lg" 
+                              onClick={startVideoCall}
+                            >
+                              Start Video Call
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </>
+                    )}
                   </Card>
                 </TabsContent>
               </Tabs>
