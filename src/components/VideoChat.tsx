@@ -2,8 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Video, VideoOff, Mic, MicOff, Phone } from 'lucide-react';
-import Interviewer3DAvatar from './Interviewer3DAvatar';
+import { Video, VideoOff, Mic, MicOff, Phone, CameraOff } from 'lucide-react';
 
 interface VideoChatProps {
   onClose: () => void;
@@ -12,6 +11,7 @@ interface VideoChatProps {
 const VideoChat = ({ onClose }: VideoChatProps) => {
   const [userVideoActive, setUserVideoActive] = useState(false);
   const [userAudioActive, setUserAudioActive] = useState(false);
+  const [assistantVideoActive, setAssistantVideoActive] = useState(false);
   const [assistantSpeaking, setAssistantSpeaking] = useState(false);
   const userVideoRef = useRef<HTMLVideoElement>(null);
   const userMediaStream = useRef<MediaStream | null>(null);
@@ -99,6 +99,11 @@ const VideoChat = ({ onClose }: VideoChatProps) => {
     }
   };
 
+  // Toggle AI assistant video
+  const toggleAssistantVideo = () => {
+    setAssistantVideoActive(!assistantVideoActive);
+  };
+
   // Cleanup function to stop all media tracks on component unmount
   useEffect(() => {
     return () => {
@@ -120,10 +125,30 @@ const VideoChat = ({ onClose }: VideoChatProps) => {
     <div className="grid grid-cols-2 gap-4 h-full">
       {/* AI Assistant Video Feed */}
       <Card className="relative overflow-hidden flex items-center justify-center bg-gray-900 h-full">
-        <Interviewer3DAvatar speaking={assistantSpeaking} showWellnessData={false} />
+        {assistantVideoActive ? (
+          <div className="flex flex-col items-center justify-center text-blue-400">
+            <div className="h-32 w-32 rounded-full bg-blue-500/20 flex items-center justify-center mb-2">
+              <Video className="h-16 w-16" />
+            </div>
+            <p className="text-lg font-medium">AI Assistant {assistantSpeaking && "(Speaking...)"}</p>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center text-white/70">
+            <CameraOff size={48} className="mb-2" />
+            <p>AI camera is off</p>
+          </div>
+        )}
         <div className="absolute bottom-4 left-4 bg-black/50 px-3 py-1.5 rounded-full text-white text-xs">
           AI Assistant
         </div>
+        <Button 
+          size="icon" 
+          variant={assistantVideoActive ? "default" : "outline"}
+          onClick={toggleAssistantVideo}
+          className="absolute top-4 right-4 h-10 w-10 rounded-full bg-black/50 hover:bg-black/70"
+        >
+          {assistantVideoActive ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4" />}
+        </Button>
       </Card>
       
       {/* User Video Feed */}
